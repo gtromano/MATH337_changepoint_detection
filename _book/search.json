@@ -44,7 +44,7 @@
     "href": "1_intro_cusum.html",
     "title": "1  An Introduction to Changepoint Detection",
     "section": "",
-    "text": "Test\n\n1 + 1\n\n[1] 2",
+    "text": "1.1 Piecewise Stationary Time Series\nIn this module, we will be dealing with time series. A time series is a sequence of observations recorded over time (or space), where the order of the data points is crucial.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>An Introduction to Changepoint Detection</span>"
     ]
@@ -57,6 +57,36 @@
     "text": "In summary, this book has no content whatsoever.\n\n1 + 1\n\n[1] 2",
     "crumbs": [
       "<span class='chapter-number'>2</span>  <span class='chapter-title'>Controlling the CUSUM and Other Models</span>"
+    ]
+  },
+  {
+    "objectID": "1_intro_cusum.html#piecewise-constant-time-series",
+    "href": "1_intro_cusum.html#piecewise-constant-time-series",
+    "title": "1  An Introduction to Changepoint Detection",
+    "section": "",
+    "text": "1.1.1 What is a time series?\nIn previous modules, such as Likelihood Inference, we typically dealt with data that was not ordered in a particular way. For example, we might have worked with a sample of independent Gaussian observations, where each observation is drawn randomly from the same distribution. This sample might look like the following:\n\\[\n  y_i \\sim \\mathcal{N}(0,1), \\ i = 1, \\dots, 100\n\\]\nHere, \\(y_i\\) represents the \\(i\\)-th observation, and the assumption is that all observations are independent and identically distributed (i.i.d.) with a mean of 0 and variance of 1.\n\n\n\n\n\n\n\n\n\nIn this case, the observations do not have any particular order, and our primary interest may be in estimating parameters such as the mean, variance, or mode of the distribution. This is typical for traditional inference, where the order of observations is not of concern.\nHowever, a time series involves a specific order to the data—usually indexed by time, although it could also be by space or another sequential dimension. For example, we could assume that the Gaussian sample above is a sequential process, ordered by the time we drew an observation. Each observation corresponds to a specific time point \\(t\\). If the time points are indexed from 1 to 100, we would write the time series as:\n\\[\n  y_{1:100} = (y_1, y_2, \\dots, y_{100})\n\\]\nwhere \\(y_t\\) represents the observation at time \\(t\\), with, in case of our example, \\(t = 1, 2, \\dots, 100\\).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>An Introduction to Changepoint Detection</span>"
+    ]
+  },
+  {
+    "objectID": "1_intro_cusum.html#piecewise-stationary-time-series",
+    "href": "1_intro_cusum.html#piecewise-stationary-time-series",
+    "title": "1  An Introduction to Changepoint Detection",
+    "section": "",
+    "text": "1.1.1 What is a time series?\nIn previous modules, such as Likelihood Inference, we typically dealt with data that was not ordered in a particular way. For example, we might have worked with a sample of independent Gaussian observations, where each observation is drawn randomly from the same distribution. This sample might look like the following:\n\\[\n  y_i \\sim \\mathcal{N}(0,1), \\ i = 1, \\dots, 100\n\\]\nHere, \\(y_i\\) represents the \\(i\\)-th observation, and the assumption is that all observations are independent and identically distributed (i.i.d.) with a mean of 0 and variance of 1.\n\n\n\n\n\n\n\n\n\nIn this case, the observations do not have any particular order, and our primary interest may be in estimating parameters such as the mean, variance, or mode of the distribution. This is typical for traditional inference, where the order of observations is not of concern.\nHowever, a time series involves a specific order to the data—usually indexed by time, although it could also be by space or another sequential dimension. For example, we could assume that the Gaussian sample above is a sequential process, ordered by the time we drew an observation. Each observation corresponds to a specific time point \\(t\\):\n\n\n\n\n\n\n\n\n\nFormal Notation. In time series analysis, we typically denote a time series by using an index \\(t\\) to represent time or order. The time series vector is written as:\n\\[\n  y_{1:n} = (y_1, y_2, \\dots, y_n)\n\\]\nHere, \\(n\\) is the total length of the sequence, and \\(y_t\\) represents the observed value at time \\(t\\), for \\(t = 1, 2, \\dots, n\\). In our previous example, for instance, \\(n = 100\\).\nOften, we are also interested in subsets of a time series (inclusive), especially when investigating specific “windows” or “chunks” of the data. We will denote as a subset of the time series, from time \\(l\\) to time \\(u\\), the following:\n\\[\n  y_{l:u} = (y_l, y_{l+1}, \\dots, y_u)\n\\]\nUnderstanding and working with subsets of time series data is important for many applications, such as when detecting changes in the behavior or properties of the time series over specific intervals.\n\n\n1.1.2 Stationary, non-stationary, and piecewise stationary time series\nTime series can be classified into different categories based on their statistical properties over time. The three main types are stationary, non-stationary, and piecewise stationary time series. For example:\n\n\n\n\n\n\n\n\n\n\nStationary Time Series: A time series is said to be stationary if its statistical properties—such as the mean, variance, and autocovariance—are constant over time. This implies that the behavior of the series doesn’t change as time progresses.\n\nMathematically, for a stationary time series \\(y_t\\), the expected value and variance are constant over time: \\[\n    \\mathbb{E}(y_t) = \\mu \\quad \\text{and} \\quad \\text{Var}(y_t) = \\sigma^2 \\quad \\forall \\in \\{1, ..., n\\}\n\\] In this example, the stationary time series was generated by sampling random normal variables \\(y_t = \\epsilon_t, \\ \\epsilon_t \\sim \\mathcal{N}(0, 1)\\). We can see, very simply how, in this case: \\[\n    \\mathbb{E}(y_t) = \\mathbb{E}(\\epsilon_t) = 0, \\forall t \\in \\{1, ..., 100\\}\n\\]\n\nNon-Stationary Time Series: A time series is non-stationary if its statistical properties change over time. Often, non-stationary series exhibit trends or varying variances. For example, a series with a trend (increasing or decreasing) is non-stationary because the mean is not constant.\n\nA common form of non-stationarity is a linear trend, where the series grows over time. In our example, the non-stationary series is generated as: \\[\n    y_t = \\epsilon_t + 0.1 \\cdot t , \\ \\epsilon_t \\sim \\mathcal{N}(0, 1)\n\\] This creates a time series with a linear upward trend. In fact, similarly to what done before: \\[\n    \\mathbb{E}(y_t) = \\mathbb{E}(\\epsilon_t) + \\mathbb{E}(0.1 \\cdot t) = 0.1 \\cdot t.\n\\] Therefore: \\[\n  \\forall t_1, t_2 \\in \\{1, ..., 100\\}, t_1 \\neq t_2 \\rightarrow \\mathbb{E}(y_{t_1}) \\neq \\mathbb{E}(y_{t_2})\n\\]\n\nPiecewise Stationary Time Series: A piecewise stationary time series is stationary within certain segments but has changes in its statistical properties at certain points, known as changepoints. After each changepoint, the series may have a different mean, variance, or both.\n\nIn this case, the time series was stationary for the first half of the observations, but after \\(t = 50\\), a sudden shift occurs. Mathematically: \\[\n    y_t = \\begin{cases}\n    \\epsilon_t & \\text{for } t \\leq 50 \\\\\n    \\epsilon_t + 5 & \\text{for } t &gt; 50\n    \\end{cases}, \\epsilon_t \\sim \\mathcal{N}(0, 1)\n\\] This abrupt change at \\(t = 50\\) introduces a piecewise structure to the data.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>An Introduction to Changepoint Detection</span>"
+    ]
+  },
+  {
+    "objectID": "1_intro_cusum.html#introduction-to-changepoints",
+    "href": "1_intro_cusum.html#introduction-to-changepoints",
+    "title": "1  An Introduction to Changepoint Detection",
+    "section": "1.2 Introduction to changepoints",
+    "text": "1.2 Introduction to changepoints\nChangepoints are sudden, and often unexpected shifts in the behaviour of a process. These could be a physical, biological, industrial or financial process. (give various examples).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>An Introduction to Changepoint Detection</span>"
     ]
   }
 ]

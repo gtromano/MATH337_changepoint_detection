@@ -1,7 +1,169 @@
 # An Introduction to Changepoint Detection
 
-Test
-
-```{r}
-1 + 1
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggpubr)
 ```
+
+## Piecewise Stationary Time Series
+
+In this module, we will be dealing with **time series**. A time series is a sequence of observations recorded over time (or space), where the order of the data points is crucial.
+
+### What is a time series?
+
+In previous modules, such as Likelihood Inference, we typically dealt with data that was not ordered in a particular way. For example, we might have worked with a sample of independent Gaussian observations, where each observation is drawn randomly from the same distribution. This sample might look like the following:
+
+$$
+  y_i \sim \mathcal{N}(0,1), \ i = 1, \dots, 100
+$$
+
+Here, $y_i$ represents the $i$-th observation, and the assumption is that all observations are independent and identically distributed (i.i.d.) with a mean of 0 and variance of 1.
+
+```{r echo=FALSE}
+set.seed(123)
+# Convert y to a data frame
+data <- data.frame(y = rnorm(100))
+
+# Create the histogram using ggplot2
+ggplot(data, aes(x = y)) +
+  geom_histogram(binwidth = 0.5, color = "black") +
+  theme_minimal() +
+  labs(title = "Histogram of Random Normal Values", x = "Values", y = "Frequency")
+```
+
+In this case, the observations do not have any particular order, and our primary interest may be in estimating parameters such as the mean, variance, or mode of the distribution. This is typical for traditional inference, where the order of observations is not of concern.
+
+However, a **time series** involves a specific order to the data---usually indexed by time, although it could also be by space or another sequential dimension. For example, we could assume that the Gaussian sample above is a sequential process, ordered by the time we drew an observation. Each observation corresponds to a specific time point $t$:
+
+```{r, echo=FALSE}
+# Set seed for reproducibility
+set.seed(123)
+
+# Generate a stationary time series (normally distributed)
+y <- rnorm(100)
+
+# Create a data frame with an index for time and the time series values
+data <- data.frame(time = 1:100, y = y)
+
+# Time series plot (line graph) on the left
+time_series_plot <- ggplot(data, aes(x = time, y = y)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Time Series", x = "Time", y = "Value")
+
+# Rotated histogram plot (using coord_flip to rotate)
+rotated_histogram <- ggplot(data, aes(x = y)) +
+  geom_histogram(binwidth = 0.5, color = "black") +
+  coord_flip() +  # Flip the histogram to align it vertically
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),    # Remove y-axis label
+        axis.text.y = element_blank(),     # Remove y-axis numbers
+        #axis.ticks.y = element_blank()
+        ) +  # Remove y-axis ticks
+  labs(title = "Distribution", x = "Frequency")
+
+# Combine the two plots: time series on the left, rotated histogram on the right
+combined_plot <- ggarrange( time_series_plot, rotated_histogram, widths = c(3, 1), align = "hv")
+
+# Print the combined plot
+combined_plot
+
+
+```
+
+**Formal Notation.** In time series analysis, we typically denote a time series by using an index $t$ to represent time or order. The time series vector is written as:
+
+$$
+  y_{1:n} = (y_1, y_2, \dots, y_n)
+$$
+
+Here, $n$ is the total length of the sequence, and $y_t$ represents the observed value at time $t$, for $t = 1, 2, \dots, n$. In our previous example, for instance, $n = 100$. 
+
+Often, we are also interested in subsets of a time series (inclusive), especially when investigating specific "windows" or "chunks" of the data. We will denote as a subset of the time series, from time $l$ to time $u$, the following:
+
+$$
+  y_{l:u} = (y_l, y_{l+1}, \dots, y_u)
+$$
+
+Understanding and working with subsets of time series data is important for many applications, such as when detecting changes in the behavior or properties of the time series over specific intervals.
+
+### Stationary, non-stationary, and piecewise stationary time series
+
+Time series can be classified into different categories based on their statistical properties over time. The three main types are **stationary**, **non-stationary**, and **piecewise stationary** time series. For example:
+
+```{r, echo=FALSE}
+# Load the necessary library
+library(ggplot2)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Generate the three time series
+y1 <- rnorm(100)                           # Stationary
+y2 <- y1 + 1:100 * 0.1                     # Non-stationary
+y3 <- y1 + c(rep(0, 50), rep(5, 50))       # Piecewise stationary
+
+# Combine the time series into a data frame with labels
+data <- data.frame(
+  time = rep(1:100, 3),                    # Time index
+  value = c(y1, y2, y3),                   # Values from the three time series
+  type = factor(rep(c("A: stationary", "B: non-stationary", "C: piecewise stationary"), each = 100)) # Labels
+)
+
+# Plot the three time series using ggplot
+ggplot(data, aes(x = time, y = value)) +
+  geom_line() +
+  facet_wrap(~ type, scales = "free_y", ncol = 3) +    # Create 3 plots side by side
+  theme_minimal() +
+  labs(title = "Comparison of Time Series",
+       x = "Time", y = "Value") +
+  theme(legend.position = "none")                      # Remove legend since facet labels are clear
+```
+
+1. **Stationary Time Series**:
+   A time series is said to be *stationary* if its statistical properties—such as the mean, variance, and autocovariance—are constant over time. This implies that the behavior of the series doesn't change as time progresses.
+
+Mathematically, for a stationary time series $y_t$, the expected value and variance are constant over time:
+$$
+    \mathbb{E}(y_t) = \mu \quad \text{and} \quad \text{Var}(y_t) = \sigma^2 \quad \forall \in \{1, ..., n\}
+$$
+In this example, the stationary time series was generated by sampling random normal variables $y_t = \epsilon_t, \ \epsilon_t \sim \mathcal{N}(0, 1)$.
+We can see, very simply how, in this case: 
+$$
+    \mathbb{E}(y_t) = \mathbb{E}(\epsilon_t) = 0, \forall t \in \{1, ..., 100\}
+$$
+
+
+2. **Non-Stationary Time Series**:
+  A time series is *non-stationary* if its statistical properties change over time. Often, non-stationary series exhibit trends or varying variances. For example, a series with a trend (increasing or decreasing) is non-stationary because the mean is not constant.
+
+A common form of non-stationarity is a linear trend, where the series grows over time. In our example, the non-stationary series is generated as:
+$$
+    y_t = \epsilon_t + 0.1 \cdot t , \ \epsilon_t \sim \mathcal{N}(0, 1)
+$$
+This creates a time series with a linear upward trend. In fact, similarly to what done before:
+$$
+    \mathbb{E}(y_t) = \mathbb{E}(\epsilon_t) + \mathbb{E}(0.1 \cdot t) = 0.1 \cdot t. 
+$$
+Therefore:
+$$
+  \forall t_1, t_2 \in \{1, ..., 100\}, t_1 \neq t_2 \rightarrow \mathbb{E}(y_{t_1}) \neq \mathbb{E}(y_{t_2})
+$$
+
+
+3. **Piecewise Stationary Time Series**:
+  A *piecewise stationary* time series is stationary within certain segments but has changes in its statistical properties at certain points, known as *changepoints*. After each changepoint, the series may have a different mean, variance, or both.
+
+In this case, the time series was stationary for the first half of the observations, but after $t = 50$, a sudden shift occurs. Mathematically:
+$$
+    y_t = \begin{cases} 
+    \epsilon_t & \text{for } t \leq 50 \\
+    \epsilon_t + 5 & \text{for } t > 50
+    \end{cases}, \epsilon_t \sim \mathcal{N}(0, 1)
+$$
+This abrupt change at $t = 50$ introduces a piecewise structure to the data.
+
+
+## Introduction to changepoints
+
+Changepoints are sudden, and often unexpected shifts in the behaviour of a process. These could be a physical, biological, industrial or financial process. (give various examples).

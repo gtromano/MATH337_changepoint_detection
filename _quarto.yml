@@ -16,7 +16,7 @@ bibliography: references.bib
 
 format:
   html:
-    theme: journal
+    theme: lux
   pdf:
     documentclass: scrreprt
 

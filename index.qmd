@@ -1,9 +1,21 @@
 # Preface {.unnumbered}
 
-This is a Quarto book.
+These are the notes for MATH337 Changepoint Detection. They were written by Gaetano Romano.
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+The module will introduce you to changepoint detection, detailing some algorithms, developing the basics theoretical foundations, and practicing few real-world scenarios.
 
-```{r}
-1 + 1
-```
+Across five weeks we will cover the following topics:
+
+1.  An introduction to changepoint detection and the CUSUM statistics
+
+2.  Controlling the CUSUM and some additional models
+
+3.  Dealing with multiple changes
+
+4.  Penalty selection
+
+5.  Breaking the real-world assumptions.
+
+We will be using R as the programming language for this module. If you're unfamiliar with it, make sure you cover the first three weeks of [MATH245](https://lumath245.github.io/_book/index.html).
+
+Every week, you are expected to follow two lectures, one lab, and one computer aided workshop. Over the lecture, we will cover the basics concepts of changepoint detection. During the labs, you will be dealing with computations and details at your own pace, and, finally, during the workshops, you'll give a go at programming the various algorithms and running real-world examples.

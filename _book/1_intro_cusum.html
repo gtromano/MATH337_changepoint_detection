@@ -20,7 +20,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -193,7 +213,12 @@ window.Quarto = {
   <li><a href="#what-is-a-time-series" id="toc-what-is-a-time-series" class="nav-link" data-scroll-target="#what-is-a-time-series"><span class="header-section-number">1.1.1</span> What is a time series?</a></li>
   <li><a href="#stationary-non-stationary-and-piecewise-stationary-time-series" id="toc-stationary-non-stationary-and-piecewise-stationary-time-series" class="nav-link" data-scroll-target="#stationary-non-stationary-and-piecewise-stationary-time-series"><span class="header-section-number">1.1.2</span> Stationary, non-stationary, and piecewise stationary time series</a></li>
   </ul></li>
-  <li><a href="#introduction-to-changepoints" id="toc-introduction-to-changepoints" class="nav-link" data-scroll-target="#introduction-to-changepoints"><span class="header-section-number">1.2</span> Introduction to changepoints</a></li>
+  <li><a href="#introduction-to-changepoints" id="toc-introduction-to-changepoints" class="nav-link" data-scroll-target="#introduction-to-changepoints"><span class="header-section-number">1.2</span> Introduction to changepoints</a>
+  <ul class="collapse">
+  <li><a href="#types-of-changes-in-time-series" id="toc-types-of-changes-in-time-series" class="nav-link" data-scroll-target="#types-of-changes-in-time-series"><span class="header-section-number">1.2.1</span> Types of Changes in Time Series</a></li>
+  <li><a href="#the-biggest-data-challenge-in-changepoint-detection" id="toc-the-biggest-data-challenge-in-changepoint-detection" class="nav-link" data-scroll-target="#the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</a></li>
+  </ul></li>
+  <li><a href="#detecting-one-change-in-mean-the-cusum-statistic" id="toc-detecting-one-change-in-mean-the-cusum-statistic" class="nav-link" data-scroll-target="#detecting-one-change-in-mean-the-cusum-statistic"><span class="header-section-number">1.3</span> Detecting one change-in-mean: the CUSUM Statistic</a></li>
   </ul>
 </nav>
     </div>
@@ -293,19 +318,118 @@ window.Quarto = {
 <ol start="3" type="1">
 <li><strong>Piecewise Stationary Time Series</strong>: A <em>piecewise stationary</em> time series is stationary within certain segments but has changes in its statistical properties at certain points, known as <em>changepoints</em>. After each changepoint, the series may have a different mean, variance, or both.</li>
 </ol>
-<p>In this case, the time series was stationary for the first half of the observations, but after <span class="math inline">\(t = 50\)</span>, a sudden shift occurs. Mathematically: <span class="math display">\[
-    y_t = \begin{cases}
+<p>In our example, the time series was stationary for the first half of the observations, but after <span class="math inline">\(t = 50\)</span>, a sudden shift occurs. Mathematically: <span class="math display">\[
+y_t = \begin{cases}
     \epsilon_t &amp; \text{for } t \leq 50 \\
     \epsilon_t + 5 &amp; \text{for } t &gt; 50
-    \end{cases}, \epsilon_t \sim \mathcal{N}(0, 1)
+    \end{cases}, \quad \epsilon_t \sim \mathcal{N}(0, 1)
 \]</span> This abrupt change at <span class="math inline">\(t = 50\)</span> introduces a piecewise structure to the data.</p>
 </section>
 </section>
 <section id="introduction-to-changepoints" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="introduction-to-changepoints"><span class="header-section-number">1.2</span> Introduction to changepoints</h2>
-<p>Changepoints are sudden, and often unexpected shifts in the behaviour of a process. These could be a physical, biological, industrial or financial process. (give various examples).</p>
+<p>Changepoints are sudden, and often unexpected, shifts in the behavior of a process. They are also known as breakpoints, structural breaks, or regime switches. The detection of changepoints is crucial in understanding and responding to changes in various types of time series data.</p>
+<p>The primary objectives in detecting changepoints include:</p>
+<ul>
+<li><strong>Has a change occurred?</strong>: Identifying if there is a shift in the data.</li>
+<li><strong>If yes, where is the change?</strong>: Locating the precise point where the change happened.</li>
+<li><strong>What is the difference between the pre and post-change data?</strong> This may reveal the type of change, and it could indicate differences in parameter values before and after the change.</li>
+<li><strong>How certain are we of the changepoint location?</strong>: Assessing the confidence in the detected changepoint.</li>
+<li><strong>How many changes have occurred?</strong>: Identifying multiple changepoints and analyzing each one for similar characteristics.</li>
+</ul>
+<p>Changepoints can be found in a wide range of time series, not limited to physical, biological, industrial, or financial processes. For instance, to give few examples:</p>
+<ol type="1">
+<li><p><strong>ECG</strong>: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="source_imgs/intro-ecg.png" class="img-fluid figure-img"></p>
+<figcaption>Electrocardiograms (heart monitoring), Fotoohinasab et al, Asilomar conference 2020.</figcaption>
+</figure>
+</div></li>
+<li><p><strong>Cancer Diagnosis</strong>: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="source_imgs/intro-breakpoints.png" class="img-fluid figure-img"></p>
+<figcaption>DNA copy number data, breakpoints associated with aggressive cancer, Hocking et al, Bioinformatics 2014.</figcaption>
+</figure>
+</div></li>
+<li><p><strong>Engineering Monitoring</strong>: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="source_imgs/CPU-monitoring.png" class="img-fluid figure-img"></p>
+<figcaption>Temperature data from a CPU of an AWS server. Source Romano et al., (2023)</figcaption>
+</figure>
+</div></li>
+</ol>
+<section id="types-of-changes-in-time-series" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="types-of-changes-in-time-series"><span class="header-section-number">1.2.1</span> Types of Changes in Time Series</h3>
+<p>As you might have noticed from the examples above, there’s not a strict way on which a time-series might change. Depending on the model, we could seek for different types of changes in the structure of a time series. Some of the most common types of changes include shifts in mean, variance, and trends in regression. For example, the CPU example above exihibited, in addition to some extreme observations, both changes in mean and variance.</p>
+<ul>
+<li>A <strong>change in mean</strong> occurs when the average level of an otherwise stationary time series shifts from one point to another. This type of change is often encountered in real-world data when there is a sudden shift in the process generating the data, such as a change in policy, market conditions, or external factors affecting the system.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In the plot above, the red lines indicate the true mean values of the different segments.</p>
+<ul>
+<li>A <strong>change in variance</strong> refers to a shift in the variability of the time series data, even when the mean remains constant. This type of change is important in scenarios where the stability of a process fluctuates over time. For example, in financial markets, periods of high volatility (high variance) may be followed by periods of relative calm (low variance).</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="change-in-regression-trend" class="level4" data-number="1.2.1.1">
+<h4 data-number="1.2.1.1" class="anchored" data-anchor-id="change-in-regression-trend"><span class="header-section-number">1.2.1.1</span> 3. Change in Regression (Trend)</h4>
+<p>A <strong>change in regression</strong> or trend occurs when the underlying relationship between time and the values of the time series changes. This could reflect a shift in the growth or decline rate of a process. For example, a company’s revenue might grow steadily over a period, then plateau, and later exhibit a quadratic or nonlinear growth trend.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="the-biggest-data-challenge-in-changepoint-detection" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</h3>
+<p>One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science—but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: <strong>At which episode did “The Simpsons” start to decline?</strong></p>
+<p>It’s almost common knowledge that “The Simpsons,” the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. Critics, die-hard fans, and casual viewers alike have pointed to a shift in humor, writing, and overall creativity. But pinpointing exactly <em>when</em> this drop occurred is the real challenge. Fortunately, there’s a branch of statistics that was practically built to answer questions like these!</p>
+<p>I have downloaded a dataset <span class="citation" data-cites="bown_simpsons_dataset">(<a href="references.html#ref-bown_simpsons_dataset" role="doc-biblioref">Bown 2023</a>)</span> containing ratings for every episode of “The Simpsons” up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this plot, each episode of “The Simpsons” is represented by its TMBD rating, and episodes are colored by season. By visually inspecting the graph, we may already start to see some potential points where the ratings decline. However, the goal of our changepoint analysis is to move beyond visual inspection and rigorously detect the exact moment where a significant shift in the data occurs.</p>
+<p>Jokes apart, this is a challenging time series! First of all, there’s not a clear single change, but rather an increase, followed by a decline. After which, the sequence seems rather stationary. For this reason, throughout the module, we will use this data as a running example to develop our understanding of various methods, hopefully trying to obtain a definitive answer towards the final chapters. But let’s procede in order…</p>
+</section>
+</section>
+<section id="detecting-one-change-in-mean-the-cusum-statistic" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="detecting-one-change-in-mean-the-cusum-statistic"><span class="header-section-number">1.3</span> Detecting one change-in-mean: the CUSUM Statistic</h2>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-bown_simpsons_dataset" class="csl-entry" role="listitem">
+Bown, Jonathan. 2023. <span>“Simpsons Episodes &amp; Ratings (1989-Present).”</span> <a href="https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download">https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

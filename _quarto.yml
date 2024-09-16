@@ -1,0 +1,24 @@
+project:
+  type: book
+
+book:
+  title: "MATH337: Changepoint Detection"
+  author: "Gaetano Romano"
+  date: "11/01/24"
+  downloads: [pdf, epub]
+  chapters:
+    - index.qmd
+    - 1_intro_cusum.qmd
+    - 2_control.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: journal
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+

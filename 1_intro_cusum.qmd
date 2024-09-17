@@ -335,9 +335,9 @@ This approach is intuitive because if the mean $\mu$ is the same across the enti
 More formally, we would detect at change at $\tau$ if: 
 
 $$
-\frac{C_{\tau}^2 }{\sigma^2} > \lambda,
+\frac{C_{\tau}^2 }{\sigma^2} > c,
 $$
-where the $\lambda \in \mathbb{R}^+$ is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).
+where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).
 
 ### Algorithmic Formulation of the CUSUM Statistic
 
@@ -391,7 +391,7 @@ In pseudocode:
 
 ---
 
-| **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$
+| **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$, variance $\sigma$.
 | **OUTPUT:** Changepoint estimate $\hat{\tau}$, maximum CUSUM statistic $C_{max}$
 |
 | $n \leftarrow$ length of $y$
@@ -409,7 +409,7 @@ In pseudocode:
 |     $C_{max} \leftarrow C_t$
 |     $\hat{\tau} \leftarrow t$
 |
-| **IF** $C_{max} > c$
+| **IF** $C_{max}^2 / \sigma > c$
 |   **RETURN** $\hat{\tau}$, $C_{max}$  // Changepoint detected
 | **ELSE**
 |   **RETURN** NULL, $C_{max}$  // No changepoint detected

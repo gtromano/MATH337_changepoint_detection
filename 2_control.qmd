@@ -16,12 +16,12 @@ We have met this distribution already in hypothesis testing and constructing con
 
 We learned that, when properly normalized $C_\tau/\sigma$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable.
 
-However, as the change is unknown, our actual test statistic for detecting a change is $\max_\tau C_\tau^2/σ^2$. 
+However, as the change is unknown, our actual test statistic for detecting a change is $\max_\tau C_\tau^2/σ^2$.
 
 Calculating the distribution of this maximum is a bit more challenging:
 
-1.    So far, we worked only for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
-2.    The usual regularity conditions for likelihood-ratio test statistics don't apply here. Setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model.
+1.  So far, we worked only for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
+2.  The usual regularity conditions for likelihood-ratio test statistics don't apply here. Setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model.
 
 ### Controlling the max of our Cusums
 
@@ -31,11 +31,26 @@ $$
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_τ C_τ/σ - b_n) ≤ u\} = \exp\{-2π^{-1/2}\exp(-u)\},
 $$
 
-where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant. 
+where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant.
 
 This asymptotic result suggests that the threshold for $C_τ^2/σ^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
 
-In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. We will see how to achieve so in the Lab.
+In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. This, as we will see, it's much better as it ends up having less conservative thresholds:
+
+![](source_imgs/empirical_thres_comparison.png)
+
+We will see how to obtain this thresholds in the Lab.
 
 # Workshop 2 Exercises
-1.    Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.
+
+1.  Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.
+
+# Lab 2 Exercises
+
+1.  Write a function, that taking as input $n$ and a desired $\alpha$ level for false positive rate, returns the treshold for the cusum statistics.
+
+2.  Construct a function that, taking as input $n$, a desired $\alpha$ , and a `replicates` parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week
+
+3.  Compare for a range of increasingly values of n, e.g. $n = 100, 500, 1000, 10.000$, and for few desired levels of alpha, the Monte Carlo threshold with the theoretically justified threshold. Plot the results, to recreate the plot above.
+
+4.  Using the Test the Simpsons dataset, find a critical level for your CUSUM statistics, and declare a change.

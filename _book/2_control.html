@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -103,6 +69,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -131,6 +126,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">MATH337: Changepoint Detection</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.pdf">
+              <i class="bi bi-bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.epub">
+              <i class="bi bi-bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -170,7 +184,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-asymptotic-distribution-of-the-cusum-statistics" id="toc-the-asymptotic-distribution-of-the-cusum-statistics" class="nav-link active" data-scroll-target="#the-asymptotic-distribution-of-the-cusum-statistics"><span class="header-section-number">2.1</span> The asymptotic distribution of the CUSUM statistics</a>
+  <ul class="collapse">
+  <li><a href="#controlling-the-max-of-our-cusums" id="toc-controlling-the-max-of-our-cusums" class="nav-link" data-scroll-target="#controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our Cusums</a></li>
+  </ul></li>
+  <li><a href="#workshop-2-exercises" id="toc-workshop-2-exercises" class="nav-link" data-scroll-target="#workshop-2-exercises"><span class="header-section-number">3</span> Workshop 2 Exercises</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -194,15 +218,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>In summary, this book has no content whatsoever.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
+<p>In this chapter, we explore the properties of the CUSUM test for detecting a change in mean, and this will allow us how to determine appropriate thresholds, and explore its properties when a changepoint is present.</p>
+<p>We will employ some concepts from asymptotic theory: in time series analysis, an asymptotic distribution refers to the distribution that our test statistic approaches as the length of the time series <span class="math inline">\(n\)</span> becomes very large.</p>
+<section id="the-asymptotic-distribution-of-the-cusum-statistics" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="the-asymptotic-distribution-of-the-cusum-statistics"><span class="header-section-number">2.1</span> The asymptotic distribution of the CUSUM statistics</h2>
+<p>We have learned that the chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables. More formally, if <span class="math inline">\(z_1, \cdots, z_k\)</span> are independent, standard Normal random variables, then:</p>
+<p><span class="math display">\[
+\sum_{i=1}^k z^2_i \sim \chi^2_k
+\]</span></p>
+<p>We have met this distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom (k). For <span class="math inline">\(k=1\)</span>, it’s highly skewed, but as k increases, it becomes more symmetric and approaches a normal distribution.</p>
+<p>We learned that, when properly normalized <span class="math inline">\(C_\tau/\sigma\)</span> follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed <span class="math inline">\(\tau\)</span>, <span class="math inline">\(C_\tau^2/\sigma^2\)</span>, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable.</p>
+<p>However, as the change is unknown, our actual test statistic for detecting a change is <span class="math inline">\(\max_\tau C_\tau^2/σ^2\)</span>.</p>
+<p>Calculating the distribution of this maximum is a bit more challenging:</p>
+<ol type="1">
+<li>So far, we worked only for one fixed <span class="math inline">\(\tau\)</span>, however, when comparing the maximums, the values of <span class="math inline">\(C_\tau\)</span> are in fact not independent across different <span class="math inline">\(\tau\)</span>s.</li>
+<li>The usual regularity conditions for likelihood-ratio test statistics don’t apply here. Setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model.</li>
+</ol>
+<section id="controlling-the-max-of-our-cusums" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our Cusums</h3>
+<p>For controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance. We will use a well known statistical result (see Theorem 2.1 of Yao and Davis, 1986, and Gombay and Horvath, 1990) that shows that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution. This convergence is described by the following equation:</p>
+<p><span class="math display">\[
+\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_τ C_τ/σ - b_n) ≤ u\} = \exp\{-2π^{-1/2}\exp(-u)\},
+\]</span></p>
+<p>where <span class="math inline">\(a_n = (2 \log \log n)^{-1/2}\)</span> and <span class="math inline">\(b_n = a_n^{-1} + 0.5a_n \log \log \log n\)</span> are a scaling and a centering constant.</p>
+<p>This asymptotic result suggests that the threshold for <span class="math inline">\(C_τ^2/σ^2\)</span> should increase with <span class="math inline">\(n\)</span> at a rate of approximately <span class="math inline">\(2 \log \log n\)</span>. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.</p>
+<p>In practice, it’s often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. We will see how to achieve so in the Lab.</p>
+</section>
+</section>
+<section id="workshop-2-exercises" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Workshop 2 Exercises</h1>
+<ol type="1">
+<li>Given the asymptotic result on the distribution, for <span class="math inline">\(n = 100\)</span> and a false positive rate <span class="math inline">\(\alpha = 0.05\)</span>, calculate the threshold <span class="math inline">\(c\)</span>.</li>
+</ol>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

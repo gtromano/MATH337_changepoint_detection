@@ -284,6 +284,193 @@ ggplot(simpsons_ratings) +
 
 In this plot, each episode of "The Simpsons" is represented by its TMBD rating, and episodes are colored by season. By visually inspecting the graph, we may already start to see some potential points where the ratings decline. However, the goal of our changepoint analysis is to move beyond visual inspection and rigorously detect the exact moment where a significant shift in the data occurs.
 
-Jokes apart, this is a challenging time series! First of all, there's not a clear single change, but rather an increase, followed by a decline. After which, the sequence seems rather stationary. For this reason, throughout the module, we will use this data as a running example to develop our understanding of various methods, hopefully trying to obtain a definitive answer towards the final chapters. But let's procede with order...
+Jokes apart, this is a challenging time series! First of all, there's not a clear single change, but rather an increase, followed by a decline. After which, the sequence seems rather stationary. For this reason, throughout the module, we will use this data as a running example to develop our understanding of various methods, hopefully trying to obtain a definitive answer towards the final chapters. But let's proceed with order...
 
-## Detecting one change-in-mean: the CUSUM Statistic
+## Detecting one change in mean
+
+In this section, we will start by exploring the simplest case of a changepoint detection problem: **detecting a change in the mean** of a time series. We assume that the data is generated according to the following model:
+
+$$
+y_t = \mu_t + \epsilon_t, \quad t = 1, \dots, n,
+$$
+
+where $\epsilon_t \sim \mathcal{N}(0, \sigma^2)$ represents Gaussian noise with mean 0 and known variance $\sigma^2$, and $\mu_t \in \mathbb{R}$ is the signal at time $t$. The vector of noise terms $\epsilon_{1:n}$ is often referred to as Gaussian noise, and hence, this model is known as *the signal plus noise model*, where the signal is given by $\mu_{1:n}$ and the noise by $\epsilon_{1:n}$.
+
+In *the change-in-mean problem*, our goal is to determine whether the signal remains constant throughout the entire sequence, or if there exists a point $\tau$), where the mean shifts. In other words, we are testing whether:
+
+$$
+\mu_1 = \mu_2 = \dots = \mu_n \quad \text{(no changepoint)},
+$$
+
+or if there exists a time $\tau$ such that:
+
+$$
+\mu_1 = \mu_2 = \dots = \mu_\tau \neq \mu_{\tau+1} = \dots = \mu_n \quad \text{(changepoint at } \tau\text{)}.
+$$
+
+
+**Note.** The point $\tau$ is our **changepoint**, e.g. the first point after which our mean changes, however there's a lot of inconsistencies on the literature: sometimes you will find that people refer to $\tau + 1$ as the changepoint, and $\tau$ as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).
+
+
+To address this problem, one of the most widely used methods is the **CUSUM (Cumulative Sum) statistic**. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint $\tau$. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.
+
+### The CUSUM statistics
+
+The CUSUM statistic works by comparing, for each potential data point, the empirical mean (average) of the data to the left (before $\tau$) with the empirical mean of the data to the right (after $\tau$):
+
+$$
+C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|,
+$$
+
+Our $\bar{y}_{1:\tau}$ and $\bar{y}_{(\tau+1):n}$ are just the empirical means of each segment, simply computed with:
+
+$$
+\bar{y}_{l:u} = \frac{1}{u - l + 1} \sum_{t = l}^{u} y_t.
+$$. 
+
+The term on the left of the difference, is there to re-scale it so that our statistics is the absolute value of normal RV that has variance 1. If there is no change, this difference is going to be distributed as a standard normal, and this is going to be a key step in drawing the distribution of the CUSUM statistic next week.
+
+This approach is intuitive because if the mean $\mu$ is the same across the entire sequence, the values of the averages on both sides of any point $\tau$ should be similar. However, if there is a change in the mean, the means will differ significantly, highlighting the changepoint.
+
+More formally, we would detect at change at $\tau$ if: 
+
+$$
+\frac{C_{\tau}^2 }{\sigma^2} > \lambda,
+$$
+where the $\lambda \in \mathbb{R}^+$ is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).
+
+### Algorithmic Formulation of the CUSUM Statistic
+
+In practice, however, we do not know the changepoint location in advance. Our goal is to detect whether a changepoint exists and, if so, estimate its location. To achieve this, we need to consider all possible changepoint locations and choose the one that maximizes our test statistic.
+
+The natural extension of the likelihood-ratio test to this situation is to use as a test statistic the maximum of $C_\tau$ as we vary $\tau$:
+
+$$
+C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
+$$
+
+And detect a changepoint if $C_{max} > c$ for some suitably chosen threshold $c$. The choice of $c$ will determine the significance level of the test (we'll discuss this in more detail later).
+Graphically, the test will look: 
+```{r echo = FALSE}
+set.seed(5)
+x <- c(rnorm(10), rnorm(5, 3))
+plot(x, type = "l", xlim = c(0.5, 16), ylim = c(-11, 5), xlab= "t", ylab = " ", col = "grey", main = "Cusum over 15 points")
+points(1:15, x, pch = 19, cex = 1.5)
+
+offset = -4
+sep = .5
+operations = 1
+for (i in 1:14) {
+  segments(x0 = 1 -.15, x1 = i +0.15, y0 = 1 + offset, y1 = 1  + offset, lwd = 2, col = "red")
+  segments(x0 = i+1 -.15, x1 = 15 +0.15, y0 = 1 + offset, y1 = 1 + offset, lwd = 2, col = "blue")
+  operations <- operations + 1
+  offset = offset - sep
+}
+
+```
+
+
+If we detect a changepoint (i.e., if $C_{max} > c$), we can estimate its location by:
+
+$$
+\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2 / \sigma^2
+$$
+
+In other words, $\hat{\tau}$ is the value of $\tau$ that maximizes the CUSUM statistic.
+
+A simple estimate of the size of the change is then given by:
+
+$$
+\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}
+$$
+
+This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.
+
+
+In pseudocode:
+
+---
+
+| **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$
+| **OUTPUT:** Changepoint estimate $\hat{\tau}$, maximum CUSUM statistic $C_{max}$
+|
+| $n \leftarrow$ length of $y$
+| $C_{max} \leftarrow 0$
+| $\hat{\tau} \leftarrow 0$
+| $S_n \leftarrow \sum_{i=1}^n y_i$  // Compute total sum of y
+| $S \leftarrow 0$
+|
+| **FOR** $t = 1, \dots, n - 1$
+|   $S \leftarrow S + y_t$
+|   $\bar{y}_{1:t} \leftarrow S / t$
+|   $\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)$
+|   $C_t \leftarrow \sqrt{\frac{t(n-t)}{n}} |\bar{y}_{1:t} - \bar{y}_{(t+1):n}|$
+|   **IF** $C_t > C_{max}$
+|     $C_{max} \leftarrow C_t$
+|     $\hat{\tau} \leftarrow t$
+|
+| **IF** $C_{max} > c$
+|   **RETURN** $\hat{\tau}$, $C_{max}$  // Changepoint detected
+| **ELSE**
+|   **RETURN** NULL, $C_{max}$  // No changepoint detected
+
+---
+
+It's worth noting that, as we only need to calculate the CUSUM statistic for each potential changepoint once. By pre-computing the cumulative sum of all observations, this allows. The time complexity of this algorithm is $O(n)$, where $n$ is the length of the time series.
+
+### Example
+
+Running the CUSUM test on our Simpsons episode results in: 
+```{r echo = F}
+LR <- function(x) {
+  #input is data vector length >=2
+  S <- cumsum(x) #calculate cummulate sum of data
+  n <- length(x) #number of data points
+  tau <- 1:(n - 1) #possible change-point locations to test
+  D <- S[tau] / tau - (S[n] - S[tau]) / (n - tau) #difference in means
+  LR <- D ^ 2 * tau * (n - tau) / n #LR statistic at locations tau
+  #return LR statistic and estimate of tau
+  return(list(LR = LR, LR_max = max(LR), tau.hat = which.max(LR)))
+}
+```
+```{r echo=FALSE}
+
+# Calculate CUSUM statistics
+cusum_results <- LR(simpsons_ratings$Rating)
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  Episode = 1:(length(simpsons_ratings$Rating) - 1),
+  CUSUM = cusum_results$LR
+)
+
+# Plot 1: Time series
+p1 <- ggplot(simpsons_ratings, aes(x = Episode, y = Rating)) +
+  geom_line() +
+  geom_vline(xintercept = cusum_results$tau.hat, color = "red", linetype = "dashed") +
+  labs(title = "The Simpsons Ratings Over Time",
+       x = "Episode",
+       y = "Rating") +
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = Episode, y = CUSUM)) +
+  geom_line() +
+  geom_vline(xintercept = cusum_results$tau.hat, color = "red", linetype = "dashed") +
+  labs(title = "CUSUM Trace",
+       x = "Episode",
+       y = "CUSUM Statistic") +
+  theme_minimal()
+
+combined_plot <- ggarrange( p1, p2, align = "hv", nrow = 2)
+
+# Display the plot
+print(combined_plot)
+```
+
+This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` being the last "good" Simpsons episode, with `r simpsons_ratings[cusum_results$tau.hat + 1, "title"]` being the start of the decline, according to the Gaussian change-in-mean model!
+
+
+# Workshop 1 Exercises
+
+1.    Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant $1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}$ this follows a standard normal distribution.

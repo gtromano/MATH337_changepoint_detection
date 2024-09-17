@@ -1,7 +1,41 @@
 # Controlling the CUSUM and Other Models
 
-In summary, this book has no content whatsoever.
+In this chapter, we explore the properties of the CUSUM test for detecting a change in mean, and this will allow us how to determine appropriate thresholds, and explore its properties when a changepoint is present.
 
-```{r}
-1 + 1
-```
+We will employ some concepts from asymptotic theory: in time series analysis, an asymptotic distribution refers to the distribution that our test statistic approaches as the length of the time series $n$ becomes very large.
+
+## The asymptotic distribution of the CUSUM statistics
+
+We have learned that the chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables. More formally, if $z_1, \cdots, z_k$ are independent, standard Normal random variables, then:
+
+$$
+\sum_{i=1}^k z^2_i \sim \chi^2_k
+$$
+
+We have met this distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom (k). For $k=1$, it's highly skewed, but as k increases, it becomes more symmetric and approaches a normal distribution.
+
+We learned that, when properly normalized $C_\tau/\sigma$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable.
+
+However, as the change is unknown, our actual test statistic for detecting a change is $\max_\tau C_\tau^2/σ^2$. 
+
+Calculating the distribution of this maximum is a bit more challenging:
+
+1.    So far, we worked only for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
+2.    The usual regularity conditions for likelihood-ratio test statistics don't apply here. Setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model.
+
+### Controlling the max of our Cusums
+
+For controlling our CUSUM test, we can use the fact that $(C_1, ..., C_{n-1})/ \sigma$ are the absolute values of a Gaussian process with mean 0 and known covariance. We will use a well known statistical result (see Theorem 2.1 of Yao and Davis, 1986, and Gombay and Horvath, 1990) that shows that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution. This convergence is described by the following equation:
+
+$$
+\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_τ C_τ/σ - b_n) ≤ u\} = \exp\{-2π^{-1/2}\exp(-u)\},
+$$
+
+where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant. 
+
+This asymptotic result suggests that the threshold for $C_τ^2/σ^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
+
+In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. We will see how to achieve so in the Lab.
+
+# Workshop 2 Exercises
+1.    Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.

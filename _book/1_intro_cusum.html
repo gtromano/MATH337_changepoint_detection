@@ -218,7 +218,13 @@ window.Quarto = {
   <li><a href="#types-of-changes-in-time-series" id="toc-types-of-changes-in-time-series" class="nav-link" data-scroll-target="#types-of-changes-in-time-series"><span class="header-section-number">1.2.1</span> Types of Changes in Time Series</a></li>
   <li><a href="#the-biggest-data-challenge-in-changepoint-detection" id="toc-the-biggest-data-challenge-in-changepoint-detection" class="nav-link" data-scroll-target="#the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</a></li>
   </ul></li>
-  <li><a href="#detecting-one-change-in-mean-the-cusum-statistic" id="toc-detecting-one-change-in-mean-the-cusum-statistic" class="nav-link" data-scroll-target="#detecting-one-change-in-mean-the-cusum-statistic"><span class="header-section-number">1.3</span> Detecting one change-in-mean: the CUSUM Statistic</a></li>
+  <li><a href="#detecting-one-change-in-mean" id="toc-detecting-one-change-in-mean" class="nav-link" data-scroll-target="#detecting-one-change-in-mean"><span class="header-section-number">1.3</span> Detecting one change in mean</a>
+  <ul class="collapse">
+  <li><a href="#the-cusum-statistics" id="toc-the-cusum-statistics" class="nav-link" data-scroll-target="#the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</a></li>
+  <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3.3</span> Example</a></li>
+  </ul></li>
+  <li><a href="#workshop-1-exercises" id="toc-workshop-1-exercises" class="nav-link" data-scroll-target="#workshop-1-exercises"><span class="header-section-number">2</span> Workshop 1 Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -337,7 +343,10 @@ y_t = \begin{cases}
 <li><strong>How certain are we of the changepoint location?</strong>: Assessing the confidence in the detected changepoint.</li>
 <li><strong>How many changes have occurred?</strong>: Identifying multiple changepoints and analyzing each one for similar characteristics.</li>
 </ul>
-<p>Changepoints can be found in a wide range of time series, not limited to physical, biological, industrial, or financial processes. For instance, to give few examples:</p>
+<p>Changepoints can be found in a wide range of time series, not limited to physical, biological, industrial, or financial processes, and which objectives to follow depends on the type of the analysis we are carrying.</p>
+<p>In changepoint detection, there are two main approaches: <strong>online</strong> and <strong>offline</strong> analysis. In applications that require <strong>online analysis</strong>, the data is processed as it arrives, or in small batches. The primary goal of online changepoint detection is to identify changes as quickly as possible, making it crucial in contexts such as process control or intrusion detection, where immediate action is necessary.</p>
+<p>On the other hand, <strong>offline analysis</strong> processes all the data at once, typically after it has been fully collected. The aim here is to provide an accurate detection of changepoints, rather than a rapid one. This approach is common in fields like genome analysis or audiology, where the focus is on understanding the structure of the data post-collection.</p>
+<p>For instance, to give few examples:</p>
 <ol type="1">
 <li><p><strong>ECG</strong>: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -346,14 +355,14 @@ y_t = \begin{cases}
 <figcaption>Electrocardiograms (heart monitoring), Fotoohinasab et al, Asilomar conference 2020.</figcaption>
 </figure>
 </div></li>
-<li><p><strong>Cancer Diagnosis</strong>: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma.</p>
+<li><p><strong>Cancer Diagnosis</strong>: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma. This is a typical example of an offline analysis.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="source_imgs/intro-breakpoints.png" class="img-fluid figure-img"></p>
 <figcaption>DNA copy number data, breakpoints associated with aggressive cancer, Hocking et al, Bioinformatics 2014.</figcaption>
 </figure>
 </div></li>
-<li><p><strong>Engineering Monitoring</strong>: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures.</p>
+<li><p><strong>Engineering Monitoring</strong>: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures: this is often analysed in real-time on with online methods, with the aim of detecting an issue as quickly as possible.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="source_imgs/CPU-monitoring.png" class="img-fluid figure-img"></p>
@@ -361,6 +370,7 @@ y_t = \begin{cases}
 </figure>
 </div></li>
 </ol>
+<p>In this module, we will focus exclusively on <strong>offline</strong> changepoint detection, where we assume that all the data is available for analysis from the start.</p>
 <section id="types-of-changes-in-time-series" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="types-of-changes-in-time-series"><span class="header-section-number">1.2.1</span> Types of Changes in Time Series</h3>
 <p>As you might have noticed from the examples above, there’s not a strict way on which a time-series might change. Depending on the model, we could seek for different types of changes in the structure of a time series. Some of the most common types of changes include shifts in mean, variance, and trends in regression. For example, the CPU example above exihibited, in addition to some extreme observations, both changes in mean and variance.</p>
@@ -368,6 +378,26 @@ y_t = \begin{cases}
 <li>A <strong>change in mean</strong> occurs when the average level of an otherwise stationary time series shifts from one point to another. This type of change is often encountered in real-world data when there is a sudden shift in the process generating the data, such as a change in policy, market conditions, or external factors affecting the system.</li>
 </ul>
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 1, xend = 100, y = 1, yend = 1), col = "red", : All aesthetics have length 1, but the data has 500 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 101, xend = 250, y = 0, yend = 0), col = "red", : All aesthetics have length 1, but the data has 500 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 251, xend = 450, y = 2, yend = 2), col = "red", : All aesthetics have length 1, but the data has 500 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in geom_segment(aes(x = 451, xend = 500, y = 0.5, yend = 0.5), col = "red", : All aesthetics have length 1, but the data has 500 rows.
+ℹ Please consider using `annotate()` or provide this layer with data containing
+  a single row.</code></pre>
+</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -418,11 +448,117 @@ y_t = \begin{cases}
 </div>
 </div>
 <p>In this plot, each episode of “The Simpsons” is represented by its TMBD rating, and episodes are colored by season. By visually inspecting the graph, we may already start to see some potential points where the ratings decline. However, the goal of our changepoint analysis is to move beyond visual inspection and rigorously detect the exact moment where a significant shift in the data occurs.</p>
-<p>Jokes apart, this is a challenging time series! First of all, there’s not a clear single change, but rather an increase, followed by a decline. After which, the sequence seems rather stationary. For this reason, throughout the module, we will use this data as a running example to develop our understanding of various methods, hopefully trying to obtain a definitive answer towards the final chapters. But let’s procede in order…</p>
+<p>Jokes apart, this is a challenging time series! First of all, there’s not a clear single change, but rather an increase, followed by a decline. After which, the sequence seems rather stationary. For this reason, throughout the module, we will use this data as a running example to develop our understanding of various methods, hopefully trying to obtain a definitive answer towards the final chapters. But let’s proceed with order…</p>
 </section>
 </section>
-<section id="detecting-one-change-in-mean-the-cusum-statistic" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="detecting-one-change-in-mean-the-cusum-statistic"><span class="header-section-number">1.3</span> Detecting one change-in-mean: the CUSUM Statistic</h2>
+<section id="detecting-one-change-in-mean" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="detecting-one-change-in-mean"><span class="header-section-number">1.3</span> Detecting one change in mean</h2>
+<p>In this section, we will start by exploring the simplest case of a changepoint detection problem: <strong>detecting a change in the mean</strong> of a time series. We assume that the data is generated according to the following model:</p>
+<p><span class="math display">\[
+y_t = \mu_t + \epsilon_t, \quad t = 1, \dots, n,
+\]</span></p>
+<p>where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, \sigma^2)\)</span> represents Gaussian noise with mean 0 and known variance <span class="math inline">\(\sigma^2\)</span>, and <span class="math inline">\(\mu_t \in \mathbb{R}\)</span> is the signal at time <span class="math inline">\(t\)</span>. The vector of noise terms <span class="math inline">\(\epsilon_{1:n}\)</span> is often referred to as Gaussian noise, and hence, this model is known as <em>the signal plus noise model</em>, where the signal is given by <span class="math inline">\(\mu_{1:n}\)</span> and the noise by <span class="math inline">\(\epsilon_{1:n}\)</span>.</p>
+<p>In <em>the change-in-mean problem</em>, our goal is to determine whether the signal remains constant throughout the entire sequence, or if there exists a point <span class="math inline">\(\tau\)</span>), where the mean shifts. In other words, we are testing whether:</p>
+<p><span class="math display">\[
+\mu_1 = \mu_2 = \dots = \mu_n \quad \text{(no changepoint)},
+\]</span></p>
+<p>or if there exists a time <span class="math inline">\(\tau\)</span> such that:</p>
+<p><span class="math display">\[
+\mu_1 = \mu_2 = \dots = \mu_\tau \neq \mu_{\tau+1} = \dots = \mu_n \quad \text{(changepoint at } \tau\text{)}.
+\]</span></p>
+<p><strong>Note.</strong> The point <span class="math inline">\(\tau\)</span> is our <strong>changepoint</strong>, e.g.&nbsp;the first point after which our mean changes, however there’s a lot of inconsistencies on the literature: sometimes you will find that people refer to <span class="math inline">\(\tau + 1\)</span> as the changepoint, and <span class="math inline">\(\tau\)</span> as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).</p>
+<p>To address this problem, one of the most widely used methods is the <strong>CUSUM (Cumulative Sum) statistic</strong>. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint <span class="math inline">\(\tau\)</span>. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.</p>
+<section id="the-cusum-statistics" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</h3>
+<p>The CUSUM statistic works by comparing, for each potential data point, the empirical mean (average) of the data to the left (before <span class="math inline">\(\tau\)</span>) with the empirical mean of the data to the right (after <span class="math inline">\(\tau\)</span>):</p>
+<p><span class="math display">\[
+C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|,
+\]</span></p>
+<p>Our <span class="math inline">\(\bar{y}_{1:\tau}\)</span> and <span class="math inline">\(\bar{y}_{(\tau+1):n}\)</span> are just the empirical means of each segment, simply computed with:</p>
+<p><span class="math display">\[
+\bar{y}_{l:u} = \frac{1}{u - l + 1} \sum_{t = l}^{u} y_t.
+\]</span>.</p>
+<p>The term on the left of the difference, is there to re-scale it so that our statistics is the absolute value of normal RV that has variance 1. If there is no change, this difference is going to be distributed as a standard normal, and this is going to be a key step in drawing the distribution of the CUSUM statistic next week.</p>
+<p>This approach is intuitive because if the mean <span class="math inline">\(\mu\)</span> is the same across the entire sequence, the values of the averages on both sides of any point <span class="math inline">\(\tau\)</span> should be similar. However, if there is a change in the mean, the means will differ significantly, highlighting the changepoint.</p>
+<p>More formally, we would detect at change at <span class="math inline">\(\tau\)</span> if:</p>
+<p><span class="math display">\[
+\frac{C_{\tau}^2 }{\sigma^2} &gt; \lambda,
+\]</span> where the <span class="math inline">\(\lambda \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).</p>
+</section>
+<section id="algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</h3>
+<p>In practice, however, we do not know the changepoint location in advance. Our goal is to detect whether a changepoint exists and, if so, estimate its location. To achieve this, we need to consider all possible changepoint locations and choose the one that maximizes our test statistic.</p>
+<p>The natural extension of the likelihood-ratio test to this situation is to use as a test statistic the maximum of <span class="math inline">\(C_\tau\)</span> as we vary <span class="math inline">\(\tau\)</span>:</p>
+<p><span class="math display">\[
+C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
+\]</span></p>
+<p>And detect a changepoint if <span class="math inline">\(C_{max} &gt; c\)</span> for some suitably chosen threshold <span class="math inline">\(c\)</span>. The choice of <span class="math inline">\(c\)</span> will determine the significance level of the test (we’ll discuss this in more detail later). Graphically, the test will look:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If we detect a changepoint (i.e., if <span class="math inline">\(C_{max} &gt; c\)</span>), we can estimate its location by:</p>
+<p><span class="math display">\[
+\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2 / \sigma^2
+\]</span></p>
+<p>In other words, <span class="math inline">\(\hat{\tau}\)</span> is the value of <span class="math inline">\(\tau\)</span> that maximizes the CUSUM statistic.</p>
+<p>A simple estimate of the size of the change is then given by:</p>
+<p><span class="math display">\[
+\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}
+\]</span></p>
+<p>This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.</p>
+<p>In pseudocode:</p>
+<hr>
+<div class="line-block"><strong>INPUT:</strong> Time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span>, threshold <span class="math inline">\(c\)</span><br>
+<strong>OUTPUT:</strong> Changepoint estimate <span class="math inline">\(\hat{\tau}\)</span>, maximum CUSUM statistic <span class="math inline">\(C_{max}\)</span><br>
+<br>
+<span class="math inline">\(n \leftarrow\)</span> length of <span class="math inline">\(y\)</span><br>
+<span class="math inline">\(C_{max} \leftarrow 0\)</span><br>
+<span class="math inline">\(\hat{\tau} \leftarrow 0\)</span><br>
+<span class="math inline">\(S_n \leftarrow \sum_{i=1}^n y_i\)</span> // Compute total sum of y<br>
+<span class="math inline">\(S \leftarrow 0\)</span><br>
+<br>
+<strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n - 1\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(S \leftarrow S + y_t\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(\bar{y}_{1:t} \leftarrow S / t\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(C_t \leftarrow \sqrt{\frac{t(n-t)}{n}} |\bar{y}_{1:t} - \bar{y}_{(t+1):n}|\)</span><br>
+&nbsp;&nbsp;<strong>IF</strong> <span class="math inline">\(C_t &gt; C_{max}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow t\)</span><br>
+<br>
+<strong>IF</strong> <span class="math inline">\(C_{max} &gt; c\)</span><br>
+&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\hat{\tau}\)</span>, <span class="math inline">\(C_{max}\)</span> // Changepoint detected<br>
+<strong>ELSE</strong><br>
+&nbsp;&nbsp;<strong>RETURN</strong> NULL, <span class="math inline">\(C_{max}\)</span> // No changepoint detected</div>
+<hr>
+<p>It’s worth noting that, as we only need to calculate the CUSUM statistic for each potential changepoint once. By pre-computing the cumulative sum of all observations, this allows. The time complexity of this algorithm is <span class="math inline">\(O(n)\)</span>, where <span class="math inline">\(n\)</span> is the length of the time series.</p>
+</section>
+<section id="example" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3.3</span> Example</h3>
+<p>Running the CUSUM test on our Simpsons episode results in:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_intro_cusum_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This results in episode Thirty Minutes over Tokyo being the last “good” Simpsons episode, with Beyond Blunderdome being the start of the decline, according to the Gaussian change-in-mean model!</p>
+</section>
+</section>
+<section id="workshop-1-exercises" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Workshop 1 Exercises</h1>
+<ol type="1">
+<li>Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span> this follows a standard normal distribution.</li>
+</ol>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

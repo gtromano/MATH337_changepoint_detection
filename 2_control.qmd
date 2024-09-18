@@ -1,3 +1,8 @@
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggpubr)
+```
+
 # Controlling the CUSUM and Other Models
 
 In this chapter, we explore the properties of the CUSUM test for detecting a change in mean, and this will allow us how to determine appropriate thresholds, and explore its properties when a changepoint is present.
@@ -14,18 +19,59 @@ $$
 
 We have met this distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom (k). For $k=1$, it's highly skewed, but as k increases, it becomes more symmetric and approaches a normal distribution.
 
-We learned that, when properly normalized $C_\tau/\sigma$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable.
+We learned that, when properly normalized $C_\tau$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
+
+```{r echo=FALSE}
+LR <- function(x) {
+  #input is data vector length >=2
+  S <- cumsum(x) #calculate cummulate sum of data
+  n <- length(x) #number of data points
+  tau <- 1:(n - 1) #possible change-point locations to test
+  D <- S[tau] / tau - (S[n] - S[tau]) / (n - tau) #difference in means
+  LR <- D ^ 2 * tau * (n - tau) / n #LR statistic at locations tau
+  #return LR statistic and estimate of tau
+  return(list(LR = LR, LR_max = max(LR), tau.hat = which.max(LR)))
+}
+
+set.seed(123)
+y <- c(rnorm(50), rnorm(50))
+
+# Calculate CUSUM statistics
+cusum_results <- LR(y)
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(length(y) - 1),
+  y = y[1:(length(y) - 1)],
+  CUSUM = cusum_results$LR
+)
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_line() +
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = CUSUM)) +
+  geom_line() +
+  theme_minimal()
+
+combined_plot <- ggarrange( p1, p2, align = "hv", nrow = 2)
+
+# Display the plot
+print(combined_plot)
+```
 
 However, as the change is unknown, our actual test statistic for detecting a change is $\max_\tau C_\tau^2/σ^2$.
 
-Calculating the distribution of this maximum is a bit more challenging:
+For this reason, calculating the distribution of this maximum ends up being a bit more challenging...
 
 1.  So far, we worked only for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
-2.  The usual regularity conditions for likelihood-ratio test statistics don't apply here. Setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model.
+2.  As we will learn later, the CUSUM is a special case of a LR test, as setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model. For this reason, the usual regularity conditions for likelihood-ratio test statistics don't apply here. 
 
-### Controlling the max of our Cusums
+### Controlling the max of our cusums
 
-For controlling our CUSUM test, we can use the fact that $(C_1, ..., C_{n-1})/ \sigma$ are the absolute values of a Gaussian process with mean 0 and known covariance. We will use a well known statistical result (see Theorem 2.1 of Yao and Davis, 1986, and Gombay and Horvath, 1990) that shows that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution. This convergence is described by the following equation:
+Fortunately, for controlling our CUSUM test, we can use the fact that $(C_1, ..., C_{n-1})/ \sigma$ are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. @yao1986asymptotic, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:
 
 $$
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_τ C_τ/σ - b_n) ≤ u\} = \exp\{-2π^{-1/2}\exp(-u)\},
@@ -41,11 +87,108 @@ In practice, it's often simplest and most effective to use Monte Carlo methods t
 
 We will see how to obtain this thresholds in the Lab.
 
-# Workshop 2 Exercises
+## Towards More General Models: the Likelihood Ratio Test
+
+The CUSUM can be viewed as a special case of a more general framework based on the Likelihood Ratio Test (LRT). This allow us to test for more general settings, beyond simply detecting changes in the mean.
+
+In general, the Likelihood Ratio Test is a method for comparing two nested models: one under the null hypothesis, which assumes no changepoint, and one under the alternative hypothesis, which assumes a changepoint exists at some unknown position $\tau$.
+
+Suppose we have a set of observations $x_1, x_2, \dots, x_n$. Under the null hypothesis $H_0$, we assume that all the data is generated by the same model without a changepoint. Under the alternative hypothesis $H_1$, there is a single changepoint at $\tau$, such that the model for the data changes after $\tau$. The LRT statistic is given by:
+
+$$
+LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n L(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n L(y_{t}| \theta_1))(\prod_{t=1}^n L(y_{t}| \theta_2)]} \right\}
+$$
+
+The LRT compares the likelihood of the data under two models to determine which one is more likely: the enumerator, is the likelihood under the null hypothesis of no changepoint, while the denominator represents the likelihood of the data under the alternative hypothesis, where we optimise for two different parameters before and after the changepoint at $\tau$.
+
+### Example: Gaussian change-in-mean
+
+The CUSUM statistics, in fact, is nothing but a specific case of this model. To see this, we start from our piecewise costant signal, plus noise, $x_i = f_i + \epsilon_i, \quad i = 1, \dots, n$. Under this model our data,  a linear combination of a Gaussian, is distributed as:
+
+$$
+y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
+$$
+Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian kernel into the LR above, and take the logarithm:
+
+$$
+LR_\tau = -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left( -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right]
+$$
+
+This simplifies to:
+
+$$
+= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
+$$
+
+To solve the minimization over $\mu_1$ and $\mu_2$, we plug-in values $\hat\mu = \bar{y}_{1:n}$ on the first term, and $\hat\mu_1 = \bar{y}_{1:\tau}$, $\hat\mu_2 = \bar{y}_{(\tau+1):n}$ for the second term:
+
+$$
+LR_\tau = \frac{1}{\sigma^2} \left[ \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
+$$
+
+This is the likelihood ratio test statistic for a change in mean in a Gaussian model, which is essentially the CUSUM statistics squared, rescaled by the known variance: 
+
+$$
+LR_\tau = \frac{C_\tau^2}{\sigma^2}
+$$
+
+This is possible to prove directly after some tedious algebraic manipulations (which we will see in the workshop!). 
+
+## Change-in-variance
+
+The great thing of the LR test is that it's extremely flexible, allowing us to detect other changes then the simple change-in-mean case. As before, the procedure is to compute the LR test conditional on a fixed location of a changepoint, e.g. $LR_\tau$, and range across all possible values for $\tau$ to find the test statistics for our change. 
+
+To this end we will demostrate how to construct a test for Gaussian change-in-variance, for mean known.
+For simplicy, we will call our variance $\sigma^2 = \theta$, our parameter of interest, and without loss of generality, we can center our data on zero (e.g. if $x_t \sim N(\mu, \theta)$, then $x_t - \mu = y_t \sim N(0, \theta)$). Then, our p.d.f for one observation will be given by: 
+
+$$
+L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
+$$
+Plugging in the main LR test formula, we find: 
+
+$$
+LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\})(\prod_{t=\tau+1}^n  \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}]} \right\}
+$$
+
+And taking the log, and simplifying over the constant gives us: 
+
+$$
+\min_\theta \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right]
+$$
+
+Now to solve the minimisation, we focus on the first term: 
+$$
+f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} \right) 
+$$
+Simplifying the sum:
+$$
+= \left( - n \log(\theta) - \frac{\sum_{t = 1}^n y^2}{\theta} \right).
+$$
+
+Taking the derivative with respect to $\theta$, gives:
+
+$$
+\frac{d}{d\theta} f(y_{1:n}, \theta) = -\frac{n}{\theta} + \frac{\sum_{t = 1}^n y^2}{\theta^2}
+$$
+Setting equal to zero and solving for $\theta$: 
+$$
+-n \theta + \sum_{t = 1}^n y^2 = 0
+$$
+Which gives us: $\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}$ the sample variance.
+
+Solving the optimization for $\theta_1$ and $\theta_2$ similarly, and plugging in the values $\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 =  \bar S_{(\tau+1):n}$, gives us the final LR test:
+
+$$
+LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right].
+$$
+
+## Workshop 2 Exercises
 
 1.  Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.
 
-# Lab 2 Exercises
+2.  Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g. $LR_\tau = C_\tau^2/\sigma^2$.
+
+## Lab 2 Exercises
 
 1.  Write a function, that taking as input $n$ and a desired $\alpha$ level for false positive rate, returns the treshold for the cusum statistics.
 
@@ -53,4 +196,4 @@ We will see how to obtain this thresholds in the Lab.
 
 3.  Compare for a range of increasingly values of n, e.g. $n = 100, 500, 1000, 10.000$, and for few desired levels of alpha, the Monte Carlo threshold with the theoretically justified threshold. Plot the results, to recreate the plot above.
 
-4.  Using the Test the Simpsons dataset, find a critical level for your CUSUM statistics, and declare a change.
+4.  Using the Test the Simpsons dataset, find a critical level for your CUSUM statistics, and declare a change with the change-in-mean model.

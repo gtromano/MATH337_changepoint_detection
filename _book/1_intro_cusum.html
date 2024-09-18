@@ -224,7 +224,8 @@ window.Quarto = {
   <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3.3</span> Example</a></li>
   </ul></li>
-  <li><a href="#workshop-1-exercises" id="toc-workshop-1-exercises" class="nav-link" data-scroll-target="#workshop-1-exercises"><span class="header-section-number">2</span> Workshop 1 Exercises</a></li>
+  <li><a href="#workshop-1-exercises" id="toc-workshop-1-exercises" class="nav-link" data-scroll-target="#workshop-1-exercises"><span class="header-section-number">1.4</span> Workshop 1 Exercises</a></li>
+  <li><a href="#lab-1-exercises" id="toc-lab-1-exercises" class="nav-link" data-scroll-target="#lab-1-exercises"><span class="header-section-number">1.5</span> Lab 1 Exercises</a></li>
   </ul>
 </nav>
     </div>
@@ -378,26 +379,6 @@ y_t = \begin{cases}
 <li>A <strong>change in mean</strong> occurs when the average level of an otherwise stationary time series shifts from one point to another. This type of change is often encountered in real-world data when there is a sudden shift in the process generating the data, such as a change in policy, market conditions, or external factors affecting the system.</li>
 </ul>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in geom_segment(aes(x = 1, xend = 100, y = 1, yend = 1), col = "red", : All aesthetics have length 1, but the data has 500 rows.
-ℹ Please consider using `annotate()` or provide this layer with data containing
-  a single row.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in geom_segment(aes(x = 101, xend = 250, y = 0, yend = 0), col = "red", : All aesthetics have length 1, but the data has 500 rows.
-ℹ Please consider using `annotate()` or provide this layer with data containing
-  a single row.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in geom_segment(aes(x = 251, xend = 450, y = 2, yend = 2), col = "red", : All aesthetics have length 1, but the data has 500 rows.
-ℹ Please consider using `annotate()` or provide this layer with data containing
-  a single row.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in geom_segment(aes(x = 451, xend = 500, y = 0.5, yend = 0.5), col = "red", : All aesthetics have length 1, but the data has 500 rows.
-ℹ Please consider using `annotate()` or provide this layer with data containing
-  a single row.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -466,8 +447,8 @@ y_t = \mu_t + \epsilon_t, \quad t = 1, \dots, n,
 <p><span class="math display">\[
 \mu_1 = \mu_2 = \dots = \mu_\tau \neq \mu_{\tau+1} = \dots = \mu_n \quad \text{(changepoint at } \tau\text{)}.
 \]</span></p>
-<p><strong>Note.</strong> The point <span class="math inline">\(\tau\)</span> is our <strong>changepoint</strong>, e.g.&nbsp;the first point after which our mean changes, however there’s a lot of inconsistencies on the literature: sometimes you will find that people refer to <span class="math inline">\(\tau + 1\)</span> as the changepoint, and <span class="math inline">\(\tau\)</span> as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).</p>
-<p>To address this problem, one of the most widely used methods is the <strong>CUSUM (Cumulative Sum) statistic</strong>. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint <span class="math inline">\(\tau\)</span>. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.</p>
+<p><strong>Note.</strong> The point <span class="math inline">\(\tau\)</span> is our <em>changepoint</em>, e.g.&nbsp;the first point after which our mean changes, however there’s a lot of inconsistencies on the literature: sometimes you will find that people refer to <span class="math inline">\(\tau + 1\)</span> as the changepoint, and <span class="math inline">\(\tau\)</span> as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).</p>
+<p>To address this problem, one of the most widely used methods is <em>the CUSUM (Cumulative Sum) statistic</em>. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint <span class="math inline">\(\tau\)</span>. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.</p>
 <section id="the-cusum-statistics" class="level3" data-number="1.3.1">
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</h3>
 <p>The CUSUM statistic works by comparing, for each potential data point, the empirical mean (average) of the data to the left (before <span class="math inline">\(\tau\)</span>) with the empirical mean of the data to the right (after <span class="math inline">\(\tau\)</span>):</p>
@@ -477,13 +458,13 @@ C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\ta
 <p>Our <span class="math inline">\(\bar{y}_{1:\tau}\)</span> and <span class="math inline">\(\bar{y}_{(\tau+1):n}\)</span> are just the empirical means of each segment, simply computed with:</p>
 <p><span class="math display">\[
 \bar{y}_{l:u} = \frac{1}{u - l + 1} \sum_{t = l}^{u} y_t.
-\]</span>.</p>
+\]</span></p>
 <p>The term on the left of the difference, is there to re-scale it so that our statistics is the absolute value of normal RV that has variance 1. If there is no change, this difference is going to be distributed as a standard normal, and this is going to be a key step in drawing the distribution of the CUSUM statistic next week.</p>
 <p>This approach is intuitive because if the mean <span class="math inline">\(\mu\)</span> is the same across the entire sequence, the values of the averages on both sides of any point <span class="math inline">\(\tau\)</span> should be similar. However, if there is a change in the mean, the means will differ significantly, highlighting the changepoint.</p>
 <p>More formally, we would detect at change at <span class="math inline">\(\tau\)</span> if:</p>
 <p><span class="math display">\[
-\frac{C_{\tau}^2 }{\sigma^2} &gt; \lambda,
-\]</span> where the <span class="math inline">\(\lambda \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).</p>
+\frac{C_{\tau}^2 }{\sigma^2} &gt; c,
+\]</span> where the <span class="math inline">\(c \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).</p>
 </section>
 <section id="algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.2">
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</h3>
@@ -514,7 +495,7 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <p>This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.</p>
 <p>In pseudocode:</p>
 <hr>
-<div class="line-block"><strong>INPUT:</strong> Time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span>, threshold <span class="math inline">\(c\)</span><br>
+<div class="line-block"><strong>INPUT:</strong> Time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span>, threshold <span class="math inline">\(c\)</span>, variance <span class="math inline">\(\sigma\)</span>.<br>
 <strong>OUTPUT:</strong> Changepoint estimate <span class="math inline">\(\hat{\tau}\)</span>, maximum CUSUM statistic <span class="math inline">\(C_{max}\)</span><br>
 <br>
 <span class="math inline">\(n \leftarrow\)</span> length of <span class="math inline">\(y\)</span><br>
@@ -532,7 +513,7 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow t\)</span><br>
 <br>
-<strong>IF</strong> <span class="math inline">\(C_{max} &gt; c\)</span><br>
+<strong>IF</strong> <span class="math inline">\(C_{max}^2 / \sigma &gt; c\)</span><br>
 &nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\hat{\tau}\)</span>, <span class="math inline">\(C_{max}\)</span> // Changepoint detected<br>
 <strong>ELSE</strong><br>
 &nbsp;&nbsp;<strong>RETURN</strong> NULL, <span class="math inline">\(C_{max}\)</span> // No changepoint detected</div>
@@ -554,10 +535,25 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <p>This results in episode Thirty Minutes over Tokyo being the last “good” Simpsons episode, with Beyond Blunderdome being the start of the decline, according to the Gaussian change-in-mean model!</p>
 </section>
 </section>
-<section id="workshop-1-exercises" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Workshop 1 Exercises</h1>
+<section id="workshop-1-exercises" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="workshop-1-exercises"><span class="header-section-number">1.4</span> Workshop 1 Exercises</h2>
 <ol type="1">
-<li>Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span> this follows a standard normal distribution.</li>
+<li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
+</ol>
+<ol type="a">
+<li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. Suggestion: try to compute the variance of the process.</p></li>
+<li><p>$ y_t = <em>t + 3 (t &gt; 50), &nbsp;t = 1, , 100, </em>{1:100} N(0, 1) $</p></li>
+<li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
+</ol>
+<ol start="2" type="1">
+<li>Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant <span class="math inline">\(\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}\)</span> this follows a standard normal distribution.</li>
+</ol>
+</section>
+<section id="lab-1-exercises" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="lab-1-exercises"><span class="header-section-number">1.5</span> Lab 1 Exercises</h2>
+<ol type="1">
+<li><p>Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.</p></li>
+<li><p>Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above.</p></li>
 </ol>
 
 

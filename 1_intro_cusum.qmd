@@ -187,7 +187,7 @@ As you might have noticed from the examples above, there's not a strict way on w
 
 -   A **change in mean** occurs when the average level of an otherwise stationary time series shifts from one point to another. This type of change is often encountered in real-world data when there is a sudden shift in the process generating the data, such as a change in policy, market conditions, or external factors affecting the system.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 # Change in mean example (converted to ggplot)
 set.seed(1)
 x <- 1:500
@@ -209,7 +209,7 @@ In the plot above, the red lines indicate the true mean values of the different 
 
 -   A **change in variance** refers to a shift in the variability of the time series data, even when the mean remains constant. This type of change is important in scenarios where the stability of a process fluctuates over time. For example, in financial markets, periods of high volatility (high variance) may be followed by periods of relative calm (low variance).
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 # Change in variance example
 set.seed(1)
 y <- c(rnorm(100, 0, sd = 0.1), rnorm(150, 0, sd = 0.7), rnorm(200, 0, sd = 0.25), rnorm(50, 0, sd = 1))
@@ -226,7 +226,7 @@ ggplot(data_variance, aes(x = x, y = y)) +
 
 A **change in regression** or trend occurs when the underlying relationship between time and the values of the time series changes. This could reflect a shift in the growth or decline rate of a process. For example, a company's revenue might grow steadily over a period, then plateau, and later exhibit a quadratic or nonlinear growth trend.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 # change in regression example using ggplot
 set.seed(1)
 x <- 1:500
@@ -308,11 +308,9 @@ $$
 \mu_1 = \mu_2 = \dots = \mu_\tau \neq \mu_{\tau+1} = \dots = \mu_n \quad \text{(changepoint at } \tau\text{)}.
 $$
 
+**Note.** The point $\tau$ is our *changepoint*, e.g. the first point after which our mean changes, however there's a lot of inconsistencies on the literature: sometimes you will find that people refer to $\tau + 1$ as the changepoint, and $\tau$ as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).
 
-**Note.** The point $\tau$ is our **changepoint**, e.g. the first point after which our mean changes, however there's a lot of inconsistencies on the literature: sometimes you will find that people refer to $\tau + 1$ as the changepoint, and $\tau$ as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).
-
-
-To address this problem, one of the most widely used methods is the **CUSUM (Cumulative Sum) statistic**. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint $\tau$. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.
+To address this problem, one of the most widely used methods is *the CUSUM (Cumulative Sum) statistic*. The basic idea behind the CUSUM statistic is to systematically compare the distribution of the data to the left and right of each possible changepoint $\tau$. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.
 
 ### The CUSUM statistics
 
@@ -326,18 +324,17 @@ Our $\bar{y}_{1:\tau}$ and $\bar{y}_{(\tau+1):n}$ are just the empirical means o
 
 $$
 \bar{y}_{l:u} = \frac{1}{u - l + 1} \sum_{t = l}^{u} y_t.
-$$. 
+$$
 
 The term on the left of the difference, is there to re-scale it so that our statistics is the absolute value of normal RV that has variance 1. If there is no change, this difference is going to be distributed as a standard normal, and this is going to be a key step in drawing the distribution of the CUSUM statistic next week.
 
 This approach is intuitive because if the mean $\mu$ is the same across the entire sequence, the values of the averages on both sides of any point $\tau$ should be similar. However, if there is a change in the mean, the means will differ significantly, highlighting the changepoint.
 
-More formally, we would detect at change at $\tau$ if: 
+More formally, we would detect at change at $\tau$ if:
 
 $$
 \frac{C_{\tau}^2 }{\sigma^2} > c,
-$$
-where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).
+$$ where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).
 
 ### Algorithmic Formulation of the CUSUM Statistic
 
@@ -349,8 +346,8 @@ $$
 C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 $$
 
-And detect a changepoint if $C_{max} > c$ for some suitably chosen threshold $c$. The choice of $c$ will determine the significance level of the test (we'll discuss this in more detail later).
-Graphically, the test will look: 
+And detect a changepoint if $C_{max} > c$ for some suitably chosen threshold $c$. The choice of $c$ will determine the significance level of the test (we'll discuss this in more detail later). Graphically, the test will look:
+
 ```{r echo = FALSE}
 set.seed(5)
 x <- c(rnorm(10), rnorm(5, 3))
@@ -369,7 +366,6 @@ for (i in 1:14) {
 
 ```
 
-
 If we detect a changepoint (i.e., if $C_{max} > c$), we can estimate its location by:
 
 $$
@@ -386,20 +382,19 @@ $$
 
 This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.
 
-
 In pseudocode:
 
----
+------------------------------------------------------------------------
 
 | **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$, variance $\sigma$.
 | **OUTPUT:** Changepoint estimate $\hat{\tau}$, maximum CUSUM statistic $C_{max}$
-|
+| 
 | $n \leftarrow$ length of $y$
 | $C_{max} \leftarrow 0$
 | $\hat{\tau} \leftarrow 0$
-| $S_n \leftarrow \sum_{i=1}^n y_i$  // Compute total sum of y
+| $S_n \leftarrow \sum_{i=1}^n y_i$ // Compute total sum of y
 | $S \leftarrow 0$
-|
+| 
 | **FOR** $t = 1, \dots, n - 1$
 |   $S \leftarrow S + y_t$
 |   $\bar{y}_{1:t} \leftarrow S / t$
@@ -408,19 +403,19 @@ In pseudocode:
 |   **IF** $C_t > C_{max}$
 |     $C_{max} \leftarrow C_t$
 |     $\hat{\tau} \leftarrow t$
-|
+| 
 | **IF** $C_{max}^2 / \sigma > c$
-|   **RETURN** $\hat{\tau}$, $C_{max}$  // Changepoint detected
+|   **RETURN** $\hat{\tau}$, $C_{max}$ // Changepoint detected
 | **ELSE**
-|   **RETURN** NULL, $C_{max}$  // No changepoint detected
+|   **RETURN** NULL, $C_{max}$ // No changepoint detected
 
----
+------------------------------------------------------------------------
 
 It's worth noting that, as we only need to calculate the CUSUM statistic for each potential changepoint once. By pre-computing the cumulative sum of all observations, this allows. The time complexity of this algorithm is $O(n)$, where $n$ is the length of the time series.
 
 ### Example
 
-Running the CUSUM test on our Simpsons episode results in: 
+
 ```{r echo = F}
 LR <- function(x) {
   #input is data vector length >=2
@@ -433,6 +428,44 @@ LR <- function(x) {
   return(list(LR = LR, LR_max = max(LR), tau.hat = which.max(LR)))
 }
 ```
+
+
+It is possible to see how the cusum behaves on this simple example below: 
+
+```{r echo=FALSE}
+set.seed(123)
+y <- c(rnorm(50), rnorm(50) + 5)
+
+# Calculate CUSUM statistics
+cusum_results <- LR(y)
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(length(y) - 1),
+  y = y[1:(length(y) - 1)],
+  CUSUM = cusum_results$LR
+)
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_line() +
+  geom_vline(xintercept = cusum_results$tau.hat, color = "red", linetype = "dashed") + 
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = CUSUM)) +
+  geom_line() +
+  geom_vline(xintercept = cusum_results$tau.hat, color = "red", linetype = "dashed") +
+  theme_minimal()
+
+combined_plot <- ggarrange( p1, p2, align = "hv", nrow = 2)
+
+# Display the plot
+print(combined_plot)
+```
+
+Running the CUSUM test, and maximising on our Simpsons episode, results in:
+
 ```{r echo=FALSE}
 
 # Calculate CUSUM statistics
@@ -470,7 +503,21 @@ print(combined_plot)
 
 This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` being the last "good" Simpsons episode, with `r simpsons_ratings[cusum_results$tau.hat + 1, "title"]` being the start of the decline, according to the Gaussian change-in-mean model!
 
+## Workshop 1 Exercises
 
-# Workshop 1 Exercises
+1. Determine if the following processes are stationary, piecewise stationary, or non-stationary:
 
-1.    Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant $1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}$ this follows a standard normal distribution.
+  a. $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. 
+  Suggestion: try to compute the variance of the process. 
+  
+  b. $ y_t = \epsilon_t + 3 \cdot \mathbb{1}(t > 50), \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1) $
+  
+  c. $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
+    
+2.  Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant $\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}$ this follows a standard normal distribution.
+
+## Lab 1 Exercises
+
+1. Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.
+
+2. Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above. 

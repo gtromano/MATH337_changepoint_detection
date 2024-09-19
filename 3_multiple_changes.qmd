@@ -1,0 +1,37 @@
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(ggpubr)
+```
+
+# Multiple changepoints
+
+In real-world data, it is common to encounter situations where more than one change occurs. When applying the CUSUM statistic in such cases, where there are **multiple changes**, the question arises: how does CUSUM behave, and how can we detect these multiple changes effectively?
+
+### Real Example: Genomic Data and Neuroblastoma
+
+To motivate this discussion, we return to the example from week 1: detecting active genomic regions using *ChIP-seq data*. Our goal here is to identify copy number variations (CNVs)—structural changes in the genome where DNA sections are duplicated or deleted. These variations can impact gene expression and are linked to diseases like cancer, including neuroblastoma. The dataset we’ll examine consists of logratios of genomic probe intensities, which help us detect changes in the underlying DNA structure.
+
+Statistically our objective is to segment this logratio sequence into regions with different means, corresponding to different genomic states:
+
+```{r echo=FALSE, results=TRUE}
+data(neuroblastoma, package="neuroblastoma")
+
+nb.dt <- neuroblastoma[["profiles"]]
+one.dt <- nb.dt |> filter(profile.id==4, chromosome==2)
+
+ggplot() +
+  scale_y_continuous("logratio (noisy copy number measurement)") +
+  geom_point(aes(position / 1e6, logratio),
+             data = one.dt) +
+  theme_minimal()
+```
+
+As seen from the plot, the data is noisy, but there are visible shifts in the logratio values, suggesting multiple changes in the underlying copy number. 
+
+Running the CUSUM statistic in this scenario with multiple changes, leads to the trace:
+
+
+## Binary Segmentation
+
+## Optimal Segmentation
+

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -212,11 +246,16 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#controlling-the-max-of-our-cusums" id="toc-controlling-the-max-of-our-cusums" class="nav-link" data-scroll-target="#controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</a></li>
   </ul></li>
-  <li><a href="#towards-more-general-models-the-likelihood-ratio-test" id="toc-towards-more-general-models-the-likelihood-ratio-test" class="nav-link" data-scroll-target="#towards-more-general-models-the-likelihood-ratio-test"><span class="header-section-number">2.2</span> Towards More General Models: the Likelihood Ratio Test</a>
+  <li><a href="#the-likelihood-ratio-test" id="toc-the-likelihood-ratio-test" class="nav-link" data-scroll-target="#the-likelihood-ratio-test"><span class="header-section-number">2.2</span> The Likelihood Ratio Test</a>
   <ul class="collapse">
   <li><a href="#example-gaussian-change-in-mean" id="toc-example-gaussian-change-in-mean" class="nav-link" data-scroll-target="#example-gaussian-change-in-mean"><span class="header-section-number">2.2.1</span> Example: Gaussian change-in-mean</a></li>
   </ul></li>
-  <li><a href="#change-in-variance" id="toc-change-in-variance" class="nav-link" data-scroll-target="#change-in-variance"><span class="header-section-number">2.3</span> Change-in-variance</a></li>
+  <li><a href="#towards-more-general-models" id="toc-towards-more-general-models" class="nav-link" data-scroll-target="#towards-more-general-models"><span class="header-section-number">2.3</span> Towards More General Models</a>
+  <ul class="collapse">
+  <li><a href="#change-in-variance" id="toc-change-in-variance" class="nav-link" data-scroll-target="#change-in-variance"><span class="header-section-number">2.3.1</span> Change-in-variance</a></li>
+  <li><a href="#change-in-slope" id="toc-change-in-slope" class="nav-link" data-scroll-target="#change-in-slope"><span class="header-section-number">2.3.2</span> Change-in-slope</a></li>
+  <li><a href="#revisiting-our-simpsons-data-again" id="toc-revisiting-our-simpsons-data-again" class="nav-link" data-scroll-target="#revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</a></li>
+  </ul></li>
   <li><a href="#workshop-2-exercises" id="toc-workshop-2-exercises" class="nav-link" data-scroll-target="#workshop-2-exercises"><span class="header-section-number">2.4</span> Workshop 2 Exercises</a></li>
   <li><a href="#lab-2-exercises" id="toc-lab-2-exercises" class="nav-link" data-scroll-target="#lab-2-exercises"><span class="header-section-number">2.5</span> Lab 2 Exercises</a></li>
   </ul>
@@ -282,8 +321,8 @@ window.Quarto = {
 <p>We will see how to obtain this thresholds in the Lab.</p>
 </section>
 </section>
-<section id="towards-more-general-models-the-likelihood-ratio-test" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="towards-more-general-models-the-likelihood-ratio-test"><span class="header-section-number">2.2</span> Towards More General Models: the Likelihood Ratio Test</h2>
+<section id="the-likelihood-ratio-test" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="the-likelihood-ratio-test"><span class="header-section-number">2.2</span> The Likelihood Ratio Test</h2>
 <p>The CUSUM can be viewed as a special case of a more general framework based on the Likelihood Ratio Test (LRT). This allow us to test for more general settings, beyond simply detecting changes in the mean.</p>
 <p>In general, the Likelihood Ratio Test is a method for comparing two nested models: one under the null hypothesis, which assumes no changepoint, and one under the alternative hypothesis, which assumes a changepoint exists at some unknown position <span class="math inline">\(\tau\)</span>.</p>
 <p>Suppose we have a set of observations <span class="math inline">\(x_1, x_2, \dots, x_n\)</span>. Under the null hypothesis <span class="math inline">\(H_0\)</span>, we assume that all the data is generated by the same model without a changepoint. Under the alternative hypothesis <span class="math inline">\(H_1\)</span>, there is a single changepoint at <span class="math inline">\(\tau\)</span>, such that the model for the data changes after <span class="math inline">\(\tau\)</span>. The LRT statistic is given by:</p>
@@ -315,9 +354,11 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 <p>This is possible to prove directly after some tedious algebraic manipulations (which we will see in the workshop!).</p>
 </section>
 </section>
-<section id="change-in-variance" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="change-in-variance"><span class="header-section-number">2.3</span> Change-in-variance</h2>
+<section id="towards-more-general-models" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="towards-more-general-models"><span class="header-section-number">2.3</span> Towards More General Models</h2>
 <p>The great thing of the LR test is that it’s extremely flexible, allowing us to detect other changes then the simple change-in-mean case. As before, the procedure is to compute the LR test conditional on a fixed location of a changepoint, e.g.&nbsp;<span class="math inline">\(LR_\tau\)</span>, and range across all possible values for <span class="math inline">\(\tau\)</span> to find the test statistics for our change.</p>
+<section id="change-in-variance" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="change-in-variance"><span class="header-section-number">2.3.1</span> Change-in-variance</h3>
 <p>To this end we will demostrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicy, we will call our variance <span class="math inline">\(\sigma^2 = \theta\)</span>, our parameter of interest, and without loss of generality, we can center our data on zero (e.g.&nbsp;if <span class="math inline">\(x_t \sim N(\mu, \theta)\)</span>, then <span class="math inline">\(x_t - \mu = y_t \sim N(0, \theta)\)</span>). Then, our p.d.f for one observation will be given by:</p>
 <p><span class="math display">\[
 L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
@@ -327,7 +368,7 @@ LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\theta \sq
 \]</span></p>
 <p>And taking the log, and simplifying over the constant gives us:</p>
 <p><span class="math display">\[
-\min_\theta \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right]
+\min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
 \]</span></p>
 <p>Now to solve the minimisation, we focus on the first term: <span class="math display">\[
 f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} \right)
@@ -340,10 +381,146 @@ f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} 
 \]</span> Setting equal to zero and solving for <span class="math inline">\(\theta\)</span>: <span class="math display">\[
 -n \theta + \sum_{t = 1}^n y^2 = 0
 \]</span> Which gives us: <span class="math inline">\(\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}\)</span> the sample variance.</p>
-<p>Solving the optimization for <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span> similarly, and plugging in the values <span class="math inline">\(\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 =  \bar S_{(\tau+1):n}\)</span>, gives us the final LR test:</p>
+<p>Solving the optimization for <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span> similarly, and plugging in the values <span class="math inline">\(\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 = \bar S_{(\tau+1):n}\)</span>, gives us the final LR test:</p>
 <p><span class="math display">\[
 LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right].
 \]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>LR_var <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  x2 <span class="ot">&lt;-</span> x<span class="sc">^</span><span class="dv">2</span> <span class="co"># squaring the data</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(x2) <span class="co"># calculate square cummulate sum of the data, divided by n</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x) <span class="co">#number of data points</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  tau <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>(n <span class="sc">-</span> <span class="dv">1</span>) <span class="co">#possible change-point locations to test</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  left <span class="ot">&lt;-</span> tau <span class="sc">*</span> <span class="fu">log</span>(S[tau] <span class="sc">/</span> tau)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  right <span class="ot">&lt;-</span> (n <span class="sc">-</span> tau) <span class="sc">*</span> <span class="fu">log</span>((S[n] <span class="sc">-</span> S[tau]) <span class="sc">/</span> (n<span class="sc">-</span>tau))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  LR <span class="ot">&lt;-</span> <span class="sc">+</span> n <span class="sc">*</span> <span class="fu">log</span>(S[n]<span class="sc">/</span>n) <span class="sc">-</span> left <span class="sc">-</span> right <span class="co">#LR statistic at locations tau</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  LR <span class="ot">&lt;-</span> LR </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#return LR statistic and estimate of tau</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">LR =</span> LR, <span class="at">LR_max =</span> <span class="fu">max</span>(LR), <span class="at">tau.hat =</span> <span class="fu">which.max</span>(LR)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">0</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>cusum_results <span class="ot">&lt;-</span> <span class="fu">LR_var</span>(y)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for the CUSUM trace</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>cusum_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(y) <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(y) <span class="sc">-</span> <span class="dv">1</span>)],</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">CUSUM =</span> cusum_results<span class="sc">$</span>LR</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Time series</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cusum_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: CUSUM trace</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cusum_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> CUSUM)) <span class="sc">+</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span> <span class="fu">ggarrange</span>( p1, p2, <span class="at">align =</span> <span class="st">"hv"</span>, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the plot</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_control_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="change-in-slope" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="change-in-slope"><span class="header-section-number">2.3.2</span> Change-in-slope</h3>
+<p>Another important exaple, and an alternative to detecting a change-in-mean, is detecting a change in slope. In this section, we assume the data is still modeled as a signal plus noise, but the signal itself is a linear function of time (e.g.&nbsp;non-stationary, with a change!). Graphically:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_control_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>More formally, let our data be modeled as:</p>
+<p><span class="math display">\[
+y_t = f_t + \epsilon_t, \quad t = 1, \dots, n,
+\]</span></p>
+<p>where the noise vector <span class="math inline">\(\epsilon_{1:n} \sim N(0, 1)\)</span> consists of independent and identically distributed (i.i.d.) normal random variables. In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.</p>
+<p>Under the null hypothesis <span class="math inline">\(H_0\)</span>, we assume that the signal is linear with a constant slope over the entire sequence, i.e.,</p>
+<p><span class="math display">\[
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, n,
+\]</span></p>
+<p>where <span class="math inline">\(\theta_0\)</span> is the intercept, and <span class="math inline">\(\theta_1\)</span> is the slope. However, under the alternative hypothesis <span class="math inline">\(H_1\)</span>, we assume there is a changepoint at <span class="math inline">\(\tau\)</span> after which the slope changes. Thus, the signal becomes:</p>
+<p><span class="math display">\[
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \tau \theta_1 + (t-\tau)\theta_2, \quad t = \tau+1, \dots, n,
+\]</span></p>
+<p>where <span class="math inline">\(\theta_2\)</span> is the new slope after the changepoint. In other words, the model is showing a continuoos piecewise linear mean.</p>
+<p>For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector <span class="math inline">\(v_\tau\)</span>, i.e.,</p>
+<p><span class="math display">\[
+LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
+\]</span></p>
+<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and $ v_^y_{1:n}$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="references.html#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
+</section>
+<section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
+<p>So, going back to the Simpsons example… We mentioned how the belowed show rose rapidly to success, and at one point, started to <em>decline…</em> A much better model would therefore be our change-in-slope model!</p>
+<p>To run the model, we can take advantage of the <code>not</code> package, which by default is a multiple changepoint algorithm (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.</p>
+<p>Before we proceed, we need to load, clean and standardize our data:</p>
+<div class="cell" data-warnings="false">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Simpsons ratings data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"extra/simpsons_episodes.csv"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes <span class="sc">|&gt;</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Episode =</span> id <span class="sc">+</span> <span class="dv">1</span>, <span class="at">Season =</span> <span class="fu">as.factor</span>(season), <span class="at">Rating =</span> tmdb_rating)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes[<span class="sc">-</span><span class="fu">nrow</span>(simpsons_episodes), ]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> simpsons_episodes<span class="sc">$</span>Rating</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can then run our model with:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(not)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinContMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Our changepoint estimate: NA"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_control_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We notice how the test statistics implemented does not detect any significant change… As this may sound a bit anti-climatic, there is still some relaxation on the hypotheses that we can do to obtain a better answer. We can, in fact, relax the hypothesis that the regression line needs to be continuous, and assume that there might be a change in the intercept too, signifying an abrupt change:</p>
+<p><span class="math display">\[
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
+\]</span></p>
+<p>We can do that by changing the model via the <code>contrast</code> argument:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Our changepoint estimate: 176"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2_control_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can see that we now find a significant changepoint prior to episode The Simpsons Spin-Off Showcase, which is anthology episode well over into season 8, which is by many considered the last good one!</p>
+</section>
 </section>
 <section id="workshop-2-exercises" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="workshop-2-exercises"><span class="header-section-number">2.4</span> Workshop 2 Exercises</h2>
@@ -363,6 +540,9 @@ LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \ta
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-baranowski2019narrowest" class="csl-entry" role="listitem">
+Baranowski, Rafal, Yining Chen, and Piotr Fryzlewicz. 2019. <span>“Narrowest-over-Threshold Detection of Multiple Change Points and Change-Point-Like Features.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 81 (3): 649–72.
+</div>
 <div id="ref-yao1986asymptotic" class="csl-entry" role="listitem">
 Yao, Yi-Ching, and Richard A Davis. 1986. <span>“The Asymptotic Behavior of the Likelihood Ratio Statistic for Testing a Shift in Mean in a Sequence of Independent Normal Variates.”</span> <em>Sankhy<span>ā</span>: The Indian Journal of Statistics, Series A</em>, 339–53.
 </div>

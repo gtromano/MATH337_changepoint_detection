@@ -10,6 +10,7 @@ book:
     - index.qmd
     - 1_intro_cusum.qmd
     - 2_control.qmd
+    - 3_multiple_changes.qmd
     - references.qmd
 
 bibliography: references.bib

@@ -222,9 +222,9 @@ ggplot(data_variance, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
-#### 3. Change in Regression (Trend)
+#### 3. Change in Regression (Slope)
 
-A **change in regression** or trend occurs when the underlying relationship between time and the values of the time series changes. This could reflect a shift in the growth or decline rate of a process. For example, a company's revenue might grow steadily over a period, then plateau, and later exhibit a quadratic or nonlinear growth trend.
+A **change in regression** or slope occurs when the underlying relationship between time and the values of the time series changes. This could reflect a shift in the growth or decline rate of a process. For example, a company's revenue might grow steadily over a period, then plateau, and later exhibit a quadratic or nonlinear growth trend.
 
 ```{r echo=FALSE, warning=FALSE}
 # change in regression example using ggplot
@@ -251,7 +251,7 @@ ggplot(data_trend, aes(x = x, y = y)) +
   geom_line(data = data_segment_2, aes(x = x, y = y), col = 'red', linewidth = 1.5) +
   geom_line(data = data_segment_3, aes(x = x, y = y), col = 'red', linewidth = 1.5) +
   geom_line(data = data_segment_4, aes(x = x, y = y), col = 'red', linewidth = 1.5) +
-  labs(title = "Change in Regression (Trend)", x = "Time", y = "Value") +
+  labs(title = "Change in Regression (Slope)", x = "Time", y = "Value") +
   theme_minimal()
 ```
 

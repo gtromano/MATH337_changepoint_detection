@@ -5,11 +5,13 @@ library(ggpubr)
 
 # Multiple changepoints
 
+## Introduction
+
 In real-world data, it is common to encounter situations where more than one change occurs. When applying the CUSUM statistic in such cases, where there are **multiple changes**, the question arises: how does CUSUM behave, and how can we detect these multiple changes effectively?
 
 ### Real Example: Genomic Data and Neuroblastoma
 
-To motivate this discussion, we return to the example from week 1: detecting active genomic regions using *ChIP-seq data*. Our goal here is to identify copy number variations (CNVs)—structural changes in the genome where DNA sections are duplicated or deleted. These variations can impact gene expression and are linked to diseases like cancer, including neuroblastoma. The dataset we’ll examine consists of logratios of genomic probe intensities, which help us detect changes in the underlying DNA structure.
+To motivate this discussion, we return to the example from week 1: detecting active genomic regions using *ChIP-seq data*. Our goal here is to identify copy number variations (CNVs)---structural changes in the genome where DNA sections are duplicated or deleted. These variations can impact gene expression and are linked to diseases like cancer, including neuroblastoma. The dataset we'll examine consists of logratios of genomic probe intensities, which help us detect changes in the underlying DNA structure.
 
 Statistically our objective is to segment this logratio sequence into regions with different means, corresponding to different genomic states:
 
@@ -26,12 +28,196 @@ ggplot() +
   theme_minimal()
 ```
 
-As seen from the plot, the data is noisy, but there are visible shifts in the logratio values, suggesting multiple changes in the underlying copy number. 
+As seen from the plot, the data is noisy, but there are visible shifts in the logratio values, suggesting multiple changes in the underlying copy number. By the end of this chapter, we will segment this sequence!
 
-Running the CUSUM statistic in this scenario with multiple changes, leads to the trace:
+### Towards multiple changes
 
+Under this framework, the observed sequence $y_t$ can be modeled as a piecewise constant signal with changes in the mean occurring at each changepoint $\tau_k$. A plausible model for the change-in-mean signal is given by
+
+$$
+y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t < \tau_{k+1}, \ k = 0, 1, \dots, K,
+$$
+
+where $\mu_k$ is the mean of the $k$-th segment, and $\epsilon_t \sim \mathcal{N}(0, \sigma^2)$ are independent Gaussian noise terms with mean 0 and (known) variance $\sigma^2$.
+
+As a starting example, we can generate a sequence with 4 segments, with $\tau_1 = 50, \tau_2 = 100, \tau_3 = 150$ and means $\mu_1 = 2, \mu_2 = 0, \mu_3 = -1$ and $\mu_4 = 2$. Running the CUSUM statistic in this scenario with multiple changes, leads to the following $C_\tau^2$ trace:
+
+```{r echo=FALSE}
+LR <- function(x) {
+  #input is data vector length >=2
+  S <- cumsum(x) #calculate cummulate sum of data
+  n <- length(x) #number of data points
+  tau <- 1:(n - 1) #possible change-point locations to test
+  D <- S[tau] / tau - (S[n] - S[tau]) / (n - tau) #difference in means
+  LR <- D ^ 2 * tau * (n - tau) / n #LR statistic at locations tau
+  #return LR statistic and estimate of tau
+  return(list(LR = LR, LR_max = max(LR), tau.hat = which.max(LR)))
+}
+
+# broken case for bs
+# y <- c(rnorm(100, 2), rnorm(100, 1), rnorm(100, -1), rnorm(100, 1.5))
+
+mu <- c(rep(2, 100), rep(-1, 100), rep(0, 100), rep(2, 100))
+
+set.seed(43)
+y <- mu + rnorm(400)
+# Calculate CUSUM statistics
+cusum_results <- LR(y)
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(length(y) - 1),
+  y = y[1:(length(y) - 1)],
+  mu = mu[1:(length(mu) - 1)],
+  CUSUM = cusum_results$LR
+)
+
+cs_res_tot <- cusum_df
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(x = x, y = mu), col="red") + 
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = CUSUM)) +
+  geom_line() +
+  theme_minimal()
+
+combined_plot <- ggarrange(p1, p2, align = "hv", nrow = 2)
+
+# Display the plot
+print(combined_plot)
+```
+
+From this, we notice that our test still has power to detect some of the changes, but the estimate that we get, is initially wrong. $\Delta \mu = |\mu_1 - \mu_2|$. Is power lost when there is more then one change in our test?
+
+Well, to answer this question, we can compare the values of the CUSUM statistic ran on the whole dataset (as above), with the values of the CUSUM, ran on a subset containing only one change:
+
+```{r echo = FALSE}
+up <- 200
+
+# Calculate CUSUM statistics
+cusum_results <- LR(y[1:up])
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(up - 1),
+  y = y[1:(up - 1)],
+  CUSUM = cusum_results$LR
+)
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_point() +
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = CUSUM)) +
+  geom_line() +
+  geom_line(data = cs_res_tot, aes(x = x, y = CUSUM), col="grey") +
+  xlim(1, up) +
+  theme_minimal()
+
+combined_plot <- ggarrange(p1, p2, align = "hv", nrow = 2)
+
+# Display the plot
+print(combined_plot)
+```
+
+We can see that max of the old cusum (the line in grey) is much lower than the one where we isolate the sequence on one single change! So there is an effective loss of power in this scenario in analyzing all changes together, as some changes are masking the effects of others...
+
+This gives us motivation to move towards some methodology that tries to estimate all changes locations jointly, rather then one at a time!
+
+### The cost of a segmentation
+
+Well, so far we only worked with one scheme that tried to split a sequence in a hald
+
+But how can we work in case we have more than one change? Well, we need to introduce the cost of a segment.
+
+If we assume the data is independent and identically distributed within each segment, for segment parameter $\theta$, then this cost can be obtained through: $$
+    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - \log(f(y_i, \theta))
+$$ with $f(y, \theta)$ being the likelihood for data point $y$ if the segment parameter is $\theta$. Now, for example, in the gaussian case this cost is given by:
+
+$$
+\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+$$
+
+The cost for the full segmentation will be given by the sum across all segments: $$
+\sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}})
+$$
+
+Interestingly, the cost of a full segmentation is closely related to the LR test. Consider, a single Gaussian change-in-mean at time $\tau$, splitting the data into two segments: $y_{1:\tau}$ and $y_{\tau+1:n}$. The cost of this segmentation is:
+
+$$
+\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = \frac{1}{\sigma^2} \left[\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{(\tau+1):n})^2 \right]
+$$ Which is essentially the same LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
+
+### The "best" segmentation
+
+We now have a way of evaluating how "good" a segmentation is, so it's only natural to ask the question: what would be the best one?
+
+Well, one way would be to, say, finding the the best set of $\tau = \tau_0, \dots, \tau_{K+1}$ changepoints that minimise the cost:
+
+$$
+\min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
+$$
+
+Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
+
+```{r echo=FALSE, warning=FALSE}
+#| fig-height: 2
+bs.list <- suppressWarnings(binsegRcpp::binseg_normal(y))
+bs.models <- bs.list
+
+gg <- ggplot(cs_res_tot, aes(x = x, y = y)) +
+  geom_point()
+
+plotK <- function(k){
+  k.segs <- coef(bs.list, as.integer(k))
+  gg+
+    geom_vline(aes(
+      xintercept=start-0.5),
+      color="red",
+      data=k.segs[-1])+
+    geom_segment(aes(
+      start-0.5, mean,
+      xend=end+0.5, yend=mean),
+      size=2,
+      alpha=0.5,
+      color="red",
+      data=k.segs) + 
+    theme_minimal() +
+    labs(title = paste("Segments:", k, "Seg. Cost: ", round(bs.models$splits$loss[k])), x = "t")
+}
+
+plotK(1)
+plotK(2)
+plotK(3)
+plotK(4)
+
+```
+
+Well, arguably we would like to stop at 4, which we know is the real number of segments, but the cost keep going down...
+
+```{r, echo=FALSE}
+#| fig-height: 2
+plotK(10)
+plotK(100)
+```
+
+And finally:
+
+```{r echo=FALSE}
+#| fig-height: 2
+plotK(400)
+```
+
+![](source_imgs/fine.png){fig-align="center" width="486"}
+
+Well, it turns out, that according to the minimization above, the optimal segmentation across all would be the one that puts each point into its own segment!
 
 ## Binary Segmentation
 
 ## Optimal Segmentation
-

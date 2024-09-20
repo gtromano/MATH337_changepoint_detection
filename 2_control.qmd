@@ -176,24 +176,12 @@ LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \ta
 $$
 
 ```{r}
-LR_var <- function(x) {
-  x2 <- x^2 # squaring the data
-  S <- cumsum(x2) # calculate square cummulate sum of the data, divided by n
-  n <- length(x) #number of data points
-  tau <- 1:(n - 1) #possible change-point locations to test
-  left <- tau * log(S[tau] / tau)
-  right <- (n - tau) * log((S[n] - S[tau]) / (n-tau))
-  LR <- + n * log(S[n]/n) - left - right #LR statistic at locations tau
-  LR <- LR 
-  #return LR statistic and estimate of tau
-  return(list(LR = LR, LR_max = max(LR), tau.hat = which.max(LR)))
-}
-
+source("../MATH337_changepoint_detection_materials/additional_hidden_scripts.R")
 set.seed(123)
 y <- c(rnorm(100,0, 5), rnorm(100, 0, 1))
 cusum_results <- LR_var(y)
 
-# Create a data frame for the CUSUM trace
+# Create a data frame for the CUSUM traces
 cusum_df <- data.frame(
   x = 1:(length(y) - 1),
   y = y[1:(length(y) - 1)],

@@ -399,8 +399,9 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <section id="binary-segmentation-in-action" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="binary-segmentation-in-action"><span class="header-section-number">3.2.1</span> Binary Segmentation in action</h3>
 <p>Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98.</p>
-<p><strong>Step 0:</strong> We start by computing the cost as in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>, and for those that are less then <span class="math inline">\(\beta\)</span>, we pick the smallest. This will be our first changepoint estimate, and the first point of split.</p>
-<p>In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold <span class="math inline">\(\beta\)</span>, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate:</p>
+<p><strong>Step 1:</strong> We start by computing the cost as in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>, and for those that are less then <span class="math inline">\(\beta\)</span>, we pick the smallest. This will be our first changepoint estimate, and the first point of split.</p>
+<p>In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold <span class="math inline">\(\beta\)</span>, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate.</p>
+<p>In our case, we can see that the min of our cost has been achieved for <span class="math inline">\(\hat\tau=100\)</span>, and since this is below the threshold, it’s our first estimated changepoint!</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -410,7 +411,12 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </div>
 </div>
 </div>
-<p>Step 1:</p>
+<p><strong>Step 2:</strong></p>
+<p>From the first step, we have to check now two splits:</p>
+<ul>
+<li><p>The first left split, <strong>1-LEFT</strong> in the plot below, covers data <span class="math inline">\(y_{1:100}\)</span>. We can see that from here, the min of our statistic is below the threshold, therefore we won’t declare any further change in this subset.</p></li>
+<li><p>The first right split, <strong>1-RIGHT</strong> covers data <span class="math inline">\(y_{101:400}\)</span>. We can see that here, the min of the statistics, is below the threshold, and therefore we identify a second change at <span class="math inline">\(\hat\tau = 297\)</span>. This is not exactly 300, so we don’t have a perfect estimate. Despite this is not ideal, this is the best point we have found and therefore we have to continue!</p></li>
+</ul>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -420,7 +426,12 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </div>
 </div>
 </div>
-<p>Step 2:</p>
+<p><strong>Step 3:</strong></p>
+<p>In step 3, we have to check again two splits splits:</p>
+<ul>
+<li><p>The second left split, <strong>2-LEFT</strong> in the plot below, covers data <span class="math inline">\(y_{101:297}\)</span>. Now, it’s in this split that the statistics goes below the threshold! The third estimated change is at <span class="math inline">\(\hat\tau = 203\)</span>, again slightly off the real one at 200. We continue investigating this split…</p></li>
+<li><p>The second right split, <strong>2-RIGHT</strong> covers data <span class="math inline">\(y_{298:400}\)</span>. In this last split, the min is not over the threshold, therefore we stop the search.</p></li>
+</ul>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -430,7 +441,12 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </div>
 </div>
 </div>
-<p>Step 3:</p>
+<p><strong>Step 4:</strong></p>
+<p>In step 4, we check:</p>
+<ul>
+<li><p>The third left split, <strong>3-LEFT</strong> in the plot below, covers data <span class="math inline">\(y_{101:203}\)</span>. The minimum, in here is not over the threshold.</p></li>
+<li><p>The third right split, <strong>3-RIGHT</strong> covers data <span class="math inline">\(y_{204:298}\)</span>. Similarly, the minimum is not over the treshold.</p></li>
+</ul>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -440,6 +456,28 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </div>
 </div>
 </div>
+<p>The algorithm therefore terminates!</p>
+<p>With this graphical description in mind, we formally describe the Binary Segmentation algorithm as a recursive procedure, where the first iteration would be simply given by <span class="math inline">\(\text{BinSeg}(y_{1:n}, \beta)\)</span>.</p>
+<hr>
+<div class="line-block"><span class="math inline">\(\text{BinSeg}(y_{s:t}, \beta)\)</span><br>
+</div>
+<hr>
+<div class="line-block"><strong>INPUT:</strong> Subseries <span class="math inline">\(y_{s:t} = \{y_s, \dots, y_t\}\)</span> of length <span class="math inline">\(t - s + 1\)</span>, penalty <span class="math inline">\(\beta\)</span><br>
+<strong>OUTPUT:</strong> Set of detected changepoints <span class="math inline">\(cp\)</span><br>
+<br>
+<strong>IF</strong> <span class="math inline">\(t - s \leq 1\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint in segments of length 1 or less<br>
+<br>
+<strong>COMPUTE</strong><br>
+<span class="math inline">\(\mathcal{Q} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]\)</span><br>
+<br>
+<strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) \}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
+<br>
+<strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>
+<hr>
 </section>
 </section>
 <section id="optimal-segmentation" class="level2" data-number="3.3">

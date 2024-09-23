@@ -234,25 +234,25 @@ where the segment cost $\mathcal{L}(\cdot)$, is as in @eq-segment_cost.
 
 3.  If there are no more resulting valid splits, then the procedure ends.
 
-
 Some of you might have noted how the condition in @eq-bin_seg_condition is closely related to the LR test in @eq-lr-test. In fact, rearranging equation above, gives us:
 
 $$
 - \mathcal{L}(y_{1:n}) + \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = - \frac{LR_\tau}{2}  < -\beta.
 $$
 
-The $-\beta$ acts exactly as the constant $c$ for declaring a change, and it adds a natural stopping condition, solving the issue of overfitting that we mentioned in the previous section! Binary Segmentation, in fact, does nothing more then iteratively running a LR test, until no changes are found anymore! 
+The $-\beta$ acts exactly as the constant $c$ for declaring a change, and it adds a natural stopping condition, solving the issue of overfitting that we mentioned in the previous section! Binary Segmentation, in fact, does nothing more then iteratively running a LR test, until no changes are found anymore!
 
 This gives us a strategy to essentially apply a test that is locally optimal for one change, such as the Likelihood Ratio test, to solve a multiple changepoint segmentation. For this reason, BS is often employed to extend single changepoint procedures to multiple changes procedures, and hence it is one of the most prominent methods in the literature.
 
 ### Binary Segmentation in action
 
-Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a $\beta = 2 \log(400) =$  `{r} round(2 * log(400), 2)`. 
+Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a $\beta = 2 \log(400) =$ `{r} round(2 * log(400), 2)`.
 
-**Step 0:**
-We start by computing the cost as in @eq-bin_seg_condition, and for those that are less then $\beta$, we pick the smallest. This will be our first changepoint estimate, and the first point of split.
+**Step 1:** We start by computing the cost as in @eq-bin_seg_condition, and for those that are less then $\beta$, we pick the smallest. This will be our first changepoint estimate, and the first point of split.
 
-In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold $\beta$, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate:
+In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold $\beta$, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate.
+
+In our case, we can see that the min of our cost has been achieved for $\hat\tau=100$, and since this is below the threshold, it's our first estimated changepoint!
 
 ```{r echo=F}
 beta =  round(2 * log(400), 2)
@@ -295,23 +295,70 @@ return(combined_plot)
 cusum_plot(y, 1)
 ```
 
+**Step 2:**
 
-Step 1:
+From the first step, we have to check now two splits:
+
+-   The first left split, **1-LEFT** in the plot below, covers data $y_{1:100}$. We can see that from here, the min of our statistic is below the threshold, therefore we won't declare any further change in this subset.
+
+-   The first right split, **1-RIGHT** covers data $y_{101:400}$. We can see that here, the min of the statistics, is below the threshold, and therefore we identify a second change at $\hat\tau = 297$. This is not exactly 300, so we don't have a perfect estimate. Despite this is not ideal, this is the best point we have found and therefore we have to continue!
 
 ```{r echo=F}
 ggarrange(cusum_plot(y[1:100], 1), cusum_plot(y[101:400], 101), labels = c("1-LEFT", "1-RIGHT"), widths = c(1.5, 2.5))
 ```
 
-**Step 2:**
-
-```{r echo=F}
-ggarrange(cusum_plot(y[101:300], 100), cusum_plot(y[301:400], 301), labels = c("2-LEFT", "2-RIGHT"), widths = c(2.7, 1.3))
-```
 **Step 3:**
 
+In step 3, we have to check again two splits splits:
+
+-   The second left split, **2-LEFT** in the plot below, covers data $y_{101:297}$. Now, it's in this split that the statistics goes below the threshold! The third estimated change is at $\hat\tau = 203$, again slightly off the real one at 200. We continue investigating this split...
+
+-   The second right split, **2-RIGHT** covers data $y_{298:400}$. In this last split, the min is not over the threshold, therefore we stop the search.
+
 ```{r echo=F}
-ggarrange(cusum_plot(y[101:202], 100), cusum_plot(y[203:300], 203), labels = c("3-LEFT", "3-RIGHT"))
+ggarrange(cusum_plot(y[101:297], 100), cusum_plot(y[298:400], 301), labels = c("2-LEFT", "2-RIGHT"), widths = c(2.7, 1.3))
 ```
+
+**Step 4:**
+
+In step 4, we check:
+
+-   The third left split, **3-LEFT** in the plot below, covers data $y_{101:203}$. The minimum, in here is not over the threshold.
+
+-   The third right split, **3-RIGHT** covers data $y_{204:298}$. Similarly, the minimum is not over the treshold.
+
+```{r echo=F}
+ggarrange(cusum_plot(y[101:203], 100), cusum_plot(y[204:298], 203), labels = c("3-LEFT", "3-RIGHT"))
+```
+
+The algorithm therefore terminates!
+
+With this graphical description in mind, we formally describe the Binary Segmentation algorithm as a recursive procedure, where the first iteration would be simply given by $\text{BinSeg}(y_{1:n}, \beta)$.
+
+------------------------------------------------------------------------
+
+| $\text{BinSeg}(y_{s:t}, \beta)$
+| 
+
+------------------------------------------------------------------------
+
+| **INPUT:** Subseries $y_{s:t} = \{y_s, \dots, y_t\}$ of length $t - s + 1$, penalty $\beta$
+| **OUTPUT:** Set of detected changepoints $cp$
+| 
+| **IF** $t - s \leq 1$
+|     **RETURN** $\{\}$ // No changepoint in segments of length 1 or less
+| 
+| **COMPUTE**
+| $\mathcal{Q} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]$
+| 
+| **IF** $\mathcal{Q} < 0$
+|     $\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]$
+|      $cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}$
+|      **RETURN** $cp$
+| 
+| **RETURN** $\{\}$ // No changepoint if $-LR/2$ is above penalty $- \beta$
+
+------------------------------------------------------------------------
 
 ## Optimal Segmentation
 

@@ -162,7 +162,7 @@ Well, one way would be to, say, finding the the best set of $\tau = \tau_0, \dot
 
 $$
 \min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
-$$
+$${eq-segment_cost}
 
 Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
 
@@ -218,6 +218,101 @@ plotK(400)
 
 Well, it turns out, that according to the minimization above, the optimal segmentation across all would be the one that puts each point into its own segment!
 
+Well, there are different solutions to this problem. The first one we will see, is a divide-and-conquer greedy approach, called Binary Segmentation, and the second one will aim a generating a different optimization to the one below that will find the optimal segmentation *up to a constant* to avoid over-fitting!
+
 ## Binary Segmentation
 
+Binary Segmentation (BS) is a procedure from \cite{scott1974cluster} and \cite{sen1975tests}. Binary segmentation works like this:
+
+1.  Start with a test for a change $\tau$ that splits a sequence into two segments and to check if the cost over those two segments, plus a penalty $\beta \in \mathbb{R}$, is smaller then the cost computed on the whole sequence: $$
+        \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) + \beta < \mathcal{L}(y_{1:n})     
+    $$ {#eq-bin_seg_condition}
+
+where the segment cost $\mathcal{L}(\cdot)$, is as in @eq-segment_cost.
+
+2.  If the condition in @eq-bin_seg_condition is true for at least one $\tau \in 1, \dots, n$, then the $\tau$ that minimizes $\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})$ is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.
+
+3.  If there are no more resulting valid splits, then the procedure ends.
+
+
+Some of you might have noted how the condition in @eq-bin_seg_condition is closely related to the LR test in @eq-lr-test. In fact, rearranging equation above, gives us:
+
+$$
+- \mathcal{L}(y_{1:n}) + \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = - \frac{LR_\tau}{2}  < -\beta.
+$$
+
+The $-\beta$ acts exactly as the constant $c$ for declaring a change, and it adds a natural stopping condition, solving the issue of overfitting that we mentioned in the previous section! Binary Segmentation, in fact, does nothing more then iteratively running a LR test, until no changes are found anymore! 
+
+This gives us a strategy to essentially apply a test that is locally optimal for one change, such as the Likelihood Ratio test, to solve a multiple changepoint segmentation. For this reason, BS is often employed to extend single changepoint procedures to multiple changes procedures, and hence it is one of the most prominent methods in the literature.
+
+### Binary Segmentation in action
+
+Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a $\beta = 2 \log(400) =$  `{r} round(2 * log(400), 2)`. 
+
+**Step 0:**
+We start by computing the cost as in @eq-bin_seg_condition, and for those that are less then $\beta$, we pick the smallest. This will be our first changepoint estimate, and the first point of split.
+
+In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold $\beta$, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate:
+
+```{r echo=F}
+beta =  round(2 * log(400), 2)
+
+cusum_plot <- function(y, low) {
+  # Calculate CUSUM statistics
+cusum_results <- LR(y)
+
+n <- length(y)
+
+mu <- c(rep(mean(y[1:cusum_results$tau]), cusum_results$tau),
+  rep(mean(y[(cusum_results$tau+1):n]), n - cusum_results$tau))
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(n - 1) + low,
+  y = y[1:(n - 1)],
+  mu = mu[1:(n - 1)],
+  LR = - cusum_results$LR / 2
+)
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(x = x, y = mu), col="blue") + 
+  theme_minimal()
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = LR)) +
+  geom_line() +
+  geom_line(data = cusum_df |> filter(LR < -beta), aes(x = x, y = LR), col = "pink") +
+  geom_hline(yintercept = -beta, col="pink") + 
+  geom_vline(xintercept = cusum_results$tau + low, col="red") +
+  theme_minimal()
+
+combined_plot <- ggarrange(p1, p2, align = "hv", nrow = 2)
+return(combined_plot)
+}
+
+cusum_plot(y, 1)
+```
+
+
+Step 1:
+
+```{r echo=F}
+ggarrange(cusum_plot(y[1:100], 1), cusum_plot(y[101:400], 101), labels = c("1-LEFT", "1-RIGHT"), widths = c(1.5, 2.5))
+```
+
+**Step 2:**
+
+```{r echo=F}
+ggarrange(cusum_plot(y[101:300], 100), cusum_plot(y[301:400], 301), labels = c("2-LEFT", "2-RIGHT"), widths = c(2.7, 1.3))
+```
+**Step 3:**
+
+```{r echo=F}
+ggarrange(cusum_plot(y[101:202], 100), cusum_plot(y[203:300], 203), labels = c("3-LEFT", "3-RIGHT"))
+```
+
 ## Optimal Segmentation
+
+## A Comparison of the two Approaches

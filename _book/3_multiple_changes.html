@@ -201,8 +201,12 @@ window.Quarto = {
   <li><a href="#the-cost-of-a-segmentation" id="toc-the-cost-of-a-segmentation" class="nav-link" data-scroll-target="#the-cost-of-a-segmentation"><span class="header-section-number">3.1.3</span> The cost of a segmentation</a></li>
   <li><a href="#the-best-segmentation" id="toc-the-best-segmentation" class="nav-link" data-scroll-target="#the-best-segmentation"><span class="header-section-number">3.1.4</span> The “best” segmentation</a></li>
   </ul></li>
-  <li><a href="#binary-segmentation" id="toc-binary-segmentation" class="nav-link" data-scroll-target="#binary-segmentation"><span class="header-section-number">3.2</span> Binary Segmentation</a></li>
+  <li><a href="#binary-segmentation" id="toc-binary-segmentation" class="nav-link" data-scroll-target="#binary-segmentation"><span class="header-section-number">3.2</span> Binary Segmentation</a>
+  <ul class="collapse">
+  <li><a href="#binary-segmentation-in-action" id="toc-binary-segmentation-in-action" class="nav-link" data-scroll-target="#binary-segmentation-in-action"><span class="header-section-number">3.2.1</span> Binary Segmentation in action</a></li>
+  </ul></li>
   <li><a href="#optimal-segmentation" id="toc-optimal-segmentation" class="nav-link" data-scroll-target="#optimal-segmentation"><span class="header-section-number">3.3</span> Optimal Segmentation</a></li>
+  <li><a href="#a-comparison-of-the-two-approaches" id="toc-a-comparison-of-the-two-approaches" class="nav-link" data-scroll-target="#a-comparison-of-the-two-approaches"><span class="header-section-number">3.4</span> A Comparison of the two Approaches</a></li>
   </ul>
 </nav>
     </div>
@@ -305,7 +309,7 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <p>Well, one way would be to, say, finding the the best set of <span class="math inline">\(\tau = \tau_0, \dots, \tau_{K+1}\)</span> changepoints that minimise the cost:</p>
 <p><span class="math display">\[
 \min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
-\]</span></p>
+\]</span>{eq-segment_cost}</p>
 <p>Which one would this be? Say that for instance we range the <span class="math inline">\(K = 1, \dots, n\)</span>, and at each step we find the best possible segmentation. Graphically, we would be observing the following:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -370,13 +374,79 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </figure>
 </div>
 <p>Well, it turns out, that according to the minimization above, the optimal segmentation across all would be the one that puts each point into its own segment!</p>
+<p>Well, there are different solutions to this problem. The first one we will see, is a divide-and-conquer greedy approach, called Binary Segmentation, and the second one will aim a generating a different optimization to the one below that will find the optimal segmentation <em>up to a constant</em> to avoid over-fitting!</p>
 </section>
 </section>
 <section id="binary-segmentation" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="binary-segmentation"><span class="header-section-number">3.2</span> Binary Segmentation</h2>
+<p>Binary Segmentation (BS) is a procedure from and . Binary segmentation works like this:</p>
+<ol type="1">
+<li>Start with a test for a change <span class="math inline">\(\tau\)</span> that splits a sequence into two segments and to check if the cost over those two segments, plus a penalty <span class="math inline">\(\beta \in \mathbb{R}\)</span>, is smaller then the cost computed on the whole sequence: <span id="eq-bin_seg_condition"><span class="math display">\[
+    \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) + \beta &lt; \mathcal{L}(y_{1:n})     
+\tag{3.1}\]</span></span></li>
+</ol>
+<p>where the segment cost <span class="math inline">\(\mathcal{L}(\cdot)\)</span>, is as in <span class="quarto-unresolved-ref">?eq-segment_cost</span>.</p>
+<ol start="2" type="1">
+<li><p>If the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> is true for at least one <span class="math inline">\(\tau \in 1, \dots, n\)</span>, then the <span class="math inline">\(\tau\)</span> that minimizes <span class="math inline">\(\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})\)</span> is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.</p></li>
+<li><p>If there are no more resulting valid splits, then the procedure ends.</p></li>
+</ol>
+<p>Some of you might have noted how the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> is closely related to the LR test in <span class="quarto-unresolved-ref">?eq-lr-test</span>. In fact, rearranging equation above, gives us:</p>
+<p><span class="math display">\[
+- \mathcal{L}(y_{1:n}) + \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = - \frac{LR_\tau}{2}  &lt; -\beta.
+\]</span></p>
+<p>The <span class="math inline">\(-\beta\)</span> acts exactly as the constant <span class="math inline">\(c\)</span> for declaring a change, and it adds a natural stopping condition, solving the issue of overfitting that we mentioned in the previous section! Binary Segmentation, in fact, does nothing more then iteratively running a LR test, until no changes are found anymore!</p>
+<p>This gives us a strategy to essentially apply a test that is locally optimal for one change, such as the Likelihood Ratio test, to solve a multiple changepoint segmentation. For this reason, BS is often employed to extend single changepoint procedures to multiple changes procedures, and hence it is one of the most prominent methods in the literature.</p>
+<section id="binary-segmentation-in-action" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="binary-segmentation-in-action"><span class="header-section-number">3.2.1</span> Binary Segmentation in action</h3>
+<p>Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98.</p>
+<p><strong>Step 0:</strong> We start by computing the cost as in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>, and for those that are less then <span class="math inline">\(\beta\)</span>, we pick the smallest. This will be our first changepoint estimate, and the first point of split.</p>
+<p>In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold <span class="math inline">\(\beta\)</span>, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Step 1:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Step 2:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Step 3:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="optimal-segmentation" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="optimal-segmentation"><span class="header-section-number">3.3</span> Optimal Segmentation</h2>
+</section>
+<section id="a-comparison-of-the-two-approaches" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="a-comparison-of-the-two-approaches"><span class="header-section-number">3.4</span> A Comparison of the two Approaches</h2>
 
 
 </section>

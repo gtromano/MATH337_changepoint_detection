@@ -473,7 +473,7 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <br>
 <strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) \}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>

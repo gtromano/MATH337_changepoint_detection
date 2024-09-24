@@ -230,8 +230,11 @@ window.Quarto = {
   <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3.3</span> Example</a></li>
   </ul></li>
-  <li><a href="#workshop-1-exercises" id="toc-workshop-1-exercises" class="nav-link" data-scroll-target="#workshop-1-exercises"><span class="header-section-number">1.4</span> Workshop 1 Exercises</a></li>
-  <li><a href="#lab-1-exercises" id="toc-lab-1-exercises" class="nav-link" data-scroll-target="#lab-1-exercises"><span class="header-section-number">1.5</span> Lab 1 Exercises</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.4</span> Exercises</a>
+  <ul class="collapse">
+  <li><a href="#workshop-1" id="toc-workshop-1" class="nav-link" data-scroll-target="#workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</a></li>
+  <li><a href="#lab-1" id="toc-lab-1" class="nav-link" data-scroll-target="#lab-1"><span class="header-section-number">1.4.2</span> Lab 1</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -423,7 +426,8 @@ y_t = \begin{cases}
 <section id="the-biggest-data-challenge-in-changepoint-detection" class="level3" data-number="1.2.2">
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</h3>
 <p>One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science—but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: <strong>At which episode did “The Simpsons” start to decline?</strong></p>
-<p>It’s almost common knowledge that “The Simpsons,” the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. Critics, die-hard fans, and casual viewers alike have pointed to a shift in humor, writing, and overall creativity. But pinpointing exactly <em>when</em> this drop occurred is the real challenge. Fortunately, there’s a branch of statistics that was practically built to answer questions like these!</p>
+<p>It’s almost common knowledge that “The Simpsons,” the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. But pinpointing exactly <em>when</em> this drop occurred is the real challenge. Fortunately, there’s a branch of statistics that was practically built to answer questions like these!</p>
+<p><img src="source_imgs/simpsons-barney.gif" class="img-fluid" width="435"></p>
 <p>I have downloaded a dataset <span class="citation" data-cites="bown_simpsons_dataset">(<a href="references.html#ref-bown_simpsons_dataset" role="doc-biblioref">Bown 2023</a>)</span> containing ratings for every episode of “The Simpsons” up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -551,22 +555,26 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <p>This results in episode Thirty Minutes over Tokyo being the last “good” Simpsons episode, with Beyond Blunderdome being the start of the decline, according to the Gaussian change-in-mean model!</p>
 </section>
 </section>
-<section id="workshop-1-exercises" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="workshop-1-exercises"><span class="header-section-number">1.4</span> Workshop 1 Exercises</h2>
+<section id="exercises" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">1.4</span> Exercises</h2>
+<section id="workshop-1" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</h3>
 <ol type="1">
 <li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
 </ol>
+<!-- -->
 <ol type="a">
 <li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. Suggestion: try to compute the variance of the process.</p></li>
-<li><p>$ y_t = <em>t + 3 (t &gt; 50), &nbsp;t = 1, , 100, </em>{1:100} N(0, 1) $</p></li>
+<li><p>$ y_t = t + 3* (t &gt; 50), &nbsp;t = 1, , 100, N(0, 1) $</p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 </ol>
+<!-- -->
 <ol start="2" type="1">
 <li>Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant <span class="math inline">\(\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}\)</span> this follows a standard normal distribution.</li>
 </ol>
 </section>
-<section id="lab-1-exercises" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="lab-1-exercises"><span class="header-section-number">1.5</span> Lab 1 Exercises</h2>
+<section id="lab-1" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="lab-1"><span class="header-section-number">1.4.2</span> Lab 1</h3>
 <ol type="1">
 <li><p>Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.</p></li>
 <li><p>Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above.</p></li>
@@ -578,6 +586,7 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 Bown, Jonathan. 2023. <span>“Simpsons Episodes &amp; Ratings (1989-Present).”</span> <a href="https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download">https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download</a>.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

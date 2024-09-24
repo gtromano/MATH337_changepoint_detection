@@ -259,7 +259,9 @@ ggplot(data_trend, aes(x = x, y = y)) +
 
 One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science---but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: **At which episode did "The Simpsons" start to decline?**
 
-It's almost common knowledge that "The Simpsons," the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. Critics, die-hard fans, and casual viewers alike have pointed to a shift in humor, writing, and overall creativity. But pinpointing exactly *when* this drop occurred is the real challenge. Fortunately, there's a branch of statistics that was practically built to answer questions like these!
+It's almost common knowledge that "The Simpsons," the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. But pinpointing exactly *when* this drop occurred is the real challenge. Fortunately, there's a branch of statistics that was practically built to answer questions like these!
+
+![](source_imgs/simpsons-barney.gif){width="435"}
 
 I have downloaded a dataset [@bown_simpsons_dataset] containing ratings for every episode of "The Simpsons" up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.
 
@@ -415,7 +417,6 @@ It's worth noting that, as we only need to calculate the CUSUM statistic for eac
 
 ### Example
 
-
 ```{r echo = F}
 LR <- function(x) {
   #input is data vector length >=2
@@ -429,8 +430,7 @@ LR <- function(x) {
 }
 ```
 
-
-It is possible to see how the cusum behaves on this simple example below: 
+It is possible to see how the cusum behaves on this simple example below:
 
 ```{r echo=FALSE}
 set.seed(123)
@@ -503,21 +503,28 @@ print(combined_plot)
 
 This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` being the last "good" Simpsons episode, with `r simpsons_ratings[cusum_results$tau.hat + 1, "title"]` being the start of the decline, according to the Gaussian change-in-mean model!
 
-## Workshop 1 Exercises
+## Exercises
 
-1. Determine if the following processes are stationary, piecewise stationary, or non-stationary:
+### Workshop 1
 
-  a. $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. 
-  Suggestion: try to compute the variance of the process. 
-  
-  b. $ y_t = \epsilon_t + 3 \cdot \mathbb{1}(t > 50), \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1) $
-  
-  c. $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
-    
+1.  Determine if the following processes are stationary, piecewise stationary, or non-stationary:
+
+```{=html}
+<!-- -->
+```
+a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. Suggestion: try to compute the variance of the process.
+
+b.  \$ y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50),  t = 1, \dots, 100, \quad \epsilon{1:100} \sim N(0, 1) \$
+
+c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
+
+```{=html}
+<!-- -->
+```
 2.  Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant $\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}$ this follows a standard normal distribution.
 
-## Lab 1 Exercises
+### Lab 1
 
-1. Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.
+1.  Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.
 
-2. Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above. 
+2.  Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above.

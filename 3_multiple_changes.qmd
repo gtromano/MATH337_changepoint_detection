@@ -162,7 +162,7 @@ Well, one way would be to, say, finding the the best set of $\tau = \tau_0, \dot
 
 $$
 \min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
-$${eq-segment_cost}
+$${#eq-segment_cost}
 
 Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
 
@@ -360,6 +360,114 @@ With this graphical description in mind, we formally describe the Binary Segment
 
 ------------------------------------------------------------------------
 
-## Optimal Segmentation
+## Optimal Partitioning
 
+Another solution to avoid the over-fitting problem of @eq-segment_cost lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the *penalised approach*. 
+
+To achieve this, we want to minimize the following cost function:
+
+$$
+Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}) + \beta K
+ \right],
+$$
+
+where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$  with a penalty $ \beta $ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
+
+Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving $Q_{n, \beta}$ ensures that the segmentation is **globally optimal**, as in the location of the changes are the best possible to minimise our cost.
+
+Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as $n$ increases... 
+
+Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: **Optimal Partitioning (OP)**. OP solves @eq-pen-cost exactly through the following recursion.
+
+We start with $\mathcal{Q}_{0, \beta} = -\beta$, and then, for each $t = 1, \dots, n$, we compute:
+
+$$
+    \mathcal{Q}_{t, \beta} = \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right].
+$$
+
+Here, $\mathcal{Q}_{t, \beta}$ represents the optimal cost of segmenting the data up to time $t$. The algorithm builds this solution sequentially by considering each possible segmentation $\mathcal{Q}_{0, \beta},\ \cdots, \mathcal{Q}_{t-2, \beta},\ \mathcal{Q}_{t-1, \beta}$ before the current time $t$, plus the segment cost up to current time $t$, $\mathcal{L}(y_{\tau + 1:t})$.
+
+This recursion can be quite hard to digest, and is, as usual, best described graphically.
+
+**Step 1** Say we are at $t = 1$. In this case, according to equation above, the optimal cost up to time one will be given by (remember that the $\beta$ cancels out with $Q_{0, \beta}$!):
+
+
+$$
+ \mathcal{Q}_{1, \beta} = \left[ -\beta + \mathcal{L}(y_{1:1}) + \beta \right] = \mathcal{L}(y_{1:1})
+$$
+
+```{r, echo=FALSE}
+set.seed(5)
+x <- c(rnorm(6))
+plot(x, type = "l", xlim = c(-1, 10), ylim = c(-12, 4), xlab= "t", ylab = " ", col = "grey")
+points(1:6, x, pch = 19, cex = 1.5, col = "grey")
+  
+offset = -6
+sep = 2
+operations = 1
+  
+points(1, x[1], pch = 19, cex = 1.5)
+
+# Right side - Cost of fitting a new change with dynamic tau and t
+segments(x0 = 1 - .15, x1 = 1+0.25, y0 = 1 + offset, y1 = 1 + offset, lwd = 2, lty = 2)
+# Dynamic label with tau = i and t = n
+text(x = 1 + 1.3, y = 1 + offset, labels = bquote(L(y[.(1):.(1)])), cex = 0.8)
+```
+
+
+**Step 2.** Now, at the second step, we can choose either to have the whole sequence in a second segment alone (again, $\beta$ cancels out with $Q_{0, \beta} = -\beta$), and this will be given by $\mathcal{L}(y_{1:2})$ (dotted line), or we have the optimal cost from step 1 (that had only the first point in its own segment), to which we have to sum the cost relative to a second segment $\mathcal{L}(y_{2:2})$ that puts the second point alone, and the penalty $\beta$ as we have added a new segment! We maximise across the two, and this gives us $Q_{2, \beta}$
+
+```{r, echo=FALSE}
+op_plot <- function(t){
+  set.seed(5)
+  x <- c(rnorm(6))
+  plot(x, type = "l", xlim = c(-1, 10), ylim = c(-13, 4), xlab= "t", ylab = " ", col = "grey")
+  points(1:6, x, pch = 19, cex = 1.5, col = "grey")
+  
+  offset = -6
+  sep = 2
+  operations = 1
+  
+  points(1:t, x[1:t], pch = 19, cex = 1.5)
+  
+  # Right side - Cost of fitting a new change with dynamic tau and t
+  segments(x0 = 1 - .15, x1 = t + 0.15, y0 = 3 + offset, y1 = 3 + offset, lwd = 2, lty = 2)
+  # Dynamic label with tau = i and t = n
+  text(x = t + 1.3, y = 3 + offset, labels = bquote(L(y[.(1):.(t)])), cex = 0.8)
+  
+  for (i in 1:(t-1)) {
+    # Left side - Minimum cost of segmenting data up to time t (use dynamic i for Q_i)
+    segments(x0 = 1 - .15, x1 = i + 0.15, y0 = 1 + offset, y1 = 1 + offset, lwd = 2)
+    # Dynamic label with Q_i where i is the current index
+    text(x = 0.3, y = 1 + offset, labels = bquote(Q[.(i)*beta]), cex = 0.8)
+    
+    text(x = i + 0.5, y = 1 + offset, labels = "+", cex = 0.8)
+    
+    # Right side - Cost of fitting a new change with dynamic tau and t
+    segments(x0 = i + 1 - .15, x1 = t + 0.15, y0 = 1 + offset, y1 = 1 + offset, lwd = 2, lty = 2)
+    # Dynamic label with tau = i and t = n
+    text(x = t + 1.3, y = 1 + offset, labels = bquote(L(y[.(i+1):.(t)]) + beta), cex = 0.8)
+    
+    operations <- operations + 1
+    offset = offset - sep
+  }
+}
+op_plot(2)
+```
+
+*Step 3*: 
+```{r, echo=FALSE}
+op_plot(3)
+```
+
+*Step 4*
+```{r, echo=FALSE}
+op_plot(4)
+```
+
+
+*Step $n$*
+```{r, echo=FALSE}
+op_plot(6)
+```
 ## A Comparison of the two Approaches

@@ -262,8 +262,9 @@ window.Quarto = {
   <li><a href="#change-in-slope" id="toc-change-in-slope" class="nav-link" data-scroll-target="#change-in-slope"><span class="header-section-number">2.3.2</span> Change-in-slope</a></li>
   <li><a href="#revisiting-our-simpsons-data-again" id="toc-revisiting-our-simpsons-data-again" class="nav-link" data-scroll-target="#revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</a></li>
   </ul></li>
-  <li><a href="#workshop-2-exercises" id="toc-workshop-2-exercises" class="nav-link" data-scroll-target="#workshop-2-exercises"><span class="header-section-number">2.4</span> Workshop 2 Exercises</a></li>
-  <li><a href="#lab-2-exercises" id="toc-lab-2-exercises" class="nav-link" data-scroll-target="#lab-2-exercises"><span class="header-section-number">2.5</span> Lab 2 Exercises</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.4</span> Exercises</a></li>
+  <li><a href="#workshop-2" id="toc-workshop-2" class="nav-link" data-scroll-target="#workshop-2"><span class="header-section-number">2.5</span> Workshop 2</a></li>
+  <li><a href="#lab-2" id="toc-lab-2" class="nav-link" data-scroll-target="#lab-2"><span class="header-section-number">2.6</span> Lab 2</a></li>
   </ul>
 </nav>
     </div>
@@ -516,15 +517,18 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \th
 <p>We can see that we now find a significant changepoint prior to episode The Simpsons Spin-Off Showcase, which is anthology episode well over into season 8, which is by many considered the last good one!</p>
 </section>
 </section>
-<section id="workshop-2-exercises" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="workshop-2-exercises"><span class="header-section-number">2.4</span> Workshop 2 Exercises</h2>
+<section id="exercises" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.4</span> Exercises</h2>
+</section>
+<section id="workshop-2" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="workshop-2"><span class="header-section-number">2.5</span> Workshop 2</h2>
 <ol type="1">
 <li><p>Given the asymptotic result on the distribution, for <span class="math inline">\(n = 100\)</span> and a false positive rate <span class="math inline">\(\alpha = 0.05\)</span>, calculate the threshold <span class="math inline">\(c\)</span>.</p></li>
 <li><p>Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g.&nbsp;<span class="math inline">\(LR_\tau = C_\tau^2/\sigma^2\)</span>.</p></li>
 </ol>
 </section>
-<section id="lab-2-exercises" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="lab-2-exercises"><span class="header-section-number">2.5</span> Lab 2 Exercises</h2>
+<section id="lab-2" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.6</span> Lab 2</h2>
 <ol type="1">
 <li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the treshold for the cusum statistics.</p></li>
 <li><p>Construct a function that, taking as input <span class="math inline">\(n\)</span>, a desired <span class="math inline">\(\alpha\)</span> , and a <code>replicates</code> parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week</p></li>

@@ -314,13 +314,13 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 ## Exercises
 
-## Workshop 2
+### Workshop 2
 
 1.  Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.
 
 2.  Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g. $LR_\tau = C_\tau^2/\sigma^2$.
 
-## Lab 2
+### Lab 2
 
 1.  Write a function, that taking as input $n$ and a desired $\alpha$ level for false positive rate, returns the treshold for the cusum statistics.
 

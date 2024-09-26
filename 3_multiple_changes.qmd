@@ -144,7 +144,9 @@ $$
 \mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
 $$
 
-The cost for the full segmentation will be given by the sum across all segments: $$
+The cost for the full segmentation will be given by the sum across all segments:
+
+$$
 \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}})
 $$
 
@@ -152,7 +154,9 @@ Interestingly, the cost of a full segmentation is closely related to the LR test
 
 $$
 \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = \frac{1}{\sigma^2} \left[\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{(\tau+1):n})^2 \right]
-$$ Which is essentially the same LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
+$$
+
+Which is essentially the same LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
 
 ### The "best" segmentation
 
@@ -162,7 +166,7 @@ Well, one way would be to, say, finding the the best set of $\tau = \tau_0, \dot
 
 $$
 \min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
-$${#eq-segment_cost}
+$$ {#eq-segment_cost}
 
 Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
 
@@ -362,7 +366,7 @@ With this graphical description in mind, we formally describe the Binary Segment
 
 ## Optimal Partitioning
 
-Another solution to avoid the over-fitting problem of @eq-segment_cost lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the *penalised approach*. 
+Another solution to avoid the over-fitting problem of @eq-segment_cost lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the *penalised approach*.
 
 To achieve this, we want to minimize the following cost function:
 
@@ -371,19 +375,19 @@ Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, 
  \right],
 $$
 
-where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$  with a penalty $ \beta $ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
+where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$ with a penalty \$ \beta \$ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
 
 Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving $Q_{n, \beta}$ ensures that the segmentation is **globally optimal**, as in the location of the changes are the best possible to minimise our cost.
 
-Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as $n$ increases... 
+Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as $n$ increases...
 
-Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: **Optimal Partitioning (OP)**. OP solves @eq-pen-cost exactly through the following recursion.
+Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: **Optimal Partitioning (OP)**, from @Jackson. OP solves @eq-pen-cost exactly through the following recursion.
 
 We start with $\mathcal{Q}_{0, \beta} = -\beta$, and then, for each $t = 1, \dots, n$, we compute:
 
 $$
     \mathcal{Q}_{t, \beta} = \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right].
-$$
+$$ {#eq-optimal-partitioning}
 
 Here, $\mathcal{Q}_{t, \beta}$ represents the optimal cost of segmenting the data up to time $t$. The algorithm builds this solution sequentially by considering each possible segmentation $\mathcal{Q}_{0, \beta},\ \cdots, \mathcal{Q}_{t-2, \beta},\ \mathcal{Q}_{t-1, \beta}$ before the current time $t$, plus the segment cost up to current time $t$, $\mathcal{L}(y_{\tau + 1:t})$.
 
@@ -392,7 +396,6 @@ Here, $\mathcal{Q}_{t, \beta}$ represents the optimal cost of segmenting the dat
 This recursion can be quite hard to digest, and is, as usual, best described graphically.
 
 **Step 1** Say we are at $t = 1$. In this case, according to equation above, the optimal cost up to time one will be given by (remember that the $\beta$ cancels out with $Q_{0, \beta}$!):
-
 
 $$
  \mathcal{Q}_{1, \beta} = \left[ -\beta + \mathcal{L}(y_{1:1}) + \beta \right] = \mathcal{L}(y_{1:1})
@@ -414,13 +417,13 @@ points(1, x[1], pch = 19, cex = 1.5)
 segments(x0 = 1 - .15, x1 = 1+0.25, y0 = 1 + offset, y1 = 1 + offset, lwd = 2, lty = 2)
 # Dynamic label with tau = i and t = n
 text(x = 1 + 1.3, y = 1 + offset, labels = bquote(L(y[.(1):.(1)])), cex = 0.8)
-```
 
+```
 
 **Step 2.** Now, at the second step, we have to minimise between two segmentations:
 
 -   One with the whole sequence in a second segment alone (again, $\beta$ cancels out with $Q_{0, \beta} = -\beta$), and this will be given by $\mathcal{L}(y_{1:2})$ (dotted line)
--   One with the optimal segmentation from step 1 $\mathcal{Q}_{1, \beta}$ (whose cost considered only the first point in its own segment!), to which we have to sum the cost relative to a second segment $\mathcal{L}(y_{2:2})$ that puts the second point alone, and the penalty $\beta$ as we have added a new segment! 
+-   One with the optimal segmentation from step 1 $\mathcal{Q}_{1, \beta}$ (whose cost considered only the first point in its own segment!), to which we have to sum the cost relative to a second segment $\mathcal{L}(y_{2:2})$ that puts the second point alone, and the penalty $\beta$ as we have added a new segment!
 
 We minimise across the two, and this gives us $Q_{2, \beta}$.
 
@@ -470,17 +473,192 @@ op_plot(2)
 
 -   Finally the optimal from segmentation 2, $\mathcal{Q}_{2, \beta}$, plus the segment cost of fitting an extra segment with point 3 alone. Note that $\mathcal{Q}_{2, \beta}$ will come from the step before: if we would have been beneficial to add a change, at the previous step, this information is carried over!
 
-Again, we pick the minimum across these three to get  $\mathcal{Q}_{3, \beta}$, and proceed.
+Again, we pick the minimum across these three to get $\mathcal{Q}_{3, \beta}$, and proceed.
 
 ```{r, echo=FALSE}
 op_plot(3)
 ```
 
-*Step $n$* Until the last step! Which would look something like this:
+*Step* $n$ Until the last step! Which would look something like this:
 
 ```{r, echo=FALSE}
 op_plot(6)
 ```
 
+A formal description of the algorithm can be found below:
+
+------------------------------------------------------------------------
+
+| **INPUT:** Time series $y = (y_1, ..., y_n)$, penalty $\beta$
+| **OUTPUT:** Optimal changepoint vector $cp_n$
+| 
+| Initialize $\mathcal{Q}_0 \leftarrow -\beta$
+| Initialize $cp_0 \leftarrow \{\}$
+| 
+| **FOR** $t = 1, \dots, n$
+|      $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
+|      $\hat\tau \leftarrow \text{arg}\min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
+|      $cp_t \leftarrow (cp_\hat\tau, \hat\tau)$ // Append the changepoint to the list at the last optimal point
+| 
+| **RETURN** $cp_n$
+
+------------------------------------------------------------------------
+
+Running the Optimal Partitioning method on our example scenario, with the same penalty $\beta = 2 \log(400) =$ `{r} round(2 * log(400), 2)` as above, gives changepoint locations $\tau_{1:4} = \{100, 203, 301\}$.
+
+```{r echo=FALSE}
+library(changepoint)
+op_out <- cpt.mean(y, penalty = "Manual", pen.value =  2 * log(400), method = "PELT")
+
+plot(op_out, ylab="y")
+```
+
+So we can see how on this dataset in particular, OP performs slightly better then Binary Segmentation on the last change, getting closer to the real changepoint of 300!
 
 ## A Comparison of the two Approaches
+
+When deciding which segmentation approach to use, Binary Segmentation (BS) and Optimal Partitioning (OP) each offer different strengths. The choice largely depends on the characteristics of the data and the goal of the analysis.
+
+### Quality of the Segmentation
+
+Generally, Optimal Partitioning (OP) provides the *most accurate segmentation*, especially when we have a well-defined model and expect precise changepoint detection. OP ensures that the solution is optimal by globally minimizing the cost function across all possible segmentations. This is ideal for datasets with clear changes, even if noise is present.
+
+Let's consider a case with true changepoints at $\tau = 100, 200, 300, 400$:
+
+```{r echo=FALSE}
+#| fig-height: 2
+mu <- c(rep(2, 100), rep(1, 100), rep(-1, 100), rep(1.5, 100))
+
+set.seed(27)
+y <- mu + rnorm(400)
+# Calculate CUSUM statistics
+cusum_results <- LR(y)
+
+# Create a data frame for the CUSUM trace
+cusum_df <- data.frame(
+  x = 1:(length(y) - 1),
+  y = y[1:(length(y) - 1)],
+  mu = mu[1:(length(mu) - 1)],
+  CUSUM = cusum_results$LR
+)
+
+cs_res_tot <- cusum_df
+
+# Plot 1: Time series
+p1 <- ggplot(cusum_df, aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(x = x, y = mu), col="red") + 
+  theme_minimal()
+p1
+```
+
+While the underlying signal follows these clear shifts, noise complicates segmentation. Binary Segmentation uses a greedy process where each iteration looks for the largest changepoint. Although fast, this local search can make mistakes if the signal isn't perfectly clear, particularly in the early stages of the algorithm. For example, running BS on this dataset introduces a mistake at $\tau = 136$, as shown in the plot below:
+
+```{r echo=FALSE}
+#| fig-height: 3
+cusum_plot(y, 1)
+```
+
+This error is carried in the subsequent steps, and the full binary segmentation algorithm will output an additional change at $\tau = 136$... Optimal Partitioning (OP), on the other hand, evaluates all possible segmentations considers the overall fit across the entire sequence. It is therefore less susceptible to adding "ghost" changepoints, as rather than focusing on the largest change at each step.
+
+To illustrate, we compare the segmentations generated by both approaches:
+
+```{r echo=FALSE}
+
+# Apply Binary Segmentation and Optimal Partitioning
+out_bs <- cpt.mean(y, penalty = "Manual", pen.value = 2 * log(400), method = "BinSeg")
+out_op <- cpt.mean(y, penalty = "Manual", pen.value = 2 * log(400), method = "PELT")
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:400,
+  y = y,
+  true_mu = mu
+)
+
+bs_cpts <- cpts(out_bs)
+op_cpts <- cpts(out_op)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6) +
+  geom_line(aes(y = true_mu), color = "red", linetype = "dashed", size = 1.2) +
+  
+  # Add Binary Segmentation changepoints
+  geom_vline(xintercept = bs_cpts, linetype = "dotted", color = "blue", size = 1.1) +
+  annotate("text", x = bs_cpts, y = max(y), label = paste("BS:", bs_cpts), color = "blue", hjust = -0.1, vjust = 1) +
+  
+  # Add Optimal Partitioning changepoints
+  geom_vline(xintercept = op_cpts, linetype = "solid", color = "green", size = 1.1) +
+  annotate("text", x = op_cpts, y = min(y), label = paste("OP:", op_cpts), color = "green", hjust = -0.1, vjust = -1) +
+  
+  # Titles and theme
+  labs(
+    title = "Comparison of Binary Segmentation and Optimal Partitioning",
+    x = "Time",
+    y = "Signal"
+  ) +
+  theme_minimal()
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:400,
+  y = y,
+  true_mu = mu
+)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6) +
+  geom_line(aes(y = true_mu), color = "red", linetype = "dashed") +
+  
+  # Add Binary Segmentation changepoints
+  geom_vline(xintercept = bs_cpts, linetype = "dotted", color = "blue") +
+  annotate("text", x = bs_cpts, y = max(y), label = paste(bs_cpts), color = "blue", hjust = -0.1, vjust = 1) +
+  
+  # Add Optimal Partitioning changepoints
+  geom_vline(xintercept = op_cpts, linetype = "solid", color = "green") +
+  annotate("text", x = op_cpts, y = min(y), label = paste(op_cpts), color = "green", hjust = -0.1, vjust = -1) +
+  
+  # Titles and theme
+  labs(
+    x = "Time") +
+  theme_minimal()
+
+p
+
+```
+
+### Computational Complexity
+
+Well, you may ask why not using OP all the time, then? Well, in changepoint detection, in which is the most appropiate method, we often have to keep track of the computational performance too, and Binary Segmentation is faster on average. For this reason, for large datasets where approximate solutions are acceptable, it might be the best option.
+
+Specifically:
+
+-   **Binary Segmentation** starts by dividing the entire sequence into two parts, iteratively applying changepoint detection to each segment. In the average case, it runs in $\mathcal{O}(n \log n)$ because it avoids searching every possible split point. However, in the worst case (if all data points are changepoints), the complexity can degrade to $\mathcal{O}(n^2)$, as each step can require recalculating test statistics for a growing number of segments.
+
+-   **Optimal Partitioning**, on the other hand, solves the changepoint problem by recursively considering every possible split point up to time $t$. The result is an optimal segmentation, but at the cost of $\mathcal{O}(n^2)$ computations. This holds true for both the average and worst cases, as it always requires a full exploration of all potential changepoints. However, as we will see in the tutorial and lab, there are *recent developments* that allow for a faster computation of OP, achieving average cases of $\mathcal{O}(n \log n)$: those are the **PELT** and **FPOP** algorithms.
+
+## Exercises
+
+### Workshop 3
+
+In this workshop we will try to fix the two major drawbacks of OP and BS.
+
+1.  In OP, we can reduce the numbers of checks to be performed at each iteration, reducing the complexity. This operation is called *pruning*. Specifically, on the condition that there exists a constant $\kappa$ such that for every $l < t < u$: $$
+        \mathcal{L}(y_{l + 1:t}) + \mathcal{L}(y_{t + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
+    $$ It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating $\kappa$ to the penalty $\beta$, gives us a computational trick to improve on the efficiency... The PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, if $$\mathcal{Q}\tau + \mathcal{L}(y{\tau + 1:t}) + \kappa \geq \mathcal{Q}_t$$ then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future. On the basis of this information, your task is to write the PELT algorithm. You can do this by changing the Optimal Partitioning algorithm, adding an additional step to reflect the PELT pruning.
+
+2.  In BS, one of the issues that may arise, is an incorrect segmentation. WBS, @Fryzlewicz:2014, is a multiple changepoints procedures that improve on the BS changepoint estimation via computing the initial segmentation cost of BS multiple times over $M + 1$ random subsets of the sequence, $y_{s_1:t_1}, \dots, y_{s_M:t_M}, y_{1:n}$, picking the best subset according to what achieves the smallest segmentation cost and reiterating the procedure over that sample accordingly. The idea behind WBS lies in the fact that a favourable subset of the data $y_{s_m:t_m}$ could be drawn which contains a true change sufficiently separated from both sides $s_m, t_m$ of the sequence. By the inclusion of the $y_{1:n}$ entire sequence amongst the subsets, it is guaranteed that WBS will do no worse than the simple BS algorithm.
+
+### Lab 3
+
+1.  Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.
+
+2.  Install the `changepoint` package. The example signal of Section 3.4, with the same penalty value of $\beta = 2 * log(n)$, compare your implementation of OP, Binary Segmentation, and PELT. You will learn how to do so in the documentation, running `?cpt_mean`. You should make 300 replicates each of your experiment, and compare:
+
+    a.  The absolute error loss from the mean signal, e.g. $||\mu_{1:n} - \hat{\mu}_{1:n}||^2_2$
+
+    b.  The absolute error in the number of changepoints reconstructed, e.g. $|K - \hat{K}|$.
+
+    c.  The runtime. To this end, replicate the signal 2, 5 and 10 times the original length, and evaluate the runtime with package `microbenchmark`.

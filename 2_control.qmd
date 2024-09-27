@@ -330,13 +330,13 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 ### Workshop 2
 
-1.  Given the asymptotic result on the distribution, for $n = 100$ and a false positive rate $\alpha = 0.05$, calculate the threshold $c$.
+1.  Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g. $LR_\tau = C_\tau^2/\sigma^2$.
 
-2.  Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g. $LR_\tau = C_\tau^2/\sigma^2$.
+2.  Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable
 
 ### Lab 2
 
-1.  Write a function, that taking as input $n$ and a desired $\alpha$ level for false positive rate, returns the treshold for the cusum statistics.
+1.  Write a function, that taking as input $n$ and a desired $\alpha$ level for false positive rate, returns the threshold for the cusum statistics.
 
 2.  Construct a function that, taking as input $n$, a desired $\alpha$ , and a `replicates` parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week
 

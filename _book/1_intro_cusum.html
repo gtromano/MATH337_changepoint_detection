@@ -570,14 +570,18 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 </ol>
 <!-- -->
 <ol start="2" type="1">
-<li>Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant <span class="math inline">\(\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}\)</span> this follows a standard normal distribution.</li>
+<li><p>In this exercise we will show that the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span>, multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
+<ol type="a">
+<li><p>Compute the expected value and variance of the difference</p></li>
+<li><p>Conclude that if you standardise the sum, this follows a normal distribution.</p></li>
+</ol></li>
 </ol>
 </section>
 <section id="lab-1" class="level3" data-number="1.4.2">
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="lab-1"><span class="header-section-number">1.4.2</span> Lab 1</h3>
 <ol type="1">
-<li><p>Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.</p></li>
-<li><p>Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above.</p></li>
+<li><p>Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</p></li>
+<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.</p></li>
 </ol>
 
 

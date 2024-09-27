@@ -50,7 +50,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./references.html" rel="next">
+<link href="./4_algos_and_penalties.html" rel="next">
 <link href="./2_control.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -200,6 +200,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./4_algos_and_penalties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PELT, WBS and Penalty choices</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -228,17 +234,12 @@ window.Quarto = {
   <li><a href="#optimal-partitioning" id="toc-optimal-partitioning" class="nav-link" data-scroll-target="#optimal-partitioning"><span class="header-section-number">3.3</span> Optimal Partitioning</a>
   <ul class="collapse">
   <li><a href="#optimal-partitinioning-in-action" id="toc-optimal-partitinioning-in-action" class="nav-link" data-scroll-target="#optimal-partitinioning-in-action"><span class="header-section-number">3.3.1</span> Optimal partitinioning in action</a></li>
+  <li><a href="#neuroblastoma-example" id="toc-neuroblastoma-example" class="nav-link" data-scroll-target="#neuroblastoma-example"><span class="header-section-number">3.3.2</span> Neuroblastoma example</a></li>
   </ul></li>
-  <li><a href="#a-comparison-of-the-two-approaches" id="toc-a-comparison-of-the-two-approaches" class="nav-link" data-scroll-target="#a-comparison-of-the-two-approaches"><span class="header-section-number">3.4</span> A Comparison of the two Approaches</a>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.4</span> Exercises</a>
   <ul class="collapse">
-  <li><a href="#quality-of-the-segmentation" id="toc-quality-of-the-segmentation" class="nav-link" data-scroll-target="#quality-of-the-segmentation"><span class="header-section-number">3.4.1</span> Quality of the Segmentation</a></li>
-  <li><a href="#computational-complexity" id="toc-computational-complexity" class="nav-link" data-scroll-target="#computational-complexity"><span class="header-section-number">3.4.2</span> Computational Complexity</a></li>
-  <li><a href="#neuroblastoma-example" id="toc-neuroblastoma-example" class="nav-link" data-scroll-target="#neuroblastoma-example"><span class="header-section-number">3.4.3</span> Neuroblastoma example</a></li>
-  </ul></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.5</span> Exercises</a>
-  <ul class="collapse">
-  <li><a href="#workshop-3" id="toc-workshop-3" class="nav-link" data-scroll-target="#workshop-3"><span class="header-section-number">3.5.1</span> Workshop 3</a></li>
-  <li><a href="#lab-3" id="toc-lab-3" class="nav-link" data-scroll-target="#lab-3"><span class="header-section-number">3.5.2</span> Lab 3</a></li>
+  <li><a href="#workshop-3" id="toc-workshop-3" class="nav-link" data-scroll-target="#workshop-3"><span class="header-section-number">3.4.1</span> Workshop 3</a></li>
+  <li><a href="#lab-3" id="toc-lab-3" class="nav-link" data-scroll-target="#lab-3"><span class="header-section-number">3.4.2</span> Lab 3</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -632,14 +633,9 @@ Attaching package: 'zoo'</code></pre>
 </div>
 <p>So we can see how on this dataset in particular, OP performs slightly better then Binary Segmentation on the last change, getting closer to the real changepoint of 300!</p>
 </section>
-</section>
-<section id="a-comparison-of-the-two-approaches" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="a-comparison-of-the-two-approaches"><span class="header-section-number">3.4</span> A Comparison of the two Approaches</h2>
-<p>When deciding which segmentation approach to use, Binary Segmentation (BS) and Optimal Partitioning (OP) each offer different strengths. The choice largely depends on the characteristics of the data and the goal of the analysis.</p>
-<section id="quality-of-the-segmentation" class="level3" data-number="3.4.1">
-<h3 data-number="3.4.1" class="anchored" data-anchor-id="quality-of-the-segmentation"><span class="header-section-number">3.4.1</span> Quality of the Segmentation</h3>
-<p>Generally, Optimal Partitioning (OP) provides the <em>most accurate segmentation</em>, especially when we have a well-defined model and expect precise changepoint detection. OP ensures that the solution is optimal by globally minimizing the cost function across all possible segmentations. This is ideal for datasets with clear changes, even if noise is present.</p>
-<p>Let’s consider a case with true changepoints at <span class="math inline">\(\tau = 100, 200, 300\)</span>, and segment means <span class="math inline">\(\mu_{1:4} = 2, 1, -1, 1.5\)</span>:</p>
+<section id="neuroblastoma-example" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="neuroblastoma-example"><span class="header-section-number">3.3.2</span> Neuroblastoma example</h3>
+<p>Running the two methods on the neuroblastoma example below, gives exactly the same two segmentations:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -649,65 +645,15 @@ Attaching package: 'zoo'</code></pre>
 </div>
 </div>
 </div>
-<p>While the underlying signal follows these clear shifts, noise complicates segmentation. Binary Segmentation uses a greedy process where each iteration looks for the largest changepoint. Although fast, this local search can make mistakes if the signal isn’t perfectly clear, particularly in the early stages of the algorithm. For example, running BS on this dataset introduces a mistake at <span class="math inline">\(\tau = 136\)</span>, as shown in the plot below:</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>This error is carried in the subsequent steps, and the full binary segmentation algorithm will output an additional change at <span class="math inline">\(\tau = 136\)</span>… Optimal Partitioning (OP), on the other hand, evaluates all possible segmentations considers the overall fit across the entire sequence. It is therefore less susceptible to adding “ghost” changepoints, as rather than focusing on the largest change at each step.</p>
-<p>To illustrate, we compare the segmentations generated by both approaches:</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="computational-complexity" class="level3" data-number="3.4.2">
-<h3 data-number="3.4.2" class="anchored" data-anchor-id="computational-complexity"><span class="header-section-number">3.4.2</span> Computational Complexity</h3>
-<p>Well, you may ask why not using OP all the time, then? Well, in changepoint detection, in which is the most appropiate method, we often have to keep track of the computational performance too, and Binary Segmentation is faster on average. For this reason, for large datasets where approximate solutions are acceptable, it might be the best option.</p>
-<p>Specifically:</p>
-<ul>
-<li><p><strong>Binary Segmentation</strong> starts by dividing the entire sequence into two parts, iteratively applying changepoint detection to each segment. In the average case, it runs in <span class="math inline">\(\mathcal{O}(n \log n)\)</span> because it avoids searching every possible split point. However, in the worst case (if all data points are changepoints), the complexity can degrade to <span class="math inline">\(\mathcal{O}(n^2)\)</span>, as each step can require recalculating test statistics for a growing number of segments.</p></li>
-<li><p><strong>Optimal Partitioning</strong>, on the other hand, solves the changepoint problem by recursively considering every possible split point up to time <span class="math inline">\(t\)</span>. The result is an optimal segmentation, but at the cost of <span class="math inline">\(\mathcal{O}(n^2)\)</span> computations. This holds true for both the average and worst cases, as it always requires a full exploration of all potential changepoints. However, as we will see in the tutorial and lab, there are <em>recent developments</em> that allow for a faster computation of OP, achieving average cases of <span class="math inline">\(\mathcal{O}(n \log n)\)</span>: those are the <strong>PELT</strong> and <strong>FPOP</strong> algorithms.</p></li>
-</ul>
-</section>
-<section id="neuroblastoma-example" class="level3" data-number="3.4.3">
-<h3 data-number="3.4.3" class="anchored" data-anchor-id="neuroblastoma-example"><span class="header-section-number">3.4.3</span> Neuroblastoma example</h3>
-<p>Good news is, on the neuroblastoma dataset, the two methods produce the same results!</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
 </section>
 </section>
-<section id="exercises" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.5</span> Exercises</h2>
-<section id="workshop-3" class="level3" data-number="3.5.1">
-<h3 data-number="3.5.1" class="anchored" data-anchor-id="workshop-3"><span class="header-section-number">3.5.1</span> Workshop 3</h3>
-<p>In this workshop we will try to fix the two major drawbacks of OP and BS.</p>
-<ol type="1">
-<li><p>In OP, we can reduce the numbers of checks to be performed at each iteration, reducing the complexity. This operation is called <em>pruning</em>. Specifically, on the condition that there exists a constant <span class="math inline">\(\kappa\)</span> such that for every <span class="math inline">\(l &lt; t &lt; u\)</span>: <span class="math display">\[
-    \mathcal{L}(y_{l + 1:t}) + \mathcal{L}(y_{t + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
-\]</span> It is possible to <em>prune</em> without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating <span class="math inline">\(\kappa\)</span> to the penalty <span class="math inline">\(\beta\)</span>, gives us a computational trick to improve on the efficiency… The PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>. That is, if <span class="math display">\[\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_t\]</span> then we can safely prune the segment cost related to <span class="math inline">\(\tau\)</span>, as <span class="math inline">\(\tau\)</span> will never be the optimal changepoint location up to any time <span class="math inline">\(T &gt; t\)</span> in the future. On the basis of this information, your task is to write the PELT algorithm. You can do this by changing the Optimal Partitioning algorithm, adding an additional step to reflect the PELT pruning.</p></li>
-<li><p>In BS, one of the issues that may arise, is an incorrect segmentation. WBS, <span class="citation" data-cites="Fryzlewicz:2014">Fryzlewicz (<a href="references.html#ref-Fryzlewicz:2014" role="doc-biblioref">2014</a>)</span>, is a multiple changepoints procedures that improve on the BS changepoint estimation via computing the initial segmentation cost of BS multiple times over <span class="math inline">\(M + 1\)</span> random subsets of the sequence, <span class="math inline">\(y_{s_1:t_1}, \dots, y_{s_M:t_M}, y_{1:n}\)</span>, picking the best subset according to what achieves the smallest segmentation cost and reiterating the procedure over that sample accordingly. The idea behind WBS lies in the fact that a favourable subset of the data <span class="math inline">\(y_{s_m:t_m}\)</span> could be drawn which contains a true change sufficiently separated from both sides <span class="math inline">\(s_m, t_m\)</span> of the sequence. By the inclusion of the <span class="math inline">\(y_{1:n}\)</span> entire sequence amongst the subsets, it is guaranteed that WBS will do no worse than the simple BS algorithm.</p></li>
-</ol>
+<section id="exercises" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.4</span> Exercises</h2>
+<section id="workshop-3" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="workshop-3"><span class="header-section-number">3.4.1</span> Workshop 3</h3>
 </section>
-<section id="lab-3" class="level3" data-number="3.5.2">
-<h3 data-number="3.5.2" class="anchored" data-anchor-id="lab-3"><span class="header-section-number">3.5.2</span> Lab 3</h3>
+<section id="lab-3" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="lab-3"><span class="header-section-number">3.4.2</span> Lab 3</h3>
 <ol type="1">
 <li><p>Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.<br>
 <strong>Tips:</strong></p>
@@ -725,14 +671,8 @@ Attaching package: 'zoo'</code></pre>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
-<div id="ref-Fryzlewicz:2014" class="csl-entry" role="listitem">
-Fryzlewicz, Piotr. 2014. <span>“<span class="nocase">Wild binary segmentation for multiple change-point detection</span>.”</span> <em>Annals of Statistics</em> 42: 2243–81.
-</div>
 <div id="ref-Jackson" class="csl-entry" role="listitem">
 Jackson, Brad, Jeffrey Scargle, D. Barnes, S. Arabhi, A. Alt, P. Gioumousis, E. Gwin, P. Sangtrakulcharoen, L. Tan, and Tun Tsai. 2005. <span>“An Algorithm for Optimal Partitioning of Data on an Interval.”</span> <em>Signal Processing Letters, IEEE</em> 12 (March): 105–8. <a href="https://doi.org/10.1109/LSP.2001.838216">https://doi.org/10.1109/LSP.2001.838216</a>.
-</div>
-<div id="ref-Killick" class="csl-entry" role="listitem">
-Killick, R., P. Fearnhead, and I. A. Eckley. 2012. <span>“Optimal Detection of Changepoints with a Linear Computational Cost.”</span> <em>Journal of the American Statistical Association</em> 107 (500): 1590–98.
 </div>
 </div>
 </section>
@@ -1133,8 +1073,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./references.html" class="pagination-link" aria-label="References">
-        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./4_algos_and_penalties.html" class="pagination-link" aria-label="PELT, WBS and Penalty choices">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PELT, WBS and Penalty choices</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

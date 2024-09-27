@@ -262,9 +262,11 @@ window.Quarto = {
   <li><a href="#change-in-slope" id="toc-change-in-slope" class="nav-link" data-scroll-target="#change-in-slope"><span class="header-section-number">2.3.2</span> Change-in-slope</a></li>
   <li><a href="#revisiting-our-simpsons-data-again" id="toc-revisiting-our-simpsons-data-again" class="nav-link" data-scroll-target="#revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</a></li>
   </ul></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.4</span> Exercises</a></li>
-  <li><a href="#workshop-2" id="toc-workshop-2" class="nav-link" data-scroll-target="#workshop-2"><span class="header-section-number">2.5</span> Workshop 2</a></li>
-  <li><a href="#lab-2" id="toc-lab-2" class="nav-link" data-scroll-target="#lab-2"><span class="header-section-number">2.6</span> Lab 2</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">2.4</span> Exercises</a>
+  <ul class="collapse">
+  <li><a href="#workshop-2" id="toc-workshop-2" class="nav-link" data-scroll-target="#workshop-2"><span class="header-section-number">2.4.1</span> Workshop 2</a></li>
+  <li><a href="#lab-2" id="toc-lab-2" class="nav-link" data-scroll-target="#lab-2"><span class="header-section-number">2.4.2</span> Lab 2</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -393,32 +395,6 @@ f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} 
 LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right].
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../MATH337_changepoint_detection_materials/additional_hidden_scripts.R"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">0</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>cusum_results <span class="ot">&lt;-</span> <span class="fu">LR_var</span>(y)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for the CUSUM traces</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>cusum_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(y) <span class="sc">-</span> <span class="dv">1</span>),</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> y[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(y) <span class="sc">-</span> <span class="dv">1</span>)],</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">CUSUM =</span> cusum_results<span class="sc">$</span>LR</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Time series</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cusum_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: CUSUM trace</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cusum_df, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> CUSUM)) <span class="sc">+</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span> <span class="fu">ggarrange</span>( p1, p2, <span class="at">align =</span> <span class="st">"hv"</span>, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the plot</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -466,25 +442,25 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <p>To run the model, we can take advantage of the <code>not</code> package, which by default is a multiple changepoint algorithm (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.</p>
 <p>Before we proceed, we need to load, clean and standardize our data:</p>
 <div class="cell" data-warnings="false">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Simpsons ratings data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"extra/simpsons_episodes.csv"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes <span class="sc">|&gt;</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Episode =</span> id <span class="sc">+</span> <span class="dv">1</span>, <span class="at">Season =</span> <span class="fu">as.factor</span>(season), <span class="at">Rating =</span> tmdb_rating)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes[<span class="sc">-</span><span class="fu">nrow</span>(simpsons_episodes), ]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> simpsons_episodes<span class="sc">$</span>Rating</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Simpsons ratings data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"extra/simpsons_episodes.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes <span class="sc">|&gt;</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Episode =</span> id <span class="sc">+</span> <span class="dv">1</span>, <span class="at">Season =</span> <span class="fu">as.factor</span>(season), <span class="at">Rating =</span> tmdb_rating)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> simpsons_episodes[<span class="sc">-</span><span class="fu">nrow</span>(simpsons_episodes), ]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> simpsons_episodes<span class="sc">$</span>Rating</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can then run our model with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(not)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinContMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(not)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinContMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Our changepoint estimate: NA"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -499,13 +475,13 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \th
 \]</span></p>
 <p>We can do that by changing the model via the <code>contrast</code> argument:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Our changepoint estimate: 176"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -519,16 +495,15 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \th
 </section>
 <section id="exercises" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.4</span> Exercises</h2>
-</section>
-<section id="workshop-2" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="workshop-2"><span class="header-section-number">2.5</span> Workshop 2</h2>
+<section id="workshop-2" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="workshop-2"><span class="header-section-number">2.4.1</span> Workshop 2</h3>
 <ol type="1">
 <li><p>Given the asymptotic result on the distribution, for <span class="math inline">\(n = 100\)</span> and a false positive rate <span class="math inline">\(\alpha = 0.05\)</span>, calculate the threshold <span class="math inline">\(c\)</span>.</p></li>
 <li><p>Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g.&nbsp;<span class="math inline">\(LR_\tau = C_\tau^2/\sigma^2\)</span>.</p></li>
 </ol>
 </section>
-<section id="lab-2" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.6</span> Lab 2</h2>
+<section id="lab-2" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.4.2</span> Lab 2</h3>
 <ol type="1">
 <li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the treshold for the cusum statistics.</p></li>
 <li><p>Construct a function that, taking as input <span class="math inline">\(n\)</span>, a desired <span class="math inline">\(\alpha\)</span> , and a <code>replicates</code> parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week</p></li>
@@ -545,6 +520,7 @@ Baranowski, Rafal, Yining Chen, and Piotr Fryzlewicz. 2019. <span>“Narrowest-o
 Yao, Yi-Ching, and Richard A Davis. 1986. <span>“The Asymptotic Behavior of the Likelihood Ratio Statistic for Testing a Shift in Mean in a Sequence of Independent Normal Variates.”</span> <em>Sankhy<span>ā</span>: The Indian Journal of Statistics, Series A</em>, 339–53.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

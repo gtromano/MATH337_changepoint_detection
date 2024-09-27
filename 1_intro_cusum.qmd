@@ -490,7 +490,7 @@ p1 <- ggplot(simpsons_ratings, aes(x = Episode, y = Rating)) +
 p2 <- ggplot(cusum_df, aes(x = Episode, y = CUSUM)) +
   geom_line() +
   geom_vline(xintercept = cusum_results$tau.hat, color = "red", linetype = "dashed") +
-  labs(title = "CUSUM Trace",
+  labs(title = "CUSUM Statistics over time",
        x = "Episode",
        y = "CUSUM Statistic") +
   theme_minimal()
@@ -512,19 +512,25 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 ```{=html}
 <!-- -->
 ```
-a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. Suggestion: try to compute the variance of the process.
+  a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. Suggestion: try to compute the variance of the process.
 
-b.  \$ y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50),  t = 1, \dots, 100, \quad \epsilon{1:100} \sim N(0, 1) \$
+  b.  \$ y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50),  t = 1, \dots, 100, \quad \epsilon{1:100} \sim N(0, 1) \$
 
-c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
+  c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 
 ```{=html}
 <!-- -->
 ```
-2.  Compute the mean and variance of the absolute value of difference between the two pre-change and post-change sample means when there is no change, and show that when multiplied by the normalizing constant $\frac{1}{\sigma^2} \sqrt{\frac{\tau(n-\tau)}{n}}$ this follows a standard normal distribution.
+
+2.  In this exercise we will show that the difference $\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}$,  multiplied by the normalizing constant $1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}$, follows a standard normal distribution. **Hint:**
+  
+    a.    Compute the expected value and variance of the difference
+
+    b.    Conclude that if you standardise the sum, this follows a normal distribution.
+
 
 ### Lab 1
 
-1.  Code the CUSUM algorithm for an unknown change location, based on the pseudocode above.
+1.  Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.
 
-2.  Compute the CUSUM statistics for all changepoint locations in the Simpsons data, plot the result over time. Check it against the plot above.
+2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.

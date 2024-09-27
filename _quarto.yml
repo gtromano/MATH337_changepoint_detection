@@ -11,6 +11,7 @@ book:
     - 1_intro_cusum.qmd
     - 2_control.qmd
     - 3_multiple_changes.qmd
+    - 4_algos_and_penalties.qmd
     - references.qmd
 
 bibliography: references.bib

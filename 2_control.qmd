@@ -175,7 +175,7 @@ $$
 LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right].
 $$
 
-```{r}
+```{r echo=FALSE}
 source("../MATH337_changepoint_detection_materials/additional_hidden_scripts.R")
 set.seed(123)
 y <- c(rnorm(100,0, 5), rnorm(100, 0, 1))

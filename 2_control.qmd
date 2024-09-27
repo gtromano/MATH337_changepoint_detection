@@ -74,12 +74,26 @@ For this reason, calculating the distribution of this maximum ends up being a bi
 Fortunately, for controlling our CUSUM test, we can use the fact that $(C_1, ..., C_{n-1})/ \sigma$ are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. @yao1986asymptotic, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:
 
 $$
-\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_τ C_τ/σ - b_n) ≤ u\} = \exp\{-2π^{-1/2}\exp(-u)\},
+\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
 $$
 
 where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant.
 
-This asymptotic result suggests that the threshold for $C_τ^2/σ^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
+The right side of this equation is the CDF of a Gumbell distribution. As we learned from likelihood inference, to find the threshold $c_{\alpha}$ for a given false probability rate, we first set the right-hand side equal to $1 - \alpha$, and solve for $u_\alpha$. This gives:
+
+$$
+u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{2\pi^{-1/2}} \right).
+$$
+
+Then, we can find the critical value by looking into the left side of the equation:
+
+$$
+\tilde{c} = (a_n u_\alpha + b_n),
+$$
+
+To find the threshold, as $\max_\tau \frac{C_{\tau}^2 }{\sigma^2} > c$, we just have to square our value above, e.g. $c_\alpha = \tilde{c}^2$.
+
+This asymptotic result suggests that the threshold $c_\alpha$ for $C_τ^2/σ^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
 
 In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. This, as we will see, it's much better as it ends up having less conservative thresholds:
 

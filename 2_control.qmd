@@ -332,7 +332,7 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 1.  Show that the likelihood ratio test statistic for a change in mean in a Gaussian model is the CUSUM statistics squared, rescaled by the known variance, e.g. $LR_\tau = C_\tau^2/\sigma^2$.
 
-2.  Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable
+2.  Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.
 
 ### Lab 2
 

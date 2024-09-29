@@ -323,9 +323,11 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <h3 data-number="3.1.3" class="anchored" data-anchor-id="the-cost-of-a-segmentation"><span class="header-section-number">3.1.3</span> The cost of a segmentation</h3>
 <p>Well, so far we only worked with one scheme that tried to split a sequence in a hald</p>
 <p>But how can we work in case we have more than one change? Well, we need to introduce the cost of a segment.</p>
-<p>If we assume the data is independent and identically distributed within each segment, for segment parameter <span class="math inline">\(\theta\)</span>, then this cost can be obtained through: <span class="math display">\[
+<p>If we assume the data is independent and identically distributed within each segment, for segment parameter <span class="math inline">\(\theta\)</span>, then this cost can be obtained through:</p>
+<p><span class="math display">\[
     \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - \log(f(y_i, \theta))
-\]</span> with <span class="math inline">\(f(y, \theta)\)</span> being the likelihood for data point <span class="math inline">\(y\)</span> if the segment parameter is <span class="math inline">\(\theta\)</span>. Now, for example, in the gaussian case this cost is given by:</p>
+\]</span></p>
+<p>with <span class="math inline">\(f(y, \theta)\)</span> being the likelihood for data point <span class="math inline">\(y\)</span> if the segment parameter is <span class="math inline">\(\theta\)</span>. Now, for example, in the gaussian case this cost is given by:</p>
 <p><span class="math display">\[
 \mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
 \]</span></p>
@@ -635,7 +637,8 @@ Attaching package: 'zoo'</code></pre>
 </section>
 <section id="neuroblastoma-example" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="neuroblastoma-example"><span class="header-section-number">3.3.2</span> Neuroblastoma example</h3>
-<p>Running the two methods on the neuroblastoma example below, gives exactly the same two segmentations:</p>
+<p>Returning to the original example at the start of the module, the neuroblastoma dataset, we run both Binary Segmentation, and Optimal Partitioning.</p>
+<p>We report results in the plot below (blue for BS, green for OP). In this case, the algorithms return the same four changepoints:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -645,12 +648,28 @@ Attaching package: 'zoo'</code></pre>
 </div>
 </div>
 </div>
+<p>Some of you might come up with two (very interesting) questions that hopefully we will answer next week…</p>
+<ul>
+<li><p>If the methods perform roughly the same, which one do I choose?</p></li>
+<li><p>Why is the data on a different scale then that presented at the start of the chapter?</p></li>
+</ul>
 </section>
 </section>
 <section id="exercises" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.4</span> Exercises</h2>
 <section id="workshop-3" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="workshop-3"><span class="header-section-number">3.4.1</span> Workshop 3</h3>
+<ol type="1">
+<li>For the vector $ y_{1:4} = {0.5, -0.1, 12.1, 12.4}$, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
+</ol>
+<span class="math display">\[\begin{array}{c|cccc}
+l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
+\hline
+1 &amp; \mathcal{L}(y_{1:1}) &amp; 0.18 &amp; 94.59 &amp; 145.43 \\
+2 &amp;  &amp; 0.00 &amp; \mathcal{L}(y_{2:3}) &amp; 101.73 \\
+3 &amp;  &amp;  &amp; 0.00 &amp; \mathcal{L}(y_{3:4}) \\
+4 &amp;  &amp;  &amp;  &amp; 0.00 \\
+\end{array}\]</span>
 </section>
 <section id="lab-3" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored" data-anchor-id="lab-3"><span class="header-section-number">3.4.2</span> Lab 3</h3>
@@ -658,7 +677,7 @@ Attaching package: 'zoo'</code></pre>
 <li><p>Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.<br>
 <strong>Tips:</strong></p>
 <ol type="a">
-<li><p>You can pre-compute all the possible <span class="math inline">\(\mathcal{L(y_{l:u})}\)</span>, for <span class="math inline">\(u \geq l\)</span> to save computational time, and avoiding recomputing all costs.</p></li>
+<li><p>Again, you can pre-compute all the possible <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>, for <span class="math inline">\(u \geq l\)</span> to save computational time.</p></li>
 <li><p>Be very careful with indexing… R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0…</p></li>
 </ol></li>
 <li><p>Install the <code>changepoint</code> package. The example signal of Section 3.4, with the same penalty value of <span class="math inline">\(\beta = 2 * log(n)\)</span>, compare your implementation of OP, Binary Segmentation, and PELT. You will learn how to do so in the documentation, running <code>?cpt_mean</code>. You should make 300 replicates each of your experiment, and compare:</p>

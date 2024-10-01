@@ -317,11 +317,61 @@ window.Quarto = {
 <p><span class="math display">\[
         \mathcal{L}(y_{l + 1:t}) + \mathcal{L}(y_{t + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
 \]</span></p>
-<p>It is possible to <em>prune</em> without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating <span class="math inline">\(\kappa\)</span> to the penalty <span class="math inline">\(\beta\)</span>, gives us a computational trick to improve on the efficiency… The PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>. That is, if <span class="math display">\[\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_t\]</span> then we can safely prune the segment cost related to <span class="math inline">\(\tau\)</span>, as <span class="math inline">\(\tau\)</span> will never be the optimal changepoint location up to any time <span class="math inline">\(T &gt; t\)</span> in the future. On the basis of this information, your task is to write the PELT algorithm. You can do this by changing the Optimal Partitioning algorithm, adding an additional step to reflect the PELT pruning.</p>
+<p>It is possible to <em>prune</em> without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating <span class="math inline">\(\kappa\)</span> to the penalty <span class="math inline">\(\beta\)</span>, gives us a computational trick to improve on the efficiency… The PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>. That is, if <span class="math display">\[\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_t\]</span> then we can safely prune the segment cost related to <span class="math inline">\(\tau\)</span>, as <span class="math inline">\(\tau\)</span> will never be the optimal changepoint location up to any time <span class="math inline">\(T &gt; t\)</span> in the future.</p>
+<p>The intuition, is that, when <span class="math inline">\(\kappa = \beta\)</span>, our penalty, then we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a <span class="math inline">\(\mathcal{O}(n \log n)\)</span> computational complexity, without any drawbacks!</p>
+<p><img src="source_imgs/OPPELT.png" class="img-fluid"></p>
+<p>To reduce computational complexity, we can slightly modify the OP algorithm, to add the pruning condition above:</p>
+<table class="table">
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PELT</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block"><strong>INPUT:</strong> Time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span>, penalty <span class="math inline">\(\beta\)</span><br>
+<strong>OUTPUT:</strong> Optimal changepoint vector <span class="math inline">\(cp_n\)</span><br>
+<br>
+Initialize <span class="math inline">\(\mathcal{Q}_0 \leftarrow -\beta\)</span><br>
+Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span><br>
+Initialise <span class="math inline">\(R_1 = \{0\}\)</span><br>
+<br>
+<strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat\tau \leftarrow \text{arg}\min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp_t \leftarrow (cp_\hat\tau, \hat\tau)\)</span> // Append the changepoint to the list at the last optimal point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t}) + \beta \leq \mathcal{Q}_t \}\)</span> // prune the non-optimal changepoint locations<br>
+<br>
+<strong>RETURN</strong> <span class="math inline">\(cp_n\)</span></div>
+<hr>
+<p>As the segmentation retained is effectively the same, there are literally no disadvantages in using PELT over OP, if the cost function allows to do so. The problem is that this is not the case with some cost functions, such as the one for the change-in-slope. There, in fact, we have that the cost from the next change depends on the location of the previous one, violating the condition above.</p>
 </section>
 <section id="wbs-improving-on-binary-segmentation" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="wbs-improving-on-binary-segmentation"><span class="header-section-number">4.2.2</span> WBS: Improving on Binary Segmentation</h3>
-<p>In BS, one of the issues that may arise, is an incorrect segmentation. WBS, <span class="citation" data-cites="Fryzlewicz:2014">Fryzlewicz (<a href="references.html#ref-Fryzlewicz:2014" role="doc-biblioref">2014</a>)</span>, is a multiple changepoints procedures that improve on the BS changepoint estimation via computing the initial segmentation cost of BS multiple times over <span class="math inline">\(M + 1\)</span> random subsets of the sequence, <span class="math inline">\(y_{s_1:t_1}, \dots, y_{s_M:t_M}, y_{1:n}\)</span>, picking the best subset according to what achieves the smallest segmentation cost and reiterating the procedure over that sample accordingly. The idea behind WBS lies in the fact that a favourable subset of the data <span class="math inline">\(y_{s_m:t_m}\)</span> could be drawn which contains a true change sufficiently separated from both sides <span class="math inline">\(s_m, t_m\)</span> of the sequence. By the inclusion of the <span class="math inline">\(y_{1:n}\)</span> entire sequence amongst the subsets, it is guaranteed that WBS will do no worse than the simple BS algorithm.</p>
+<p>In BS, one of the issues that may arise, is an incorrect segmentation. WBS, <span class="citation" data-cites="Fryzlewicz:2014">Fryzlewicz (<a href="references.html#ref-Fryzlewicz:2014" role="doc-biblioref">2014</a>)</span>, is a multiple changepoints procedures that improve on the BS changepoint estimation via computing the initial segmentation cost of BS multiple times over <span class="math inline">\(M + 1\)</span> random subsets of the sequence, <span class="math inline">\(y_{s_1:t_1}, \dots, y_{s_M:t_M}, y_{1:n}\)</span>, picking the best subset according to what achieves the smallest segmentation cost and reiterating the procedure over that sample accordingly. The idea behind WBS lies in the fact that a favorable subset of the data <span class="math inline">\(y_{s_m:t_m}\)</span> could be drawn which contains a true change sufficiently separated from both sides <span class="math inline">\(s_m, t_m\)</span> of the sequence. By the inclusion of the <span class="math inline">\(y_{1:n}\)</span> entire sequence among the subsets, it is guaranteed that WBS will do no worse than the simple BS algorithm.</p>
+<p>We can formally provide a description of WBS as a recursive procedure again, just adding a couple of alterations to the original Binary Segmentation:</p>
+<hr>
+<div class="line-block"><span class="math inline">\(\text{WBS}(y_{s:t}, \beta)\)</span><br>
+</div>
+<hr>
+<div class="line-block"><strong>INPUT:</strong> Subseries <span class="math inline">\(y_{s:t} = \{y_s, \dots, y_t\}\)</span> of length <span class="math inline">\(t - s + 1\)</span>, penalty <span class="math inline">\(\beta\)</span><br>
+<strong>OUTPUT:</strong> Set of detected changepoints <span class="math inline">\(cp\)</span><br>
+<br>
+<strong>IF</strong> <span class="math inline">\(t - s \leq 1\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint in segments of length 1 or less<br>
+<br>
+Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] \}\)</span> tuples of subset indexes;<br>
+<span class="math inline">\(\mathcal{M} \leftarrow \mathcal{M} \cup \{[1, n]\}\)</span><br>
+<strong>COMPUTE</strong><br>
+<span class="math inline">\(\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]\)</span><br>
+<br>
+<strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
+<br>
+<strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>
+<hr>
+<p>One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of <span class="math inline">\(M\)</span> intervals: this can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.</p>
 </section>
 </section>
 <section id="penalty-selection" class="level2" data-number="4.3">

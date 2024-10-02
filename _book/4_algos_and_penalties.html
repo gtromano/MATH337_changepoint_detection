@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -230,10 +264,9 @@ window.Quarto = {
   <li><a href="#pelt-an-efficient-solution-to-op" id="toc-pelt-an-efficient-solution-to-op" class="nav-link" data-scroll-target="#pelt-an-efficient-solution-to-op"><span class="header-section-number">4.2.1</span> PELT: an efficient solution to OP</a></li>
   <li><a href="#wbs-improving-on-binary-segmentation" id="toc-wbs-improving-on-binary-segmentation" class="nav-link" data-scroll-target="#wbs-improving-on-binary-segmentation"><span class="header-section-number">4.2.2</span> WBS: Improving on Binary Segmentation</a></li>
   </ul></li>
-  <li><a href="#penalty-selection" id="toc-penalty-selection" class="nav-link" data-scroll-target="#penalty-selection"><span class="header-section-number">4.3</span> Penalty selection</a>
+  <li><a href="#penalty-selection" id="toc-penalty-selection" class="nav-link" data-scroll-target="#penalty-selection"><span class="header-section-number">4.3</span> Penalty Selection</a>
   <ul class="collapse">
-  <li><a href="#mean-absolute-deviation" id="toc-mean-absolute-deviation" class="nav-link" data-scroll-target="#mean-absolute-deviation"><span class="header-section-number">4.3.1</span> Mean absolute deviation</a></li>
-  <li><a href="#crops" id="toc-crops" class="nav-link" data-scroll-target="#crops"><span class="header-section-number">4.3.2</span> CROPS</a></li>
+  <li><a href="#example-in-r-comparing-penalties-with-pelt" id="toc-example-in-r-comparing-penalties-with-pelt" class="nav-link" data-scroll-target="#example-in-r-comparing-penalties-with-pelt"><span class="header-section-number">4.3.1</span> Example in R: Comparing Penalties with PELT</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -375,23 +408,71 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 </section>
 </section>
 <section id="penalty-selection" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="penalty-selection"><span class="header-section-number">4.3</span> Penalty selection</h2>
+<h2 data-number="4.3" class="anchored" data-anchor-id="penalty-selection"><span class="header-section-number">4.3</span> Penalty Selection</h2>
+<p>In previous sections, we applied the changepoint detection algorithms using a penalty term of (2 (n)). As we’ll see, this is the <strong>BIC penalty</strong> (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied…</p>
+<p>As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity. A lower penalty may lead to an over-segmentation, where too many changepoints are detected, while a higher penalty could under-segment the data, missing important changepoints.</p>
+<p>The three most common penalties, are:</p>
 <ul>
-<li>Mention how so far we have only used 2 log (n)</li>
-<li>This is called the AIC penalty, and is one of few different type of penalties we can have</li>
-<li>choosing the correct penalty is key to obtain a sensible segmentation</li>
-<li>Introduce for changepoint detection the BIC, AIC and MBIC penalties</li>
-<li>Make an example in R using the changepoint package, comparing the penalties with PELT</li>
-<li>once you have introduced the AIC, can you please show them that it is not consistent and asymptotically overestimates the number of changepoints.</li>
+<li><p><strong>AIC (Akaike Information Criterion):</strong> The AIC penalty takes value of (2p), where (p) is the number of parameters that one adds to the model. In multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in <span class="math inline">\(\beta = 2 \times 2 = 4\)</span> as our <span class="math inline">\(\beta\)</span>. While simple to apply, AIC is known to be <em>asymptotically inconsistent</em>: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.</p></li>
+<li><p><strong>BIC (Bayesian Information Criterion):</strong> The BIC penalty is given by (p (n)). In our approaches, this translates to: <span class="math inline">\(\beta = 2 \log(n)\)</span>, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.</p></li>
+<li><p><strong>MBIC (Modified BIC):</strong> The MBIC penalty, from <span class="citation" data-cites="zhang2007modified">Zhang and Siegmund (<a href="references.html#ref-zhang2007modified" role="doc-biblioref">2007</a>)</span>, is an extension of the BIC that includes an extra term to account for the spacing of the changepoints. We can approximate it, in practice, by using a value of <span class="math inline">\(\beta = 3 \log(n)\)</span> as our penalty. In practice, it is even more conservative then the BIC penalty.</p></li>
 </ul>
-<section id="mean-absolute-deviation" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="mean-absolute-deviation"><span class="header-section-number">4.3.1</span> Mean absolute deviation</h3>
-<ul>
-<li>Also mention how in some cases the penalty is not the only thing we need to estimate.</li>
-</ul>
-</section>
-<section id="crops" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="crops"><span class="header-section-number">4.3.2</span> CROPS</h3>
+<section id="example-in-r-comparing-penalties-with-pelt" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="example-in-r-comparing-penalties-with-pelt"><span class="header-section-number">4.3.1</span> Example in R: Comparing Penalties with PELT</h3>
+<p>Let’s now examine how different penalties impact the results of changepoint detection using the <code>changepoint</code> package in R. We’ll focus on the PELT method and compare the outcomes when using AIC, BIC, and MBIC penalties.</p>
+<p>As a data sequence, we will pick a different chromosome in our Neuroblastoma dataset. Can you tell, by eye, how many changes are in this sequence?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="4_algos_and_penalties_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can compare the three penalties using the changepoint library, as below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> one.dt<span class="sc">$</span>logratio</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(data)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply PELT with AIC, BIC, and MBIC penalties</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>cp_aic <span class="ot">&lt;-</span> <span class="fu">cpt.mean</span>(data, <span class="at">method =</span> <span class="st">"PELT"</span>, <span class="at">penalty =</span> <span class="st">"AIC"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cp_bic <span class="ot">&lt;-</span> <span class="fu">cpt.mean</span>(data, <span class="at">method =</span> <span class="st">"PELT"</span>, <span class="at">penalty =</span> <span class="st">"BIC"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>cp_mbic <span class="ot">&lt;-</span> <span class="fu">cpt.mean</span>(data, <span class="at">method =</span> <span class="st">"PELT"</span>, <span class="at">penalty =</span> <span class="st">"MBIC"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract changepoint locations for each penalty</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>cp_aic_points <span class="ot">&lt;-</span> <span class="fu">cpts</span>(cp_aic)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>cp_bic_points <span class="ot">&lt;-</span> <span class="fu">cpts</span>(cp_bic)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>cp_mbic_points <span class="ot">&lt;-</span> <span class="fu">cpts</span>(cp_mbic)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for plotting with ggplot2</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">index =</span> <span class="dv">1</span><span class="sc">:</span>n,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data frames for changepoints with corresponding method labels</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>cp_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">index =</span> cp_aic_points, <span class="at">method =</span> <span class="st">"AIC"</span>),</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">index =</span> cp_bic_points, <span class="at">method =</span> <span class="st">"BIC"</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">index =</span> cp_mbic_points, <span class="at">method =</span> <span class="st">"MBIC"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data, <span class="fu">aes</span>(<span class="at">x =</span> index, <span class="at">y =</span> data)) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>  <span class="co"># Plot the data line first</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> cp_df, <span class="fu">aes</span>(<span class="at">xintercept =</span> index, <span class="at">color =</span> method)) <span class="sc">+</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(method <span class="sc">~</span> .) <span class="sc">+</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PELT with Different Penalties: AIC, BIC, MBIC"</span>, <span class="at">x =</span> <span class="st">"Index"</span>, <span class="at">y =</span> <span class="st">"Data"</span>) <span class="sc">+</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="4_algos_and_penalties_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can see how from this example, the AIC likely overestimated the number of changepoints, while BIC and MBIC provided more conservative and reasonable segmentations. By eye, the MBIC seems to have done the better job!</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
@@ -400,6 +481,9 @@ Fryzlewicz, Piotr. 2014. <span>“<span class="nocase">Wild binary segmentation 
 </div>
 <div id="ref-Killick" class="csl-entry" role="listitem">
 Killick, R., P. Fearnhead, and I. A. Eckley. 2012. <span>“Optimal Detection of Changepoints with a Linear Computational Cost.”</span> <em>Journal of the American Statistical Association</em> 107 (500): 1590–98.
+</div>
+<div id="ref-zhang2007modified" class="csl-entry" role="listitem">
+Zhang, Nancy R, and David O Siegmund. 2007. <span>“A Modified Bayes Information Criterion with Applications to the Analysis of Comparative Genomic Hybridization Data.”</span> <em>Biometrics</em> 63 (1): 22–32.
 </div>
 </div>
 </section>

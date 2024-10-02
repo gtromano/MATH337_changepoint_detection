@@ -256,17 +256,78 @@ We can formally provide a description of WBS as a recursive procedure again, jus
 
 One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of $M$ intervals: this can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.
 
-## Penalty selection and tuning parameters
+## Penalty Selection
 
--   Mention how so far we have only used 2 log (n)
--   This is called the AIC penalty, and is one of few different type of penalties we can have
--   choosing the correct penalty is key to obtain a sensible segmentation
--   Introduce for changepoint detection the BIC, AIC and MBIC penalties
--   Make an example in R using the changepoint package, comparing the penalties with PELT
--   once you have introduced the AIC, can you please show them that it is not consistent and asymptotically overestimates the number of changepoints.
+In previous sections, we applied the changepoint detection algorithms using a penalty term of \(2 \log(n)\). As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
 
-### Mean absolute deviation
+As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity. A lower penalty may lead to an over-segmentation, where too many changepoints are detected, while a higher penalty could under-segment the data, missing important changepoints.
 
--   Also mention how in some cases the penalty is not the only thing we need to estimate.
+The three most common penalties, are:
 
-### CROPS
+- **AIC (Akaike Information Criterion):** The AIC penalty takes value of \(2p\), where \(p\) is the number of parameters that one adds to the model. In  multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in $\beta = 2 \times 2 = 4$ as our $\beta$. While simple to apply, AIC is known to be *asymptotically inconsistent*: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.
+  
+- **BIC (Bayesian Information Criterion):** The BIC penalty is given by \(p \log(n)\). In our approaches, this translates to: $\beta = 2 \log(n)$, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.
+
+- **MBIC (Modified BIC):** The MBIC penalty, from @zhang2007modified, is an extension of the BIC that includes an extra term to account for the spacing of the changepoints. We can approximate it, in practice, by using a value of $\beta = 3 \log(n)$ as our penalty. In practice, it is even more conservative then the BIC penalty. 
+
+### Example in R: Comparing Penalties with PELT
+
+Let’s now examine how different penalties impact the results of changepoint detection using the `changepoint` package in R. We'll focus on the PELT method and compare the outcomes when using AIC, BIC, and MBIC penalties.
+
+As a data sequence, we will pick a different chromosome in our Neuroblastoma dataset. Can you tell, by eye, how many changes are in this sequence?
+
+```{r echo=FALSE, results=TRUE}
+data(neuroblastoma, package="neuroblastoma")
+
+nb.dt <- neuroblastoma[["profiles"]]
+one.dt <- nb.dt |> filter(profile.id==4, chromosome == 5) |>
+  mutate(logratio = logratio / mad(logratio))
+
+ggplot() +
+  scale_y_continuous("logratio (noisy copy number measurement)") +
+  geom_point(aes(position / 1e6, logratio),
+             data = one.dt) +
+  ggtitle("Chromosome 5") +
+  theme_minimal()
+```
+
+
+We can compare the three penalties using the changepoint library, as below: 
+
+```{r}
+data <- one.dt$logratio
+n <- length(data)
+
+# Apply PELT with AIC, BIC, and MBIC penalties
+cp_aic <- cpt.mean(data, method = "PELT", penalty = "AIC")
+cp_bic <- cpt.mean(data, method = "PELT", penalty = "BIC")
+cp_mbic <- cpt.mean(data, method = "PELT", penalty = "MBIC")
+
+# Extract changepoint locations for each penalty
+cp_aic_points <- cpts(cp_aic)
+cp_bic_points <- cpts(cp_bic)
+cp_mbic_points <- cpts(cp_mbic)
+
+# Create a data frame for plotting with ggplot2
+plot_data <- data.frame(
+  index = 1:n,
+  data = data)
+
+# Create data frames for changepoints with corresponding method labels
+cp_df <- bind_rows(
+  data.frame(index = cp_aic_points, method = "AIC"),
+  data.frame(index = cp_bic_points, method = "BIC"),
+  data.frame(index = cp_mbic_points, method = "MBIC")
+)
+
+ggplot(plot_data, aes(x = index, y = data)) +
+  geom_point() +  # Plot the data line first
+  geom_vline(data = cp_df, aes(xintercept = index, color = method)) +
+  facet_grid(method ~ .) +
+  labs(title = "PELT with Different Penalties: AIC, BIC, MBIC", x = "Index", y = "Data") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+We can see how from this example, the AIC likely overestimated the number of changepoints, while BIC and MBIC provided more conservative and reasonable segmentations. By eye, the MBIC seems to have done the better job!
+

@@ -259,6 +259,15 @@ One of the major drawbacks of WBS is that in scenarios where we find frequent ch
 
 ## Penalty selection
 
+- Mention how so far we have only used 2 log (n)
+- This is called the AIC penalty, and is one of few different type of penalties we can have
+- choosing the correct penalty is key to obtain a sensible segmentation
+- Introduce for changepoint detection the BIC, AIC and MBIC penalties
+- Make an example in R using the changepoint package, comparing the penalties with PELT
+- once you have introduced the AIC, can you please show them that it is not consistent and asymptotically overestimates the number of changepoints.
+
 ### Mean absolute deviation
+
+- Also mention how in some cases the penalty is not the only thing we need to estimate. 
 
 ### CROPS

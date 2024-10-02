@@ -414,7 +414,7 @@
     "href": "4_algos_and_penalties.html#penalty-selection",
     "title": "4  PELT, WBS and Penalty choices",
     "section": "4.3 Penalty selection",
-    "text": "4.3 Penalty selection\n\n4.3.1 Mean absolute deviation\n\n\n4.3.2 CROPS\n\n\n\n\nFryzlewicz, Piotr. 2014. “Wild binary segmentation for multiple change-point detection.” Annals of Statistics 42: 2243–81.\n\n\nKillick, R., P. Fearnhead, and I. A. Eckley. 2012. “Optimal Detection of Changepoints with a Linear Computational Cost.” Journal of the American Statistical Association 107 (500): 1590–98.",
+    "text": "4.3 Penalty selection\n\nMention how so far we have only used 2 log (n)\nThis is called the AIC penalty, and is one of few different type of penalties we can have\nchoosing the correct penalty is key to obtain a sensible segmentation\nIntroduce for changepoint detection the BIC, AIC and MBIC penalties\nMake an example in R using the changepoint package, comparing the penalties with PELT\nonce you have introduced the AIC, can you please show them that it is not consistent and asymptotically overestimates the number of changepoints.\n\n\n4.3.1 Mean absolute deviation\n\nAlso mention how in some cases the penalty is not the only thing we need to estimate.\n\n\n\n4.3.2 CROPS\n\n\n\n\nFryzlewicz, Piotr. 2014. “Wild binary segmentation for multiple change-point detection.” Annals of Statistics 42: 2243–81.\n\n\nKillick, R., P. Fearnhead, and I. A. Eckley. 2012. “Optimal Detection of Changepoints with a Linear Computational Cost.” Journal of the American Statistical Association 107 (500): 1590–98.",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>PELT, WBS and Penalty choices</span>"
     ]

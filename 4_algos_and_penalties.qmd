@@ -260,7 +260,10 @@ One of the major drawbacks of WBS is that in scenarios where we find frequent ch
 
 In previous sections, we applied the changepoint detection algorithms using a penalty term of \(2 \log(n)\). As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
 
-As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity. A lower penalty may lead to an over-segmentation, where too many changepoints are detected, while a higher penalty could under-segment the data, missing important changepoints.
+As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity:
+
+-   A lower penalty may lead to an over-segmentation, where too many changepoints are detected
+-   A higher penalty could under-segment the data, missing important changepoints.
 
 The three most common penalties, are:
 
@@ -330,4 +333,55 @@ ggplot(plot_data, aes(x = index, y = data)) +
 ```
 
 We can see how from this example, the AIC likely overestimated the number of changepoints, while BIC and MBIC provided more conservative and reasonable segmentations. By eye, the MBIC seems to have done the better job!
+
+### CROPS: running with multiple penalties
+
+
+Hopefully, the example above should have highlighted that finding the right penalty can be tricky. One solution, would be to run our algorithm for a range of penalties, and then choose a posteriori what the best segmentation is. 
+The CROPS algorithm, from @haynes2017computationally, is based on this idea. CROPS works alongside an existing penalised changepoint detection algorithm, like PELT or WBS: as long as the changepoint method can map a penalty value to a (decreasing) segmentation cost, CROPS could be applied.
+
+CROPS takes as input a range of penalties $[\beta_{\text{min}}, \beta_{\text{max}}]$, and explores all possible segmentations within those two penalties in a clever way, to fit the changepoint model as least as we can. As CROPS calculates changepoints for a particular penalty, it keeps track of the range of penalty values where that specific set of changepoints is valid. This works because, for certain ranges of penalties, the set of changepoints stays the same.
+
+E.g. for penalties between $\beta_1$ and $\beta_2$, the changepoints might remain the same, so CROPS only needs to run the changepoint detection once for that range.
+
+We won't introduce the method formally, but in an intuitive way, CROPS works in this way:
+
+1. It starts calculates changepoints at two extreme penalties: $\beta_{\text{min}}$ and $\beta_{\text{max}}$. If those are the same, it quits.
+
+2. Alternatively, as a binary search, CROPS selects a mid-point penalty $\beta_\text{int}$ based on whether the segmentation change, and runs the changepoint detection again on $[\beta_{\text{min}}, \beta_{\text{int}}]$, and $[\beta_{\text{int}}, \beta_{\text{max}}]$, refining its search for the next penalty.
+
+3. It repeats 2 iteratively until no further segmentations are found.
+
+
+We can use CROPS to generate an **elbow plot** for selecting the appropriate penalty value in changepoint detection. In Data Science and Machine Learning, elbow plots are graphs that helps us choosing the appropiate value of a parameter, balancing between model complexity (in our case number of changepoints) and goodness of fit (how tightly our model fits the data).
+
+In case of CROPS, we can plot the penalty value from our range, against the number of changepoints. The curve typically shows a steep drop at first, as many changepoints are detected with low penalties, then flattens as the penalty increases and fewer changepoints are added. The **elbow** (hence its name) is the point where the rate of change in the number of changepoints significantly slows down:
+
+```{r, echo=FALSE, results=FALSE}
+set.seed(123)
+aaa <- c(rnorm(100, 10), rnorm(131, 1), rnorm(144, .5), rnorm(135,2))
+out <- cpt.mean(aaa, method = "PELT", penalty  = "CROPS", pen.value = c(2, 20))
+
+plot(out,diagnostic=TRUE)
+text(x = 5, y = 5.2, labels = "X")
+```
+
+The elbow is a point of balance between model fit and complexity. As a rule of thumb, a good choices of a penalty reside in picking either the penalty that generates the segmentation at the elbow, or the one at the point immediately prior.
+
+Going back to our neuroblastoma example above. We run CROPS for penalties $[2, 40]$, and we then generate the elbow plot:
+
+```{r, results=FALSE}
+out <- cpt.mean(data, method = "PELT", penalty  = "CROPS", pen.value = c(2, 40))
+
+plot(out,diagnostic=TRUE)
+abline(v=4)
+```
+We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!
+
+## Exercises
+
+### Workshop 4
+
+### Lab 4
+
 

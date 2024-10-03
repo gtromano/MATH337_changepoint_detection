@@ -267,6 +267,12 @@ window.Quarto = {
   <li><a href="#penalty-selection" id="toc-penalty-selection" class="nav-link" data-scroll-target="#penalty-selection"><span class="header-section-number">4.3</span> Penalty Selection</a>
   <ul class="collapse">
   <li><a href="#example-in-r-comparing-penalties-with-pelt" id="toc-example-in-r-comparing-penalties-with-pelt" class="nav-link" data-scroll-target="#example-in-r-comparing-penalties-with-pelt"><span class="header-section-number">4.3.1</span> Example in R: Comparing Penalties with PELT</a></li>
+  <li><a href="#crops-running-with-multiple-penalties" id="toc-crops-running-with-multiple-penalties" class="nav-link" data-scroll-target="#crops-running-with-multiple-penalties"><span class="header-section-number">4.3.2</span> CROPS: running with multiple penalties</a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">4.4</span> Exercises</a>
+  <ul class="collapse">
+  <li><a href="#workshop-4" id="toc-workshop-4" class="nav-link" data-scroll-target="#workshop-4"><span class="header-section-number">4.4.1</span> Workshop 4</a></li>
+  <li><a href="#lab-4" id="toc-lab-4" class="nav-link" data-scroll-target="#lab-4"><span class="header-section-number">4.4.2</span> Lab 4</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -410,7 +416,11 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 <section id="penalty-selection" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="penalty-selection"><span class="header-section-number">4.3</span> Penalty Selection</h2>
 <p>In previous sections, we applied the changepoint detection algorithms using a penalty term of (2 (n)). As we’ll see, this is the <strong>BIC penalty</strong> (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied…</p>
-<p>As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity. A lower penalty may lead to an over-segmentation, where too many changepoints are detected, while a higher penalty could under-segment the data, missing important changepoints.</p>
+<p>As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity:</p>
+<ul>
+<li>A lower penalty may lead to an over-segmentation, where too many changepoints are detected</li>
+<li>A higher penalty could under-segment the data, missing important changepoints.</li>
+</ul>
 <p>The three most common penalties, are:</p>
 <ul>
 <li><p><strong>AIC (Akaike Information Criterion):</strong> The AIC penalty takes value of (2p), where (p) is the number of parameters that one adds to the model. In multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in <span class="math inline">\(\beta = 2 \times 2 = 4\)</span> as our <span class="math inline">\(\beta\)</span>. While simple to apply, AIC is known to be <em>asymptotically inconsistent</em>: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.</p></li>
@@ -473,11 +483,62 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 </div>
 </div>
 <p>We can see how from this example, the AIC likely overestimated the number of changepoints, while BIC and MBIC provided more conservative and reasonable segmentations. By eye, the MBIC seems to have done the better job!</p>
+</section>
+<section id="crops-running-with-multiple-penalties" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="crops-running-with-multiple-penalties"><span class="header-section-number">4.3.2</span> CROPS: running with multiple penalties</h3>
+<p>Hopefully, the example above should have highlighted that finding the right penalty can be tricky. One solution, would be to run our algorithm for a range of penalties, and then choose a posteriori what the best segmentation is. The CROPS algorithm, from <span class="citation" data-cites="haynes2017computationally">Haynes, Eckley, and Fearnhead (<a href="references.html#ref-haynes2017computationally" role="doc-biblioref">2017</a>)</span>, is based on this idea. CROPS works alongside an existing penalised changepoint detection algorithm, like PELT or WBS: as long as the changepoint method can map a penalty value to a (decreasing) segmentation cost, CROPS could be applied.</p>
+<p>CROPS takes as input a range of penalties <span class="math inline">\([\beta_{\text{min}}, \beta_{\text{max}}]\)</span>, and explores all possible segmentations within those two penalties in a clever way, to fit the changepoint model as least as we can. As CROPS calculates changepoints for a particular penalty, it keeps track of the range of penalty values where that specific set of changepoints is valid. This works because, for certain ranges of penalties, the set of changepoints stays the same.</p>
+<p>E.g. for penalties between <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span>, the changepoints might remain the same, so CROPS only needs to run the changepoint detection once for that range.</p>
+<p>We won’t introduce the method formally, but in an intuitive way, CROPS works in this way:</p>
+<ol type="1">
+<li><p>It starts calculates changepoints at two extreme penalties: <span class="math inline">\(\beta_{\text{min}}\)</span> and <span class="math inline">\(\beta_{\text{max}}\)</span>. If those are the same, it quits.</p></li>
+<li><p>Alternatively, as a binary search, CROPS selects a mid-point penalty <span class="math inline">\(\beta_\text{int}\)</span> based on whether the segmentation change, and runs the changepoint detection again on <span class="math inline">\([\beta_{\text{min}}, \beta_{\text{int}}]\)</span>, and <span class="math inline">\([\beta_{\text{int}}, \beta_{\text{max}}]\)</span>, refining its search for the next penalty.</p></li>
+<li><p>It repeats 2 iteratively until no further segmentations are found.</p></li>
+</ol>
+<p>We can use CROPS to generate an <strong>elbow plot</strong> for selecting the appropriate penalty value in changepoint detection. In Data Science and Machine Learning, elbow plots are graphs that helps us choosing the appropiate value of a parameter, balancing between model complexity (in our case number of changepoints) and goodness of fit (how tightly our model fits the data).</p>
+<p>In case of CROPS, we can plot the penalty value from our range, against the number of changepoints. The curve typically shows a steep drop at first, as many changepoints are detected with low penalties, then flattens as the penalty increases and fewer changepoints are added. The <strong>elbow</strong> (hence its name) is the point where the rate of change in the number of changepoints significantly slows down:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="4_algos_and_penalties_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The elbow is a point of balance between model fit and complexity. As a rule of thumb, a good choices of a penalty reside in picking either the penalty that generates the segmentation at the elbow, or the one at the point immediately prior.</p>
+<p>Going back to our neuroblastoma example above. We run CROPS for penalties <span class="math inline">\([2, 40]\)</span>, and we then generate the elbow plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.mean</span>(data, <span class="at">method =</span> <span class="st">"PELT"</span>, <span class="at">penalty  =</span> <span class="st">"CROPS"</span>, <span class="at">pen.value =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">40</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out,<span class="at">diagnostic=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="4_algos_and_penalties_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!</p>
+</section>
+</section>
+<section id="exercises" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">4.4</span> Exercises</h2>
+<section id="workshop-4" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="workshop-4"><span class="header-section-number">4.4.1</span> Workshop 4</h3>
+</section>
+<section id="lab-4" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="lab-4"><span class="header-section-number">4.4.2</span> Lab 4</h3>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Fryzlewicz:2014" class="csl-entry" role="listitem">
 Fryzlewicz, Piotr. 2014. <span>“<span class="nocase">Wild binary segmentation for multiple change-point detection</span>.”</span> <em>Annals of Statistics</em> 42: 2243–81.
+</div>
+<div id="ref-haynes2017computationally" class="csl-entry" role="listitem">
+Haynes, Kaylea, Idris A Eckley, and Paul Fearnhead. 2017. <span>“Computationally Efficient Changepoint Detection for a Range of Penalties.”</span> <em>Journal of Computational and Graphical Statistics</em> 26 (1): 134–43.
 </div>
 <div id="ref-Killick" class="csl-entry" role="listitem">
 Killick, R., P. Fearnhead, and I. A. Eckley. 2012. <span>“Optimal Detection of Changepoints with a Linear Computational Cost.”</span> <em>Journal of the American Statistical Association</em> 107 (500): 1590–98.

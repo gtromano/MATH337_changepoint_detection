@@ -254,7 +254,9 @@ We can formally provide a description of WBS as a recursive procedure again, jus
 
 ------------------------------------------------------------------------
 
-One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of $M$ intervals: this can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.
+
+One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of $M$ intervals (usually of the order of thousands of intervals).
+This can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.
 
 ## Penalty Selection
 

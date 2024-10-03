@@ -410,7 +410,7 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 <br>
 <strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>
 <hr>
-<p>One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of <span class="math inline">\(M\)</span> intervals: this can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.</p>
+<p>One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of <span class="math inline">\(M\)</span> intervals (usually of the order of thousands of intervals). This can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.</p>
 </section>
 </section>
 <section id="penalty-selection" class="level2" data-number="4.3">

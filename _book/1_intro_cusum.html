@@ -147,23 +147,7 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="./">MATH337: Changepoint Detection</a> 
         <div class="sidebar-tools-main">
-    <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
-            Download PDF
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
-            Download ePub
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="./MATH337--Changepoint-Detection.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -433,7 +417,6 @@ y_t = \begin{cases}
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</h3>
 <p>One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science—but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: <strong>At which episode did “The Simpsons” start to decline?</strong></p>
 <p>It’s almost common knowledge that “The Simpsons,” the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. But pinpointing exactly <em>when</em> this drop occurred is the real challenge. Fortunately, there’s a branch of statistics that was practically built to answer questions like these!</p>
-<p><img src="source_imgs/simpsons-barney.gif" class="img-fluid" width="435"></p>
 <p>I have downloaded a dataset <span class="citation" data-cites="bown_simpsons_dataset">(<a href="references.html#ref-bown_simpsons_dataset" role="doc-biblioref">Bown 2023</a>)</span> containing ratings for every episode of “The Simpsons” up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -568,13 +551,11 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <ol type="1">
 <li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
 </ol>
-<!-- -->
 <ol type="a">
 <li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. Suggestion: try to compute the variance of the process.</p></li>
-<li><p>$ y_t = t + 3* (t &gt; 50), &nbsp;t = 1, , 100, N(0, 1) $</p></li>
+<li><p><span class="math inline">\(y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \&gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 </ol>
-<!-- -->
 <ol start="2" type="1">
 <li><p>In this exercise we will show that the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span>, multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
 <ol type="a">

@@ -169,15 +169,15 @@ For instance, to give few examples:
 
 1.  **ECG**: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.
 
-    ![Electrocardiograms (heart monitoring), Fotoohinasab et al, Asilomar conference 2020.](source_imgs/intro-ecg)
+    ![Electrocardiograms (heart monitoring), Fotoohinasab et al, Asilomar conference 2020.](source_imgs/intro-ecg.png)
 
 2.  **Cancer Diagnosis**: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma. This is a typical example of an offline analysis.
 
-    ![DNA copy number data, breakpoints associated with aggressive cancer, Hocking et al, Bioinformatics 2014.](source_imgs/intro-breakpoints)
+    ![DNA copy number data, breakpoints associated with aggressive cancer, Hocking et al, Bioinformatics 2014.](source_imgs/intro-breakpoints.png)
 
 3.  **Engineering Monitoring**: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures: this is often analysed in real-time on with online methods, with the aim of detecting an issue as quickly as possible.
 
-    ![Temperature data from a CPU of an AWS server. Source Romano et al., (2023)](source_imgs/CPU-monitoring)
+    ![Temperature data from a CPU of an AWS server. Source Romano et al., (2023)](source_imgs/CPU-monitoring.png)
 
 In this module, we will focus exclusively on **offline** changepoint detection, where we assume that all the data is available for analysis from the start.
 
@@ -260,8 +260,6 @@ ggplot(data_trend, aes(x = x, y = y)) +
 One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science---but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: **At which episode did "The Simpsons" start to decline?**
 
 It's almost common knowledge that "The Simpsons," the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. But pinpointing exactly *when* this drop occurred is the real challenge. Fortunately, there's a branch of statistics that was practically built to answer questions like these!
-
-![](source_imgs/simpsons-barney.gif){width="435"}
 
 I have downloaded a dataset [@bown_simpsons_dataset] containing ratings for every episode of "The Simpsons" up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.
 
@@ -509,18 +507,13 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 
 1.  Determine if the following processes are stationary, piecewise stationary, or non-stationary:
 
-```{=html}
-<!-- -->
-```
+
   a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. Suggestion: try to compute the variance of the process.
 
-  b.  \$ y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50),  t = 1, \dots, 100, \quad \epsilon{1:100} \sim N(0, 1) \$
+  b.  $y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 
   c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 
-```{=html}
-<!-- -->
-```
 
 2.  In this exercise we will show that the difference $\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}$,  multiplied by the normalizing constant $1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}$, follows a standard normal distribution. **Hint:**
   

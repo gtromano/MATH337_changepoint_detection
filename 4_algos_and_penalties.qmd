@@ -212,7 +212,7 @@ To reduce computational complexity, we can slightly modify the OP algorithm, to 
 | **FOR** $t = 1, \dots, n$
 |      $\mathcal{Q}_t \leftarrow \min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $\hat\tau \leftarrow \text{arg}\min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
-|      $cp_t \leftarrow (cp_\hat\tau, \hat\tau)$ // Append the changepoint to the list at the last optimal point
+|      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the list at the last optimal point
 |      $R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t}) + \beta \leq \mathcal{Q}_t \}$ // prune the non-optimal changepoint locations
 | 
 | **RETURN** $cp_n$
@@ -264,7 +264,7 @@ One of the major drawbacks of WBS is that in scenarios where we find frequent ch
 
 ## Penalty Selection
 
-In previous sections, we applied the changepoint detection algorithms using a penalty term of (2 \log(n)). As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
+In previous sections, we applied the changepoint detection algorithms using a penalty term of $2 \log(n)$. As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
 
 As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity:
 
@@ -273,9 +273,9 @@ As in the single change, some penalty may be more conservative then others! Choo
 
 The three most common penalties, are:
 
--   **AIC (Akaike Information Criterion):** The AIC penalty takes value of (2p), where (p) is the number of parameters that one adds to the model. In multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in $\beta = 2 \times 2 = 4$ as our $\beta$. While simple to apply, AIC is known to be *asymptotically inconsistent*: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.
+-   **AIC (Akaike Information Criterion):** The AIC penalty takes value of $2p$, where $p$ is the number of parameters that one adds to the model. In multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in $\beta = 2 \times 2 = 4$ as our $\beta$. While simple to apply, AIC is known to be *asymptotically inconsistent*: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.
 
--   **BIC (Bayesian Information Criterion):** The BIC penalty is given by (p \log(n)). In our approaches, this translates to: $\beta = 2 \log(n)$, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.
+-   **BIC (Bayesian Information Criterion):** The BIC penalty is given by $p \log(n)$. In our approaches, this translates to: $\beta = 2 \log(n)$, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.
 
 -   **MBIC (Modified BIC):** The MBIC penalty, from @zhang2007modified, is an extension of the BIC that includes an extra term to account for the spacing of the changepoints. We can approximate it, in practice, by using a value of $\beta = 3 \log(n)$ as our penalty. In practice, it is even more conservative then the BIC penalty.
 

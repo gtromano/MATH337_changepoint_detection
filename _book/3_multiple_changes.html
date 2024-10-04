@@ -147,23 +147,7 @@ window.Quarto = {
     <div class="sidebar-title mb-0 py-0">
       <a href="./">MATH337: Changepoint Detection</a> 
         <div class="sidebar-tools-main">
-    <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
-      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
-            Download PDF
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item sidebar-tools-main-item" href="./MATH337--Changepoint-Detection.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
-            Download ePub
-            </a>
-          </li>
-      </ul>
-    </div>
+    <a href="./MATH337--Changepoint-Detection.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -603,7 +587,7 @@ Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span><br>
 <strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat\tau \leftarrow \text{arg}\min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp_t \leftarrow (cp_\hat\tau, \hat\tau)\)</span> // Append the changepoint to the list at the last optimal point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)\)</span> // Append the changepoint to the list at the last optimal point<br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(cp_n\)</span></div>
 <hr>
@@ -662,14 +646,16 @@ Attaching package: 'zoo'</code></pre>
 <ol type="1">
 <li>For the vector $ y_{1:4} = {0.5, -0.1, 12.1, 12.4}$, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
 </ol>
-<span class="math display">\[\begin{array}{c|cccc}
+<p><span class="math display">\[
+\begin{array}{c|cccc}
 l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 \hline
 1 &amp; \mathcal{L}(y_{1:1}) &amp; 0.18 &amp; 94.59 &amp; 145.43 \\
 2 &amp;  &amp; 0.00 &amp; \mathcal{L}(y_{2:3}) &amp; 101.73 \\
 3 &amp;  &amp;  &amp; 0.00 &amp; \mathcal{L}(y_{3:4}) \\
 4 &amp;  &amp;  &amp;  &amp; 0.00 \\
-\end{array}\]</span>
+\end{array}
+\]</span></p>
 </section>
 <section id="lab-3" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored" data-anchor-id="lab-3"><span class="header-section-number">3.4.2</span> Lab 3</h3>

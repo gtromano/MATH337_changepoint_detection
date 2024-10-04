@@ -136,11 +136,11 @@ Well, so far we only worked with one scheme that tried to split a sequence in a 
 
 But how can we work in case we have more than one change? Well, we need to introduce the cost of a segment.
 
-If we assume the data is independent and identically distributed within each segment, for segment parameter $\theta$, then this cost can be obtained through: 
+If we assume the data is independent and identically distributed within each segment, for segment parameter $\theta$, then this cost can be obtained through:
 
 $$
     \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - \log(f(y_i, \theta))
-$$ 
+$$
 
 with $f(y, \theta)$ being the likelihood for data point $y$ if the segment parameter is $\theta$. Now, for example, in the gaussian case this cost is given by:
 
@@ -502,7 +502,7 @@ A formal description of the algorithm can be found below:
 | **FOR** $t = 1, \dots, n$
 |      $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $\hat\tau \leftarrow \text{arg}\min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
-|      $cp_t \leftarrow (cp_\hat\tau, \hat\tau)$ // Append the changepoint to the list at the last optimal point
+|      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the list at the last optimal point
 | 
 | **RETURN** $cp_n$
 
@@ -578,8 +578,9 @@ Some of you might come up with two (very interesting) questions that hopefully w
 
 ### Workshop 3
 
-1.    For the vector $ y_{1:4} = \{0.5, -0.1, 12.1, 12.4\}$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
+1.  For the vector \$ y\_{1:4} = {0.5, -0.1, 12.1, 12.4}\$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
 
+$$
 \begin{array}{c|cccc}
 l \backslash u & 1 & 2 & 3 & 4 \\
 \hline
@@ -588,7 +589,7 @@ l \backslash u & 1 & 2 & 3 & 4 \\
 3 &  &  & 0.00 & \mathcal{L}(y_{3:4}) \\
 4 &  &  &  & 0.00 \\
 \end{array}
-
+$$
 
 ### Lab 3
 

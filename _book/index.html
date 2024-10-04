@@ -152,6 +152,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./4_algos_and_penalties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PELT, WBS and Penalty choices</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -166,7 +172,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
+  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a>
+  <ul class="collapse">
+  <li><a href="#source-files-and-attributions" id="toc-source-files-and-attributions" class="nav-link" data-scroll-target="#source-files-and-attributions">Source files, and attributions</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -206,20 +215,34 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="preface" class="level1 unnumbered">
 <h1 class="unnumbered">Preface</h1>
-<p>These are the notes for MATH337 Changepoint Detection. They were written by Gaetano Romano.</p>
+<p>These are the notes for <strong>MATH337 Changepoint Detection</strong>. They were written by <a href="https://www.lancaster.ac.uk/~romano/">Gaetano Romano</a>.</p>
 <p>The module will introduce you to changepoint detection, detailing some algorithms, developing the basics theoretical foundations, and practicing few real-world scenarios.</p>
 <p>Across five weeks we will cover the following topics:</p>
 <ol type="1">
 <li><p>An introduction to changepoint detection and the CUSUM statistics</p></li>
 <li><p>Controlling the CUSUM and some additional models</p></li>
 <li><p>Dealing with multiple changes</p></li>
-<li><p>Penalty selection</p></li>
-<li><p>Breaking the real-world assumptions.</p></li>
+<li><p>PELT, WBS and Penalty selection</p></li>
+<li><p>Working with Real World data.</p></li>
 </ol>
 <p>We will be using R as the programming language for this module. If you’re unfamiliar with it, make sure you cover the first three weeks of <a href="https://lumath245.github.io/_book/index.html">MATH245</a>.</p>
-<p>Every week, you are expected to follow two lectures, one lab, and one computer aided workshop. Over the lecture, we will cover the basics concepts of changepoint detection. During the labs, you will be dealing with computations and details at your own pace, and, finally, during the workshops, you’ll give a go at programming the various algorithms and running real-world examples.</p>
+<p>Every week, you are expected to follow two lectures, one workshop, and one computer aided lab. Over the lecture, we will cover the basics concepts of changepoint detection.</p>
+<p>At the end of each chapter, you will find exercises that will be carried in the workshop and the lab. During the workshop, you will be dealing with computations and details about the methodologies introduced at your own pace, and, finally, during the workshops, you’ll give a go at programming the various algorithms and running real-world examples.</p>
+<p><strong>You will find the solutions to the exercises on the Moodle page, released weekly</strong>. If you cannot access the Moodle page, and you still would like to have these solutions, please get in touch with me.</p>
+<section id="source-files-and-attributions" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="source-files-and-attributions">Source files, and attributions</h2>
+<p>The notes are released as open-source on GitHub under the <a href="https://github.com/gtromano/MATH337_changepoint_detection?tab=License-1-ov-file">CC BY-NC 4.0 License</a>. You can access the repository at the following link: <a href="https://github.com/gtromano/MATH337_changepoint_detection">https://github.com/gtromano/MATH337_changepoint_detection</a>.</p>
+<p>The materials in this course are based on and share elements with the following resources:</p>
+<ul>
+<li>Fearnhead, P., &amp; Fryzlewicz, P. (2022). Detecting a single change-point. <em>arXiv preprint arXiv:2210.07066</em>.</li>
+<li><a href="https://github.com/rkillick/intro-changepoint-course">Rebecca Killick’s Introduction to Changepoint Detection</a> - a half-day introductory course on changepoint detection.</li>
+<li><a href="https://github.com/rkillick/further-changepoints-course">Rebecca Killick’s Further Changepoint Topics</a> - an extended course on changepoint detection.</li>
+<li><a href="https://github.com/tdhock/2023-08-unsupervised-learning">Toby Hocking’s Course on Unsupervised Learning</a>, which includes changepoint detection.</li>
+</ul>
+<p>I would like to express my gratitude to the authors of these resources. In addition, materials were sourced from various academic papers, which are referenced throughout the body of these notes.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -465,6 +465,8 @@ Report results by scenario and algorithm.
 
 **NOTE:** You will be able to access parameters estimates via the function `param.est()`. To get $\hat\mu_{1:n}$, necessary for the MSE, we can then do:
 
-```{r}
+```{r eval=FALSE}
+
+results <- # cpt.mean output here
 rep(param.est(result)$mean, times = diff(c(0, cp_est, length(y))))
 ```

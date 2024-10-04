@@ -219,7 +219,13 @@ To reduce computational complexity, we can slightly modify the OP algorithm, to 
 
 ------------------------------------------------------------------------
 
-As the segmentation retained is effectively the same, there are literally no disadvantages in using PELT over OP, if the cost function allows to do so. The problem is that this is not the case with some cost functions, such as the one for the change-in-slope. There, in fact, we have that the cost from the next change depends on the location of the previous one, violating the condition above.
+As the segmentation retained is effectively the same, there are literally no disadvantages in using PELT over OP, if the cost function allows to do so.
+
+However, PELT still has some disadvantages:
+
+-   PELT pruning works only over some cost functions, those for which the condition above is true. For example, in the continuous change-in-slope case, we have that the cost from the next change depends on the location of the previous one, making it impossible for PELT to prune without loosing optimality.
+
+-   We mentioned above how PELT over iterations at which a change is detected. For signals where changes are not frequent, PELT does not benefits from. A more sophisticated approach is that of **FPOP**, that prunes at every iteration. FPOP employs a different type of pruning, called functional pruning, that at every iteration only check costs that are likely associated to a change. However, despite the pruning is stronger FPOP works only over few selected models.
 
 ### WBS: Improving on Binary Segmentation
 
@@ -254,13 +260,11 @@ We can formally provide a description of WBS as a recursive procedure again, jus
 
 ------------------------------------------------------------------------
 
-
-One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of $M$ intervals (usually of the order of thousands of intervals).
-This can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.
+One of the major drawbacks of WBS is that in scenarios where we find frequent changepoints, in order to retain a close-to-optimal estimation, one should draw a higher number of $M$ intervals (usually of the order of thousands of intervals). This can be problematic given that WBS has computational complexity that grows linearly in the total length of the observations of the subsets.
 
 ## Penalty Selection
 
-In previous sections, we applied the changepoint detection algorithms using a penalty term of \(2 \log(n)\). As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
+In previous sections, we applied the changepoint detection algorithms using a penalty term of (2 \log(n)). As we'll see, this is the **BIC penalty** (Bayes Information Criterion), a widely used penalty in changepoint detection. However, it is important to note that BIC is just one of several penalty types that can be applied...
 
 As in the single change, some penalty may be more conservative then others! Choosing the correct penalty is key to obtaining a sensible segmentation of the data. The penalty term plays a significant role in balancing the goodness-of-fit of the model with its complexity:
 
@@ -269,15 +273,15 @@ As in the single change, some penalty may be more conservative then others! Choo
 
 The three most common penalties, are:
 
-- **AIC (Akaike Information Criterion):** The AIC penalty takes value of \(2p\), where \(p\) is the number of parameters that one adds to the model. In  multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in $\beta = 2 \times 2 = 4$ as our $\beta$. While simple to apply, AIC is known to be *asymptotically inconsistent*: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.
-  
-- **BIC (Bayesian Information Criterion):** The BIC penalty is given by \(p \log(n)\). In our approaches, this translates to: $\beta = 2 \log(n)$, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.
+-   **AIC (Akaike Information Criterion):** The AIC penalty takes value of (2p), where (p) is the number of parameters that one adds to the model. In multiple changes scenario, every new change, we add a new parameter to the model (as we estimate the signal). This, in OP and BS approaches, where the penalty is added at different iterations, shouls we fit a change, this translates in $\beta = 2 \times 2 = 4$ as our $\beta$. While simple to apply, AIC is known to be *asymptotically inconsistent*: it tends to overestimate the number of changepoints as the sample size increases. Intuitively, this is because AIC is designed to minimize the prediction error rather than to identify the true model structure. It favors models that fit the data well, often leading to the inclusion of more changepoints than necessary.
 
-- **MBIC (Modified BIC):** The MBIC penalty, from @zhang2007modified, is an extension of the BIC that includes an extra term to account for the spacing of the changepoints. We can approximate it, in practice, by using a value of $\beta = 3 \log(n)$ as our penalty. In practice, it is even more conservative then the BIC penalty. 
+-   **BIC (Bayesian Information Criterion):** The BIC penalty is given by (p \log(n)). In our approaches, this translates to: $\beta = 2 \log(n)$, that we add for each additional changepoint. BIC is generally more conservative than AIC and is consistent, meaning it will not overestimate the number of changepoints as the sample size grows.
+
+-   **MBIC (Modified BIC):** The MBIC penalty, from @zhang2007modified, is an extension of the BIC that includes an extra term to account for the spacing of the changepoints. We can approximate it, in practice, by using a value of $\beta = 3 \log(n)$ as our penalty. In practice, it is even more conservative then the BIC penalty.
 
 ### Example in R: Comparing Penalties with PELT
 
-Let’s now examine how different penalties impact the results of changepoint detection using the `changepoint` package in R. We'll focus on the PELT method and compare the outcomes when using AIC, BIC, and MBIC penalties.
+Let's now examine how different penalties impact the results of changepoint detection using the `changepoint` package in R. We'll focus on the PELT method and compare the outcomes when using AIC, BIC, and MBIC penalties.
 
 As a data sequence, we will pick a different chromosome in our Neuroblastoma dataset. Can you tell, by eye, how many changes are in this sequence?
 
@@ -296,8 +300,7 @@ ggplot() +
   theme_minimal()
 ```
 
-
-We can compare the three penalties using the changepoint library, as below: 
+We can compare the three penalties using the changepoint library, as below:
 
 ```{r}
 data <- one.dt$logratio
@@ -338,9 +341,7 @@ We can see how from this example, the AIC likely overestimated the number of cha
 
 ### CROPS: running with multiple penalties
 
-
-Hopefully, the example above should have highlighted that finding the right penalty can be tricky. One solution, would be to run our algorithm for a range of penalties, and then choose a posteriori what the best segmentation is. 
-The CROPS algorithm, from @haynes2017computationally, is based on this idea. CROPS works alongside an existing penalised changepoint detection algorithm, like PELT or WBS: as long as the changepoint method can map a penalty value to a (decreasing) segmentation cost, CROPS could be applied.
+Hopefully, the example above should have highlighted that finding the right penalty can be tricky. One solution, would be to run our algorithm for a range of penalties, and then choose a posteriori what the best segmentation is. The CROPS algorithm, from @haynes2017computationally, is based on this idea. CROPS works alongside an existing penalised changepoint detection algorithm, like PELT or WBS: as long as the changepoint method can map a penalty value to a (decreasing) segmentation cost, CROPS could be applied.
 
 CROPS takes as input a range of penalties $[\beta_{\text{min}}, \beta_{\text{max}}]$, and explores all possible segmentations within those two penalties in a clever way, to fit the changepoint model as least as we can. As CROPS calculates changepoints for a particular penalty, it keeps track of the range of penalty values where that specific set of changepoints is valid. This works because, for certain ranges of penalties, the set of changepoints stays the same.
 
@@ -348,12 +349,11 @@ E.g. for penalties between $\beta_1$ and $\beta_2$, the changepoints might remai
 
 We won't introduce the method formally, but in an intuitive way, CROPS works in this way:
 
-1. It starts calculates changepoints at two extreme penalties: $\beta_{\text{min}}$ and $\beta_{\text{max}}$. If those are the same, it quits.
+1.  It starts calculates changepoints at two extreme penalties: $\beta_{\text{min}}$ and $\beta_{\text{max}}$. If those are the same, it quits.
 
-2. Alternatively, as a binary search, CROPS selects a mid-point penalty $\beta_\text{int}$ based on whether the segmentation change, and runs the changepoint detection again on $[\beta_{\text{min}}, \beta_{\text{int}}]$, and $[\beta_{\text{int}}, \beta_{\text{max}}]$, refining its search for the next penalty.
+2.  Alternatively, as a binary search, CROPS selects a mid-point penalty $\beta_\text{int}$ based on whether the segmentation change, and runs the changepoint detection again on $[\beta_{\text{min}}, \beta_{\text{int}}]$, and $[\beta_{\text{int}}, \beta_{\text{max}}]$, refining its search for the next penalty.
 
-3. It repeats 2 iteratively until no further segmentations are found.
-
+3.  It repeats 2 iteratively until no further segmentations are found.
 
 We can use CROPS to generate an **elbow plot** for selecting the appropriate penalty value in changepoint detection. In Data Science and Machine Learning, elbow plots are graphs that helps us choosing the appropiate value of a parameter, balancing between model complexity (in our case number of changepoints) and goodness of fit (how tightly our model fits the data).
 
@@ -378,12 +378,93 @@ out <- cpt.mean(data, method = "PELT", penalty  = "CROPS", pen.value = c(2, 40))
 plot(out,diagnostic=TRUE)
 abline(v=4)
 ```
+
 We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!
 
 ## Exercises
 
 ### Workshop 4
 
+1.  Looking at last week workshop exercise solution, which points in the OP recursion would have been pruned by PELT? Check that the PELT pruning condition is true.
+
+2.  Below you'll find CROPS segmentations and elbow plot for the change-in-slope model. How many changepoints would you reccomend for
+
 ### Lab 4
 
+In this lab we will test changepoint algorithms over some artificial data.
 
+1.  The code below will generate 400 sequences, every 100 sequences you will have a different change-pattern:
+
+```{r}
+library(tidyverse)
+
+generate_signal <- function(n, pattern = c("none", "up", "updown", "rand1"), nbSeg = 8, jumpSize = 1) {
+  type <- match.arg(pattern)
+
+  if (type == "rand1") {
+    set.seed(42)
+    rand1CP <- rpois(nbSeg, lambda = 10)
+    r1 <- pmax(round(rand1CP * n / sum(rand1CP)), 1)
+    s <- sum(r1)
+
+    # Adjust r1 to match sum to n
+    r1 <- if (s > n) {
+      while (sum(r1) > n) r1[which(r1 > 1)[sample(1:length(which(r1 > 1)), 1)]] <- r1[which(r1 > 1)[sample(1:length(which(r1 > 1)), 1)]] - 1
+      r1
+    } else {
+      sample(rep(seq_along(r1), n - s)) %>% table() %>% as.numeric() %>% `+`(r1)
+    }
+
+    set.seed(43)
+    rand1Jump <- runif(nbSeg, min = 0.5, max = 1) * sample(c(-1, 1), nbSeg, replace = TRUE)
+  }
+
+  # Generate scenarios
+  switch(
+    type,
+    none = rep(0, n),
+    up = rep(seq(0, nbSeg - 1) * jumpSize, each = n / nbSeg),
+    updown = rep((seq(0, nbSeg - 1) %% 2) * jumpSize, each = n / nbSeg),
+    rand1 = map2(rand1Jump, r1, ~rep(.x * jumpSize, .y)) %>% unlist()
+  )
+}
+
+sims <- expand_grid(pattern = c("none", "up", "updown", "rand1"), rep = 1:100)
+
+full_seqs <- pmap(sims, \(pattern, rep) {
+  mu <- generate_signal(1e4, pattern)
+  set.seed(rep)
+  y <- mu + rnorm(length(mu))
+  cps <- which(diff(mu) != 0)
+return(list(y = y, mu = mu, cps = cps, pattern = pattern))
+})
+
+# each component of the list describes a sequence:
+summary(full_seqs[[1]])
+```
+
+Plot four sample sequences, each with a different change pattern, with superimposed signals.
+
+2.  Install the `changepoint` package. By researching `?cpt.mean`, learn about the change in mean function. Run the PELT algorithm for change in mean on the four sequences you picked above, with MBIC penalty.
+
+3.  Compare, in a simulation study, across the four different scenarios, performances of:
+
+    a.  Binary Segmentation, with AIC and BIC penalty
+
+    b.  PELT, with AIC and BIC penalty
+
+You will need to compare performances in term of Mean Square Error of the fitted signal $\text{MSE} = ||\mu_{1:n} - \hat\mu_{1:n}||^2_2$. A function has been already coded for you below:
+
+```{r}
+mse_loss <- function(mu_true, mu_hat) {
+  return(sum((mu_true - mu_hat) ^ 2))
+}
+```
+
+Report results by scenario and algorithm.
+
+**NOTE:** You will be able to access parameters estimates via the function `param.est()`. To get $\hat\mu_{1:n}$, necessary for the MSE, we can then do:
+
+```{r}
+rep(param.est(result)$mean, times = diff(c(0, cp_est, length(y))))
+```

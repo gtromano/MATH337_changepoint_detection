@@ -1,0 +1,155 @@
+# Working with Real Data
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(changepoint)
+```
+
+In practice, working with real-world data presents various challenges that can complicate our analyses. Unlike idealised examples, real data often contain noise, outliers, and other irregularities that can impair the accuracy of the segmentations we aim to generate. The assumptions we make in our models may not hold up well, and this can lead to poor estimates of changepoints. To tackle these issues, it is important to either use robust methods, or consider carefully how we handle the estimation of key parameters within our changepoint detection models.
+
+## Estimating Other Known Parameters
+
+Let’s revisit the classic problem of detecting a change in mean. One of the key assumptions we've relied on so far is that the variance, $\sigma^2$, is fixed, and known. Specifically, we used the following cost function in our models:
+
+$$
+\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+$$
+
+In our examples, we've typically set $\sigma^2 = 1$. However, this assumption is often unrealistic when working with real data. When the true value of $\sigma^2$ is unknown or incorrectly specified, the results of changepoint detection can be significantly affected. 
+
+-   If we underestimate the variance by choosing a value for $\sigma^2$ that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints. 
+-   Conversely, if we overestimate the variance with a value that is too high, the algorithm may detect too many changes, identifying noise as changepoints.
+
+### Neuroblastoma Example: The Impact of Mis-specified Variance
+
+Consider the neuroblastoma dataset as an example. If we run a changepoint detection method like PELT or BS on this data without any pre-processing, we might observe that the algorithm does not detect any changes at all:
+
+```{r echo=FALSE}
+data(neuroblastoma, package="neuroblastoma")
+
+nb.dt <- neuroblastoma[["profiles"]]
+one.dt <- nb.dt |> filter(profile.id==4, chromosome==2)
+
+y <- one.dt$logratio
+n <- length(y)
+
+# Apply Binary Segmentation and Optimal Partitioning
+out_bs <- cpt.mean(y, method = "BinSeg")
+out_op <- cpt.mean(y, method = "PELT")
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:n,
+  y = y
+)
+
+bs_cpts <- cpts(out_bs)
+op_cpts <- cpts(out_op)
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:n,
+  y = y
+)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6) +
+  geom_vline(xintercept = bs_cpts, linetype = "dotted", color = "blue") +
+  annotate("text", x = bs_cpts, y = max(y), label = paste(bs_cpts), color = "blue", hjust = -0.1, vjust = 1) +
+    geom_vline(xintercept = op_cpts, linetype = "solid", color = "green") +
+  annotate("text", x = op_cpts, y = min(y), label = paste(op_cpts), color = "green", hjust = -0.1, vjust = -1) +
+  
+  # Titles and theme
+  labs(
+    x = "Time") +
+  theme_minimal()
+
+p
+```
+```{r}
+summary(out_op)
+```
+
+In this example, PELT fails to detect any changes because the scale of the data suggests a lower variance than expected, affecting the algorithm's sensitivity to changes.
+
+### Addressing Mis-specified Variance with Robust Estimators
+
+One problem with estimating the variance in the change-in-mean scenario, is that depending on the size of the changes, these can skew your estimate...
+
+One way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences $z_t =  y_t - y_{t-1} \ \forall \quad t = 2, \dots, n$:
+
+```{r}
+qplot(x = 1:(n-1), y = diff(y)) + theme_minimal()
+```
+
+And compute the sample variance across all these differences as an estimator for our sigma square: $\hat \sigma^2 = \bar S(z_{1:n})$. However, we have not fixed our problem... yet! 
+
+What happens exactly at $t = \tau +1$? Well, across these observations, our $z_{\tau + 1}$ appears as an outlier (why?). This can still skew our estimate of the variance.
+
+A solution, is to use robust estimators of the variance. A common choice is the Median Absolute Deviation (MAD), which is less sensitive to outliers and can provide a more reliable estimate of $\bar S$ in  our case.
+
+The formula for MAD is given by:
+
+$$
+\text{MAD} = \text{median}(|z_i - \text{median}(z_{1:n})|)
+$$
+
+This estimator computes the median of the absolute deviations from the median of the data.
+
+However, for asymptotical consistency, to fully convert MAD into a robust variance estimate, we can use:
+
+$$
+\hat \sigma_{\text{MAD}} = 1.4826 \times \text{MAD}
+$$
+
+This scaling factor ensures that $\sigma_{\text{MAD}}$ provides an approximately unbiased estimate of the standard deviation under the assumption of normally distributed data. 
+
+We then can divide our observations by this value to obtain ready-to-analyse observations. Go back and check the scale of the data in the segmentations in week 3! 
+
+While this trick provides a solution for handling variance estimation in the change-in-mean problem, more sophisticated models may require the estimation of additional parameters. And more advanced techniques are needed to ensure that all relevant parameters are accurately estimated (this is very much an open are of research)!
+
+## Non-Parametric Models
+
+A alternative approach for detecting changes in real data, especially when we don't want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.
+
+Following @zou2014nonparametric, let $F_{i:n}(q)$ denote the unknown cumulative distribution function (CDF) for the segment $y_{1:n}$, where $n$ indexes the data points. Similarly, let $\hat{F}_{1:n}(q)$ be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:
+
+$$
+\hat{F}_{1:n}(q) = \frac{1}{n} \left\{ \sum_{j=1}^{n} \mathbb{I}(y_j < q) + 0.5 \times \mathbb{I}(y_j = q) \right\}.
+$$
+
+Here, $\mathbb{I}(y_j < q)$ is an indicator function that equals 1 if $y_j < q$ and 0 otherwise, and the term $0.5 \times \mathbb{I}(y_j = q)$ handles cases where $y_j$ equals $q$.
+
+Under the assumption that the data are independent, the empirical CDF $\hat{F}_{1:n}(q)$ follows a Binomial distribution. Specifically, for any quantile $q$, we can write:
+
+$$
+n\hat{F}_{1:n}(q) \sim \mathrm{Binom}(n, F_{1:n}(q)).
+$$
+
+This means that the number of observations $y_j$ less than or equal to $q$ follows a Binomial distribution, with $n$ trials and success probability equal to the true CDF value $F_{1:n}(q)$ at $q$.
+
+Using this Binomial approximation, we can derive the log-likelihood of a segment of data $y_{\tau_1+1:\tau_2}$, where $\tau_1$ and $\tau_2$ are the changepoints marking the beginning and end of the segment, respectively. The log-likelihood is expressed as:
+
+$$
+\mathcal{L}(y_{\tau_1+1:\tau_2}; q) = (\tau_2 - \tau_1) \left[\hat{F}_{\tau_1+1:\tau_2}(q) \log(\hat{F}_{\tau_1+1:\tau_2}(q)) - (1-\hat{F}_{\tau_1+1:\tau_2}(q))\log(1-\hat{F}_{\tau_1+1:\tau_2}(q)) \right].
+$$
+
+This cost function compares the empirical CDF of the segment with a theoretical distribution, allowing us to detect whether there has been a change in the underlying distribution. Unlike parametric models, where we focus on specific parameters like the mean or variance, the non-parametric approach is more flexible and can detect changes in the entire distribution, making it suitable for a wider range of real-world applications.
+
+
+## Time dependency
+
+- another issue we might deal with is time dependency 
+
+- give the simplest explanation of time dependency 
+
+- say that in case of time dependency, we tend to over estimate the number of changes
+
+- the change in slope case is a way of accounting for time dependency! 
+
+- alternatively, we could use more sophisticated models that account for this
+
+- for instance, one such model is the DeCAFS model from Romano et. al (2023). 
+
+
+

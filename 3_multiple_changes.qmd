@@ -530,7 +530,7 @@ We report results in the plot below (blue for BS, green for OP). In this case, t
 one.dt <- nb.dt |> filter(profile.id==4, chromosome==2)
 
 y <- one.dt$logratio
-y <- (y)/mad(y)
+y <- y/mad(diff(y))
 n <- length(y)
 
 # Apply Binary Segmentation and Optimal Partitioning

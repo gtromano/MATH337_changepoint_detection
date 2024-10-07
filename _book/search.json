@@ -228,5 +228,45 @@
     "crumbs": [
       "References"
     ]
+  },
+  {
+    "objectID": "5_real_data.html",
+    "href": "5_real_data.html",
+    "title": "5  Working with Real Data",
+    "section": "",
+    "text": "5.1 Estimating Other Known Parameters\nLet’s revisit the classic problem of detecting a change in mean. One of the key assumptions we’ve relied on so far is that the variance, \\(\\sigma^2\\), is fixed, and known. Specifically, we used the following cost function in our models:\n\\[\n\\mathcal{L}(y_{s:t}) = \\frac{1}{2\\sigma^2}  \\sum_{i = s}^{t} \\left ( y_i - \\bar{y}_{s:t} \\right)^2\n\\]\nIn our examples, we’ve typically set \\(\\sigma^2 = 1\\). However, this assumption is often unrealistic when working with real data. When the true value of \\(\\sigma^2\\) is unknown or incorrectly specified, the results of changepoint detection can be significantly affected.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Working with Real Data</span>"
+    ]
+  },
+  {
+    "objectID": "5_real_data.html#estimating-other-known-parameters",
+    "href": "5_real_data.html#estimating-other-known-parameters",
+    "title": "5  Working with Real Data",
+    "section": "",
+    "text": "If we underestimate the variance by choosing a value for \\(\\sigma^2\\) that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints.\nConversely, if we overestimate the variance with a value that is too high, the algorithm may detect too many changes, identifying noise as changepoints.\n\n\n5.1.1 Neuroblastoma Example: The Impact of Mis-specified Variance\nConsider the neuroblastoma dataset as an example. If we run a changepoint detection method like PELT or BS on this data without any pre-processing, we might observe that the algorithm does not detect any changes at all:\n\n\n\n\n\n\n\n\n\n\nsummary(out_op)\n\nCreated Using changepoint version 2.2.4 \nChangepoint type      : Change in mean \nMethod of analysis    : PELT \nTest Statistic  : Normal \nType of penalty       : MBIC with value, 16.36596 \nMinimum Segment Length : 1 \nMaximum no. of cpts   : Inf \nChangepoint Locations :  \n\n\nIn this example, PELT fails to detect any changes because the scale of the data suggests a lower variance than expected, affecting the algorithm’s sensitivity to changes.\n\n\n5.1.2 Addressing Mis-specified Variance with Robust Estimators\nOne problem with estimating the variance in the change-in-mean scenario, is that depending on the size of the changes, these can skew your estimate…\nOne way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences \\(z_t =  y_t - y_{t-1} \\ \\forall \\quad t = 2, \\dots, n\\):\n\nqplot(x = 1:(n-1), y = diff(y)) + theme_minimal()\n\nWarning: `qplot()` was deprecated in ggplot2 3.4.0.\n\n\n\n\n\n\n\n\n\nAnd compute the sample variance across all these differences as an estimator for our sigma square: \\(\\hat \\sigma^2 = \\bar S(z_{1:n})\\). However, we have not fixed our problem… yet!\nWhat happens exactly at \\(t = \\tau +1\\)? Well, across these observations, our \\(z_{\\tau + 1}\\) appears as an outlier (why?). This can still skew our estimate of the variance.\nA solution, is to use robust estimators of the variance. A common choice is the Median Absolute Deviation (MAD), which is less sensitive to outliers and can provide a more reliable estimate of \\(\\bar S\\) in our case.\nThe formula for MAD is given by:\n\\[\n\\text{MAD} = \\text{median}(|z_i - \\text{median}(z_{1:n})|)\n\\]\nThis estimator computes the median of the absolute deviations from the median of the data.\nHowever, for asymptotical consistency, to fully convert MAD into a robust variance estimate, we can use:\n\\[\n\\hat \\sigma_{\\text{MAD}} = 1.4826 \\times \\text{MAD}\n\\]\nThis scaling factor ensures that \\(\\sigma_{\\text{MAD}}\\) provides an approximately unbiased estimate of the standard deviation under the assumption of normally distributed data.\nWe then can divide our observations by this value to obtain ready-to-analyse observations. Go back and check the scale of the data in the segmentations in week 3!\nWhile this trick provides a solution for handling variance estimation in the change-in-mean problem, more sophisticated models may require the estimation of additional parameters. And more advanced techniques are needed to ensure that all relevant parameters are accurately estimated (this is very much an open are of research)!",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Working with Real Data</span>"
+    ]
+  },
+  {
+    "objectID": "5_real_data.html#non-parametric-models",
+    "href": "5_real_data.html#non-parametric-models",
+    "title": "5  Working with Real Data",
+    "section": "5.2 Non-Parametric Models",
+    "text": "5.2 Non-Parametric Models\nA alternative approach for detecting changes in real data, especially when we don’t want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.\nFollowing (zou2014nonparametric?), let \\(F_{i:n}(q)\\) denote the unknown cumulative distribution function (CDF) for the segment \\(y_{1:n}\\), where \\(n\\) indexes the data points. Similarly, let \\(\\hat{F}_{1:n}(q)\\) be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:\n\\[\n\\hat{F}_{1:n}(q) = \\frac{1}{n} \\left\\{ \\sum_{j=1}^{n} \\mathbb{I}(y_j &lt; q) + 0.5 \\times \\mathbb{I}(y_j = q) \\right\\}.\n\\]\nHere, \\(\\mathbb{I}(y_j &lt; q)\\) is an indicator function that equals 1 if \\(y_j &lt; q\\) and 0 otherwise, and the term \\(0.5 \\times \\mathbb{I}(y_j = q)\\) handles cases where \\(y_j\\) equals \\(q\\).\nUnder the assumption that the data are independent, the empirical CDF \\(\\hat{F}_{1:n}(q)\\) follows a Binomial distribution. Specifically, for any quantile \\(q\\), we can write:\n\\[\nn\\hat{F}_{1:n}(q) \\sim \\mathrm{Binom}(n, F_{1:n}(q)).\n\\]\nThis means that the number of observations \\(y_j\\) less than or equal to \\(q\\) follows a Binomial distribution, with \\(n\\) trials and success probability equal to the true CDF value \\(F_{1:n}(q)\\) at \\(q\\).\nUsing this Binomial approximation, we can derive the log-likelihood of a segment of data \\(y_{\\tau_1+1:\\tau_2}\\), where \\(\\tau_1\\) and \\(\\tau_2\\) are the changepoints marking the beginning and end of the segment, respectively. The log-likelihood is expressed as:\n\\[\n\\mathcal{L}(y_{\\tau_1+1:\\tau_2}; q) = (\\tau_2 - \\tau_1) \\left[\\hat{F}_{\\tau_1+1:\\tau_2}(q) \\log(\\hat{F}_{\\tau_1+1:\\tau_2}(q)) - (1-\\hat{F}_{\\tau_1+1:\\tau_2}(q))\\log(1-\\hat{F}_{\\tau_1+1:\\tau_2}(q)) \\right].\n\\]\nThis cost function compares the empirical CDF of the segment with a theoretical distribution, allowing us to detect whether there has been a change in the underlying distribution. Unlike parametric models, where we focus on specific parameters like the mean or variance, the non-parametric approach is more flexible and can detect changes in the entire distribution, making it suitable for a wider range of real-world applications.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Working with Real Data</span>"
+    ]
+  },
+  {
+    "objectID": "5_real_data.html#time-dependency",
+    "href": "5_real_data.html#time-dependency",
+    "title": "5  Working with Real Data",
+    "section": "5.3 Time dependency",
+    "text": "5.3 Time dependency\n\nanother issue we might deal with is time dependency\ngive the simplest explanation of time dependency\nsay that in case of time dependency, we tend to over estimate the number of changes\nthe change in slope case is a way of accounting for time dependency!\nalternatively, we could use more sophisticated models that account for this\nfor instance, one such model is the DeCAFS model from Romano et. al (2023).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Working with Real Data</span>"
+    ]
   }
 ]

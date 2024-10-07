@@ -12,6 +12,7 @@ book:
     - 2_control.qmd
     - 3_multiple_changes.qmd
     - 4_algos_and_penalties.qmd
+    - 5_real_data.qmd
     - references.qmd
 
 bibliography: references.bib

@@ -54,7 +54,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -230,7 +250,6 @@ window.Quarto = {
   <li><a href="#addressing-mis-specified-variance-with-robust-estimators" id="toc-addressing-mis-specified-variance-with-robust-estimators" class="nav-link" data-scroll-target="#addressing-mis-specified-variance-with-robust-estimators"><span class="header-section-number">5.1.2</span> Addressing Mis-specified Variance with Robust Estimators</a></li>
   </ul></li>
   <li><a href="#non-parametric-models" id="toc-non-parametric-models" class="nav-link" data-scroll-target="#non-parametric-models"><span class="header-section-number">5.2</span> Non-Parametric Models</a></li>
-  <li><a href="#time-dependency" id="toc-time-dependency" class="nav-link" data-scroll-target="#time-dependency"><span class="header-section-number">5.3</span> Time dependency</a></li>
   </ul>
 </nav>
     </div>
@@ -332,7 +351,31 @@ Changepoint Locations :  </code></pre>
 <section id="non-parametric-models" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="non-parametric-models"><span class="header-section-number">5.2</span> Non-Parametric Models</h2>
 <p>A alternative approach for detecting changes in real data, especially when we don’t want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.</p>
-<p>Following <span class="citation" data-cites="zou2014nonparametric">(<a href="references.html#ref-zou2014nonparametric" role="doc-biblioref"><strong>zou2014nonparametric?</strong></a>)</span>, let <span class="math inline">\(F_{i:n}(q)\)</span> denote the unknown cumulative distribution function (CDF) for the segment <span class="math inline">\(y_{1:n}\)</span>, where <span class="math inline">\(n\)</span> indexes the data points. Similarly, let <span class="math inline">\(\hat{F}_{1:n}(q)\)</span> be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:</p>
+<p>For example, let us have a look at one of the sequences from the Yahoo! Webscope dataset ydata-labeled-time-series-anomalies-v1_0 [http://labs.yahoo.com/Academic_Relations]:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>A1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"extra/A1_yahoo_bench.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1427 Columns: 3
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+dbl (3): timestamp, value, is_anomaly
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(A1, <span class="fu">aes</span>(<span class="at">x =</span> timestamp, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">which</span>(A1<span class="sc">$</span>is_anomaly <span class="sc">==</span> <span class="dv">1</span>), <span class="at">alpha =</span> .<span class="dv">3</span>, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Following <span class="citation" data-cites="haynes2017nonpar">Haynes, Fearnhead, and Eckley (<a href="references.html#ref-haynes2017nonpar" role="doc-biblioref">2017</a>)</span>, we introduce the NP-PELT approach. Let <span class="math inline">\(F_{i:n}(q)\)</span> denote the unknown cumulative distribution function (CDF) for the segment <span class="math inline">\(y_{1:n}\)</span>, where <span class="math inline">\(n\)</span> indexes the data points. Similarly, let <span class="math inline">\(\hat{F}_{1:n}(q)\)</span> be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:</p>
 <p><span class="math display">\[
 \hat{F}_{1:n}(q) = \frac{1}{n} \left\{ \sum_{j=1}^{n} \mathbb{I}(y_j &lt; q) + 0.5 \times \mathbb{I}(y_j = q) \right\}.
 \]</span></p>
@@ -346,20 +389,45 @@ n\hat{F}_{1:n}(q) \sim \mathrm{Binom}(n, F_{1:n}(q)).
 <p><span class="math display">\[
 \mathcal{L}(y_{\tau_1+1:\tau_2}; q) = (\tau_2 - \tau_1) \left[\hat{F}_{\tau_1+1:\tau_2}(q) \log(\hat{F}_{\tau_1+1:\tau_2}(q)) - (1-\hat{F}_{\tau_1+1:\tau_2}(q))\log(1-\hat{F}_{\tau_1+1:\tau_2}(q)) \right].
 \]</span></p>
-<p>This cost function compares the empirical CDF of the segment with a theoretical distribution, allowing us to detect whether there has been a change in the underlying distribution. Unlike parametric models, where we focus on specific parameters like the mean or variance, the non-parametric approach is more flexible and can detect changes in the entire distribution, making it suitable for a wider range of real-world applications.</p>
-</section>
-<section id="time-dependency" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="time-dependency"><span class="header-section-number">5.3</span> Time dependency</h2>
-<ul>
-<li><p>another issue we might deal with is time dependency</p></li>
-<li><p>give the simplest explanation of time dependency</p></li>
-<li><p>say that in case of time dependency, we tend to over estimate the number of changes</p></li>
-<li><p>the change in slope case is a way of accounting for time dependency!</p></li>
-<li><p>alternatively, we could use more sophisticated models that account for this</p></li>
-<li><p>for instance, one such model is the DeCAFS model from Romano et. al (2023).</p></li>
-</ul>
+<p>This cost function compares the empirical CDF of at the right and at the left of this data points, for all the points:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In practice, NP-PELT on the previous sequence gives the following:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint.np)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> A1<span class="sc">$</span>value</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cpt.np</span>(y, <span class="at">penalty =</span> <span class="st">"Manual"</span>, <span class="at">pen.value =</span> <span class="dv">25</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">length</span>(y))) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">ylab =</span> <span class="st">"y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<!-- ## Time dependency -->
+<!-- - another issue we might deal with is time dependency  -->
+<!-- - give the simplest explanation of time dependency  -->
+<!-- - say that in case of time dependency, we tend to over estimate the number of changes -->
+<!-- - the change in slope case is a way of accounting for time dependency!  -->
+<!-- - alternatively, we could use more sophisticated models that account for this -->
+<!-- - for instance, one such model is the DeCAFS model from Romano et. al (2023).  -->
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-haynes2017nonpar" class="csl-entry" role="listitem">
+Haynes, Kaylea, Paul Fearnhead, and Idris A Eckley. 2017. <span>“A Computationally Efficient Nonparametric Approach for Changepoint Detection.”</span> <em>Statistics and Computing</em> 27: 1293–1305.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

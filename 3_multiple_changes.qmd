@@ -377,7 +377,7 @@ To achieve this, we want to minimize the following cost function:
 $$
 Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}) + \beta K
  \right],
-$$
+$$ {#eq-pen-cost}
 
 where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$ with a penalty \$ \beta \$ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
 
@@ -578,7 +578,7 @@ Some of you might come up with two (very interesting) questions that hopefully w
 
 ### Workshop 3
 
-1.  For the vector \$ y\_{1:4} = {0.5, -0.1, 12.1, 12.4}\$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
+1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
 
 $$
 \begin{array}{c|cccc}

@@ -190,6 +190,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./5_real_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working with Real Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">References</span></a>
   </div>
@@ -217,8 +223,10 @@ window.Quarto = {
   <li><a href="#detecting-one-change-in-mean" id="toc-detecting-one-change-in-mean" class="nav-link" data-scroll-target="#detecting-one-change-in-mean"><span class="header-section-number">1.3</span> Detecting one change in mean</a>
   <ul class="collapse">
   <li><a href="#the-cusum-statistics" id="toc-the-cusum-statistics" class="nav-link" data-scroll-target="#the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</a></li>
-  <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
+  <li><a href="#searching-for-all-taus" id="toc-searching-for-all-taus" class="nav-link" data-scroll-target="#searching-for-all-taus"><span class="header-section-number">1.3.2</span> Searching for all <span class="math inline">\(\tau\)</span>s</a></li>
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3.3</span> Example</a></li>
+  <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
+  <li><a href="#example-a-large-sequence" id="toc-example-a-large-sequence" class="nav-link" data-scroll-target="#example-a-large-sequence"><span class="header-section-number">1.3.5</span> Example: a large sequence</a></li>
   </ul></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.4</span> Exercises</a>
   <ul class="collapse">
@@ -465,8 +473,8 @@ C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\ta
 \frac{C_{\tau}^2 }{\sigma^2} &gt; c,
 \]</span> where the <span class="math inline">\(c \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (similar to a critical value in hypothesis testing!).</p>
 </section>
-<section id="algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.2">
-<h3 data-number="1.3.2" class="anchored" data-anchor-id="algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.2</span> Algorithmic Formulation of the CUSUM Statistic</h3>
+<section id="searching-for-all-taus" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="searching-for-all-taus"><span class="header-section-number">1.3.2</span> Searching for all <span class="math inline">\(\tau\)</span>s</h3>
 <p>In practice, however, we do not know the changepoint location in advance. Our goal is to detect whether a changepoint exists and, if so, estimate its location. To achieve this, we need to consider all possible changepoint locations and choose the one that maximizes our test statistic.</p>
 <p>The natural extension of the likelihood-ratio test to this situation is to use as a test statistic the maximum of <span class="math inline">\(C_\tau\)</span> as we vary <span class="math inline">\(\tau\)</span>:</p>
 <p><span class="math display">\[
@@ -492,7 +500,40 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 \Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}
 \]</span></p>
 <p>This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.</p>
-<p>In pseudocode:</p>
+</section>
+<section id="example" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3.3</span> Example</h3>
+<p>Let us compute the cusum for the vector <span class="math inline">\(y_{1:4} = (0.5, -0.1, 12.1, 12.4)\)</span>.</p>
+<p>We know that <span class="math inline">\(n = 4\)</span> (the total number of observations), therefore possible changepoints include: <span class="math inline">\(\tau = 1, 2, 3\)</span>.</p>
+<p><strong>Compute empirical means for each segment</strong></p>
+<p>We first need to calculate the segment means, <span class="math inline">\(\bar{y}_{1:\tau}\)</span> and <span class="math inline">\(\bar{y}_{(\tau+1):n}\)</span>, for each <span class="math inline">\(\tau\)</span>.</p>
+<ul>
+<li><p>For <span class="math inline">\(\tau = 1\)</span>, the left segment is: <span class="math inline">\(y_{1:1} = \{0.5\}\)</span>, and <span class="math inline">\(\bar{y}_{1:1} = 0.5.\)</span> The right segment: <span class="math inline">\(y_{2:4} = (-0.1, 12.1, 12.4)\)</span> gives <span class="math inline">\(\bar{y}_{2:4} = \frac{-0.1 + 12.1 + 12.4}{3} = \frac{24.4}{3} = 8.13.\)</span></p></li>
+<li><p>For <span class="math inline">\(\tau = 2\)</span>, we have, in a similar fashion, <span class="math inline">\(\bar{y}_{1:2} = \frac{0.5 - 0.1}{2} = 0.2.\)</span>, <span class="math inline">\(\bar{y}_{3:4} = \frac{12.1 + 12.4}{2} = 12.25\)</span></p></li>
+<li><p>Lastly, for <span class="math inline">\(\tau = 3\)</span>, we have <span class="math inline">\(\bar{y}_{1:3} = \frac{0.5 - 0.1 + 12.1}{3} = \frac{12.5}{3} = 4.16\)</span> and <span class="math inline">\(\bar{y}_{4:4} = 12.4\)</span>.</p></li>
+</ul>
+<p><strong>Compute the CUSUM statistics</strong></p>
+<p>Now that we have the empirical means for each segment, we have all the ingredients for computing our CUSUM:</p>
+<p><span class="math display">\[
+C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|.
+\]</span></p>
+<ul>
+<li><p><strong>For <span class="math inline">\(\tau = 1\)</span>:</strong> <span class="math display">\[
+C_1 = \sqrt{\frac{1(4-1)}{4}} \left| 0.5 - 8.13\overline{3} \right| = 0.866 \times 7.63\overline{3} = 6.61.
+\]</span></p></li>
+<li><p><strong>For <span class="math inline">\(\tau = 2\)</span>:</strong> <span class="math display">\[
+C_2 = \sqrt{\frac{2(4-2)}{4}} \left| 0.2 - 12.25 \right| = 1 \times 12.05 = 12.05.
+\]</span></p></li>
+<li><p><strong>For <span class="math inline">\(\tau = 3\)</span>:</strong> <span class="math display">\[
+C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \times 8.23\overline{3} = 7.13.
+\]</span></p></li>
+</ul>
+<p>Thus, the maximum of the CUSUM statistic occurs at <span class="math inline">\(\tau = 2\)</span>, with <span class="math inline">\(C_{max} = 12.05\)</span>. To detect a changepoint, we would compare <span class="math inline">\(C_{max}\)</span> to a threshold value <span class="math inline">\(c\)</span>. If <span class="math inline">\(C_{max} &gt; c\)</span>, we conclude that there is a changepoint at <span class="math inline">\(\hat{\tau} = 2\)</span>.</p>
+</section>
+<section id="algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</h3>
+<p>This process seems rather long, as for every step, we need to precompute the means… A naive implementation of the cusum, in fact, takes <span class="math inline">\(\mathcal{O}(n^2)\)</span> computations.</p>
+<p>However, there’s an algorithmic trick… By sequentially computing partial sums, e.g.&nbsp;<span class="math inline">\(S_n = \sum_{i=1}^n y_i\)</span>, we can shorten out our computations significantly. In this way the means directly as you go:</p>
 <hr>
 <div class="line-block"><strong>INPUT:</strong> Time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span>, threshold <span class="math inline">\(c\)</span>, variance <span class="math inline">\(\sigma\)</span>.<br>
 <strong>OUTPUT:</strong> Changepoint estimate <span class="math inline">\(\hat{\tau}\)</span>, maximum CUSUM statistic <span class="math inline">\(C_{max}\)</span><br>
@@ -506,7 +547,7 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n - 1\)</span><br>
 &nbsp;&nbsp;<span class="math inline">\(S \leftarrow S + y_t\)</span><br>
 &nbsp;&nbsp;<span class="math inline">\(\bar{y}_{1:t} \leftarrow S / t\)</span><br>
-&nbsp;&nbsp;<span class="math inline">\(\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)\)</span> // Can you figure out why?<br>
 &nbsp;&nbsp;<span class="math inline">\(C_t \leftarrow \sqrt{\frac{t(n-t)}{n}} |\bar{y}_{1:t} - \bar{y}_{(t+1):n}|\)</span><br>
 &nbsp;&nbsp;<strong>IF</strong> <span class="math inline">\(C_t &gt; C_{max}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
@@ -517,10 +558,10 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 <strong>ELSE</strong><br>
 &nbsp;&nbsp;<strong>RETURN</strong> NULL, <span class="math inline">\(C_{max}\)</span> // No changepoint detected</div>
 <hr>
-<p>It’s worth noting that, as we only need to calculate the CUSUM statistic for each potential changepoint once. By pre-computing the cumulative sum of all observations, this allows. The time complexity of this algorithm is <span class="math inline">\(O(n)\)</span>, where <span class="math inline">\(n\)</span> is the length of the time series.</p>
+<p>For this reason, the time complexity of the CUSUM algorithm is <span class="math inline">\(O(n)\)</span>, where <span class="math inline">\(n\)</span> is the length of the time series.</p>
 </section>
-<section id="example" class="level3" data-number="1.3.3">
-<h3 data-number="1.3.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3.3</span> Example</h3>
+<section id="example-a-large-sequence" class="level3" data-number="1.3.5">
+<h3 data-number="1.3.5" class="anchored" data-anchor-id="example-a-large-sequence"><span class="header-section-number">1.3.5</span> Example: a large sequence</h3>
 <p>It is possible to see how the cusum behaves on this simple example below:</p>
 <div class="cell">
 <div class="cell-output-display">

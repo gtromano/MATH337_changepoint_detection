@@ -112,7 +112,23 @@ While this trick provides a solution for handling variance estimation in the cha
 
 A alternative approach for detecting changes in real data, especially when we don't want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.
 
-Following @zou2014nonparametric, let $F_{i:n}(q)$ denote the unknown cumulative distribution function (CDF) for the segment $y_{1:n}$, where $n$ indexes the data points. Similarly, let $\hat{F}_{1:n}(q)$ be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:
+For example, let us have a look at one of the sequences from the
+Yahoo! Webscope dataset ydata-labeled-time-series-anomalies-v1_0 
+[http://labs.yahoo.com/Academic_Relations]:
+
+```{r}
+
+A1 <- read_csv("extra/A1_yahoo_bench.csv")
+
+ggplot(A1, aes(x = timestamp, y = value)) + 
+  geom_vline(xintercept = which(A1$is_anomaly == 1), alpha = .3, col = "red") + 
+  geom_point() +
+  theme_minimal()
+
+```
+
+
+Following @haynes2017nonpar, we introduce the NP-PELT approach. Let $F_{i:n}(q)$ denote the unknown cumulative distribution function (CDF) for the segment $y_{1:n}$, where $n$ indexes the data points. Similarly, let $\hat{F}_{1:n}(q)$ be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:
 
 $$
 \hat{F}_{1:n}(q) = \frac{1}{n} \left\{ \sum_{j=1}^{n} \mathbb{I}(y_j < q) + 0.5 \times \mathbb{I}(y_j = q) \right\}.
@@ -134,22 +150,61 @@ $$
 \mathcal{L}(y_{\tau_1+1:\tau_2}; q) = (\tau_2 - \tau_1) \left[\hat{F}_{\tau_1+1:\tau_2}(q) \log(\hat{F}_{\tau_1+1:\tau_2}(q)) - (1-\hat{F}_{\tau_1+1:\tau_2}(q))\log(1-\hat{F}_{\tau_1+1:\tau_2}(q)) \right].
 $$
 
-This cost function compares the empirical CDF of the segment with a theoretical distribution, allowing us to detect whether there has been a change in the underlying distribution. Unlike parametric models, where we focus on specific parameters like the mean or variance, the non-parametric approach is more flexible and can detect changes in the entire distribution, making it suitable for a wider range of real-world applications.
+This cost function compares the empirical CDF of at the right and at the left of this data points, for all the points:
+
+```{r echo=FALSE, warning=FALSE}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Simulate some data
+set.seed(123)
+
+# Pre-change data
+pre_change <- data.frame(y = sort(rnorm(50, mean = 5, sd = 2)), group = "1. Pre-change")
+
+# Post-change data
+post_change <- data.frame(y = sort(rnorm(50, mean = 7, sd = 10)), group = "2. Post-change")
+
+# Combine both datasets
+combined_data <- rbind(pre_change, post_change)
+
+# Create ECDF plots
+ggplot(combined_data, aes(y)) +
+  stat_ecdf(geom = "step") +  # Plot the ECDF as steps
+  geom_point(stat = "ecdf", aes(y = y), size = 2) +  # Add points
+  facet_wrap(~group, scales = "free_x") +  # Separate plots for pre- and post-change
+  labs(x = "y", y = expression(F[n](y))) +  # Change axis label to 'y'
+  theme_minimal() +  # Use a clean minimal theme
+  xlim(0, 10) +
+  theme(panel.grid.minor = element_blank())  # Optional: clean up minor gridlines
+
+```
+
+In practice, NP-PELT on the previous sequence gives the following:
+
+```{r}
+library(changepoint.np)
+
+y <- A1$value
+
+cpt.np(y, penalty = "Manual", pen.value = 25 * log(length(y))) |> plot(ylab = "y")
+```
 
 
-## Time dependency
+<!-- ## Time dependency -->
 
-- another issue we might deal with is time dependency 
+<!-- - another issue we might deal with is time dependency  -->
 
-- give the simplest explanation of time dependency 
+<!-- - give the simplest explanation of time dependency  -->
 
-- say that in case of time dependency, we tend to over estimate the number of changes
+<!-- - say that in case of time dependency, we tend to over estimate the number of changes -->
 
-- the change in slope case is a way of accounting for time dependency! 
+<!-- - the change in slope case is a way of accounting for time dependency!  -->
 
-- alternatively, we could use more sophisticated models that account for this
+<!-- - alternatively, we could use more sophisticated models that account for this -->
 
-- for instance, one such model is the DeCAFS model from Romano et. al (2023). 
+<!-- - for instance, one such model is the DeCAFS model from Romano et. al (2023).  -->
 
 
 

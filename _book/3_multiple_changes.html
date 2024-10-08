@@ -512,18 +512,18 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <h2 data-number="3.3" class="anchored" data-anchor-id="optimal-partitioning"><span class="header-section-number">3.3</span> Optimal Partitioning</h2>
 <p>Another solution to avoid the over-fitting problem of <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the <em>penalised approach</em>.</p>
 <p>To achieve this, we want to minimize the following cost function:</p>
-<p><span class="math display">\[
+<p><span id="eq-pen-cost"><span class="math display">\[
 Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}) + \beta K
 \right],
-\]</span></p>
+\tag{3.3}\]</span></span></p>
 <p>where <span class="math inline">\(Q_{n, \beta}\)</span> represents the optimal cost for segmenting the data up to time <span class="math inline">\(n\)</span> with a penalty $ $ that increases with each additional changepoint <span class="math inline">\(K\)</span>. With the <span class="math inline">\(\beta\)</span> term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.</p>
 <p>Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving <span class="math inline">\(Q_{n, \beta}\)</span> ensures that the segmentation is <strong>globally optimal</strong>, as in the location of the changes are the best possible to minimise our cost.</p>
 <p>Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as <span class="math inline">\(n\)</span> increases…</p>
-<p>Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: <strong>Optimal Partitioning (OP)</strong>, from <span class="citation" data-cites="Jackson">Jackson et al. (<a href="references.html#ref-Jackson" role="doc-biblioref">2005</a>)</span>. OP solves <span class="quarto-unresolved-ref">?eq-pen-cost</span> exactly through the following recursion.</p>
+<p>Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: <strong>Optimal Partitioning (OP)</strong>, from <span class="citation" data-cites="Jackson">Jackson et al. (<a href="references.html#ref-Jackson" role="doc-biblioref">2005</a>)</span>. OP solves <a href="#eq-pen-cost" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> exactly through the following recursion.</p>
 <p>We start with <span class="math inline">\(\mathcal{Q}_{0, \beta} = -\beta\)</span>, and then, for each <span class="math inline">\(t = 1, \dots, n\)</span>, we compute:</p>
 <p><span id="eq-optimal-partitioning"><span class="math display">\[
     \mathcal{Q}_{t, \beta} = \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right].
-\tag{3.3}\]</span></span></p>
+\tag{3.4}\]</span></span></p>
 <p>Here, <span class="math inline">\(\mathcal{Q}_{t, \beta}\)</span> represents the optimal cost of segmenting the data up to time <span class="math inline">\(t\)</span>. The algorithm builds this solution sequentially by considering each possible segmentation <span class="math inline">\(\mathcal{Q}_{0, \beta},\ \cdots, \mathcal{Q}_{t-2, \beta},\ \mathcal{Q}_{t-1, \beta}\)</span> before the current time <span class="math inline">\(t\)</span>, plus the segment cost up to current time <span class="math inline">\(t\)</span>, <span class="math inline">\(\mathcal{L}(y_{\tau + 1:t})\)</span>.</p>
 <section id="optimal-partitinioning-in-action" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="optimal-partitinioning-in-action"><span class="header-section-number">3.3.1</span> Optimal partitinioning in action</h3>
@@ -650,7 +650,7 @@ Attaching package: 'zoo'</code></pre>
 <section id="workshop-3" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="workshop-3"><span class="header-section-number">3.4.1</span> Workshop 3</h3>
 <ol type="1">
-<li>For the vector $ y_{1:4} = {0.5, -0.1, 12.1, 12.4}$, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
+<li>For the vector <span class="math inline">\(y_{1:4} = (0.5, -0.1, 12.1, 12.4)\)</span>, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
 </ol>
 <p><span class="math display">\[
 \begin{array}{c|cccc}

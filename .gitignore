@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+dump.rmd
+dump.html
+copy_to_webpage.sh
+
+/.quarto/

@@ -111,7 +111,7 @@ Suppose we have a set of observations $x_1, x_2, \dots, x_n$. Under the null hyp
 
 $$
 LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n L(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n L(y_{t}| \theta_1))(\prod_{t=1}^n L(y_{t}| \theta_2)]} \right\}
-$${eq-lr-test}
+$${#eq-lr-test}
 
 The LRT compares the likelihood of the data under two models to determine which one is more likely: the enumerator, is the likelihood under the null hypothesis of no changepoint, while the denominator represents the likelihood of the data under the alternative hypothesis, where we optimise for two different parameters before and after the changepoint at $\tau$.
 
@@ -214,27 +214,37 @@ $$
 And taking the log, and simplifying over the constant gives us:
 
 $$
-\min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
+\begin{align}
+LR_\tau &= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
+& = -\min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) + \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
+\end{align}
 $$
 
-Now to solve the minimisation, we focus on the first term: $$
-f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  - \log(\theta) - \frac{y^2}{\theta} \right) 
-$$ Simplifying the sum: $$
-= \left( - n \log(\theta) - \frac{\sum_{t = 1}^n y^2}{\theta} \right).
+Now to solve the minimisation, we focus on the first term: 
+
 $$
+f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  \log(\theta) + \frac{y^2}{\theta} \right) = \left(  n \log(\theta) + \frac{\sum_{t = 1}^n y^2}{\theta} \right).
+$$ 
 
 Taking the derivative with respect to $\theta$, gives:
 
 $$
-\frac{d}{d\theta} f(y_{1:n}, \theta) = -\frac{n}{\theta} + \frac{\sum_{t = 1}^n y^2}{\theta^2}
-$$ Setting equal to zero and solving for $\theta$: $$
--n \theta + \sum_{t = 1}^n y^2 = 0
-$$ Which gives us: $\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}$ the sample variance.
-
-Solving the optimization for $\theta_1$ and $\theta_2$ similarly, and plugging in the values $\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 = \bar S_{(\tau+1):n}$, gives us the final LR test:
+\frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}
+$$ 
+Setting equal to zero and solving for $\theta$: 
 
 $$
-LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right].
+n \theta - \sum_{t = 1}^n y^2 = 0
+$$ 
+
+Which gives us: $\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}$ the sample variance.
+
+Solving the optimization for $\theta_1$ and $\theta_2$ similarly, gives us the values $\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 = \bar S_{(\tau+1):n}$. 
+
+Now, as $f(y_{1:n}, \hat{\theta}) = \bar S_{1:n} + n$ (why?) the final LR test simplifies to:
+
+$$
+LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right]
 $$
 
 ```{r echo=FALSE}

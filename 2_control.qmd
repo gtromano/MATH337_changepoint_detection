@@ -132,13 +132,13 @@ $$
 This simplifies to:
 
 $$
-= \frac{1}{\sigma^2} \left[ - \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 + \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
+= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
 $$
 
 To solve the minimization over $\mu_1$ and $\mu_2$, we plug-in values $\hat\mu = \bar{y}_{1:n}$ on the first term, and $\hat\mu_1 = \bar{y}_{1:\tau}$, $\hat\mu_2 = \bar{y}_{(\tau+1):n}$ for the second term:
 
 $$
-LR_\tau = \frac{1}{\sigma^2} \left[ - \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 + \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
+LR_\tau = \frac{1}{\sigma^2} \left[ \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
 $$
 
 This is the likelihood ratio test statistic for a change in mean in a Gaussian model, which is essentially the CUSUM statistics squared, rescaled by the known variance:
@@ -152,23 +152,25 @@ This is possible to prove directly with some tedious computations.
 **Proof**. We start by writing down $\sigma^2 LR$. This will be:
 
 $$
-\sigma^2 LR_\tau = -\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 + \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{\tau+1:n})^2
+\sigma^2 LR_\tau = \sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{\tau+1:n})^2
 $$
 
 Now we need to expand each term. Starting with the first:
 
 $$
-\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 + 2 n \bar{y}_{1:\tau}^2 - \bar{y}_{1:\tau} \sum_{i=1}^{\tau} y_i
-$$ As $\sum_{i=1}^{n} y_i = n \bar{y}_{1:n}$, we notice that we can simplify this equation, by combining two terms. We are left with:
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2  - 2 \bar{y}_{1:n} \sum_{i=1}^{n} y_i + n \bar{y}_{1:n}^2 
+$$ 
+
+As $\sum_{i=1}^{n} y_i = n \bar{y}_{1:n}$, we notice that we can simplify the last two terms. We are left with:
 
 $$
-\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 + n \bar{y}_{1:\tau}^2
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 - n \bar{y}_{1:\tau}^2
 $$
 
-We procede similarly for the other two terms:
+We proceed similarly for the other two terms:
 
 $$
-\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 + \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 + (n-\tau) \bar{y}_{\tau+1:n}^2
+\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 - \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 - (n-\tau) \bar{y}_{\tau+1:n}^2
 $$
 
 Putting all together, and getting rid of telescopic sums, we are left with:

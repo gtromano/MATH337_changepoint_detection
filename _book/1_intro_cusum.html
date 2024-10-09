@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -425,7 +459,7 @@ y_t = \begin{cases}
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="the-biggest-data-challenge-in-changepoint-detection"><span class="header-section-number">1.2.2</span> The biggest data challenge in changepoint detection</h3>
 <p>One of the most widely debated and difficult data challenges in changepoint detection may not be in the field of finance, genetics, or climate science—but rather in television history. Specifically, the question that has plagued critics and fans alike for years is: <strong>At which episode did “The Simpsons” start to decline?</strong></p>
 <p>It’s almost common knowledge that “The Simpsons,” the longest-running and most beloved animated sitcom, experienced a significant drop in quality over time. But pinpointing exactly <em>when</em> this drop occurred is the real challenge. Fortunately, there’s a branch of statistics that was practically built to answer questions like these!</p>
-<p>I have downloaded a dataset <span class="citation" data-cites="bown_simpsons_dataset">(<a href="references.html#ref-bown_simpsons_dataset" role="doc-biblioref">Bown 2023</a>)</span> containing ratings for every episode of “The Simpsons” up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.</p>
+<p>I have downloaded a dataset <span class="citation" data-cites="bown_simpsons_dataset">(<a href="#ref-bown_simpsons_dataset" role="doc-biblioref">Bown 2023</a>)</span> containing ratings for every episode of “The Simpsons” up to season 34. We will analyze this data to determine if and when a significant shift occurred in the ratings, which might reflect the decline in quality that so many have observed.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -518,13 +552,13 @@ C_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2
 C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|.
 \]</span></p>
 <ul>
-<li><p><strong>For <span class="math inline">\(\tau = 1\)</span>:</strong> <span class="math display">\[
+<li><p><strong>For</strong> <span class="math inline">\(\tau = 1\)</span>: <span class="math display">\[
 C_1 = \sqrt{\frac{1(4-1)}{4}} \left| 0.5 - 8.13\overline{3} \right| = 0.866 \times 7.63\overline{3} = 6.61.
 \]</span></p></li>
-<li><p><strong>For <span class="math inline">\(\tau = 2\)</span>:</strong> <span class="math display">\[
+<li><p><strong>For</strong> <span class="math inline">\(\tau = 2\)</span>: <span class="math display">\[
 C_2 = \sqrt{\frac{2(4-2)}{4}} \left| 0.2 - 12.25 \right| = 1 \times 12.05 = 12.05.
 \]</span></p></li>
-<li><p><strong>For <span class="math inline">\(\tau = 3\)</span>:</strong> <span class="math display">\[
+<li><p><strong>For</strong> <span class="math inline">\(\tau = 3\)</span>: <span class="math display">\[
 C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \times 8.23\overline{3} = 7.13.
 \]</span></p></li>
 </ul>
@@ -592,11 +626,13 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <ol type="1">
 <li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
 </ol>
+<!-- -->
 <ol type="a">
 <li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. Suggestion: try to compute the variance of the process.</p></li>
 <li><p><span class="math inline">\(y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \&gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 </ol>
+<!-- -->
 <ol start="2" type="1">
 <li><p>In this exercise we will show that the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span>, multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
 <ol type="a">
@@ -609,11 +645,21 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="lab-1"><span class="header-section-number">1.4.2</span> Lab 1</h3>
 <ol type="1">
 <li><p>Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</p></li>
-<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.</p></li>
+<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above. You’ll be able to load the dataset via:</p></li>
 </ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>simpsons_episodes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://www.lancaster.ac.uk/~romano/teaching/2425MATH337/datasets/simpsons_episodes.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>simpsons_ratings <span class="ot">&lt;-</span> simpsons_episodes <span class="sc">|&gt;</span> </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Episode =</span> id <span class="sc">+</span> <span class="dv">1</span>, <span class="at">Season =</span> <span class="fu">as.factor</span>(season), <span class="at">Rating =</span> tmdb_rating)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>simpsons_ratings <span class="ot">&lt;-</span> simpsons_ratings[<span class="sc">-</span><span class="fu">nrow</span>(simpsons_ratings), ]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># run your CUSUM algorithm on the Rating variable!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-bown_simpsons_dataset" class="csl-entry" role="listitem">
 Bown, Jonathan. 2023. <span>“Simpsons Episodes &amp; Ratings (1989-Present).”</span> <a href="https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download">https://www.kaggle.com/datasets/jonbown/simpsons-episodes-2016?resource=download</a>.
 </div>

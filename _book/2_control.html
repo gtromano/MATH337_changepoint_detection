@@ -315,7 +315,7 @@ window.Quarto = {
 </ol>
 <section id="controlling-the-max-of-our-cusums" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
-<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="references.html#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
+<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
 <p><span class="math display">\[
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
 \]</span></p>
@@ -349,23 +349,57 @@ LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n L(y_{t}| \theta)}{\
 <p>The CUSUM statistics, in fact, is nothing but a specific case of this model. To see this, we start from our piecewise costant signal, plus noise, <span class="math inline">\(x_i = f_i + \epsilon_i, \quad i = 1, \dots, n\)</span>. Under this model our data, a linear combination of a Gaussian, is distributed as:</p>
 <p><span class="math display">\[
 y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
-\]</span> Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian kernel into the LR above, and take the logarithm:</p>
+\]</span></p>
+<p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian kernel into the LR above, and take the logarithm:</p>
 <p><span class="math display">\[
 LR_\tau = -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left( -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right]
 \]</span></p>
 <p>This simplifies to:</p>
 <p><span class="math display">\[
-= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
+= \frac{1}{\sigma^2} \left[ - \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 + \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
 \]</span></p>
 <p>To solve the minimization over <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_2\)</span>, we plug-in values <span class="math inline">\(\hat\mu = \bar{y}_{1:n}\)</span> on the first term, and <span class="math inline">\(\hat\mu_1 = \bar{y}_{1:\tau}\)</span>, <span class="math inline">\(\hat\mu_2 = \bar{y}_{(\tau+1):n}\)</span> for the second term:</p>
 <p><span class="math display">\[
-LR_\tau = \frac{1}{\sigma^2} \left[ \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
+LR_\tau = \frac{1}{\sigma^2} \left[ - \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 + \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
 \]</span></p>
 <p>This is the likelihood ratio test statistic for a change in mean in a Gaussian model, which is essentially the CUSUM statistics squared, rescaled by the known variance:</p>
 <p><span class="math display">\[
 LR_\tau = \frac{C_\tau^2}{\sigma^2}
 \]</span></p>
-<p>This is possible to prove directly after some tedious algebraic manipulations (which we will see in the workshop!).</p>
+<p>This is possible to prove directly after some tedious algebraic manipulations.</p>
+<p><strong>Proof</strong>. We start by writing down <span class="math inline">\(\sigma^2 LR\)</span>. This will be:</p>
+<p><span class="math display">\[
+\sigma^2 LR_\tau = -\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 + \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{\tau+1:n})^2
+\]</span></p>
+<p>Now we need to expand each term. Starting with the first:</p>
+<p><span class="math display">\[
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 + 2 n \bar{y}_{1:\tau}^2 - \bar{y}_{1:\tau} \sum_{i=1}^{\tau} y_i
+\]</span> As <span class="math inline">\(\sum_{i=1}^{n} y_i = n \bar{y}_{1:n}\)</span>, we notice that we can simplify this equation, by combining two terms. We are left with:</p>
+<p><span class="math display">\[
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 + n \bar{y}_{1:\tau}^2
+\]</span></p>
+<p>We procede similarly for the other two terms:</p>
+<p><span class="math display">\[
+\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 + \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 + (n-\tau) \bar{y}_{\tau+1:n}^2
+\]</span></p>
+<p>Putting all together, and getting rid of telescopic sums, we are left with:</p>
+<p><span class="math display">\[
+\sigma^2 LR_\tau = - n \bar{y}_{1:n}^2 + \tau \bar{y}_{1:\tau}^2 + (n - \tau) \bar{y}_{\tau+1:n}^2.
+\]</span> Now, recall that <span class="math inline">\(\bar{y}_{1:n} = \frac{1}{n} \left[ \tau \bar{y}_{1:\tau} + (n - \tau) \bar{y}_{\tau+1:n} \right]\)</span>, and:</p>
+<p><span class="math display">\[
+\bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right]
+\]</span></p>
+<p>Plugging in this into our LR:</p>
+<p><span class="math display">\[
+\begin{align}
+\sigma^2 LR_\tau &amp;= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
+&amp;=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
+&amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau}^2  - 2 \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \bar{y}_{\tau+1:n}^2)=\\
+&amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
+&amp;= C_\tau^2
+\end{align}
+\]</span></p>
+<p>This gives us <span class="math inline">\(LR_\tau = \frac{C_\tau^2}{\sigma^2}\)</span>.</p>
 </section>
 </section>
 <section id="towards-more-general-models" class="level2" data-number="2.3">
@@ -439,7 +473,7 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \ta
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 \]</span></p>
-<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and $ v_^y_{1:n}$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="references.html#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
+<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and $ v_^y_{1:n}$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
 </section>
 <section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
@@ -516,7 +550,7 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \th
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-baranowski2019narrowest" class="csl-entry" role="listitem">
 Baranowski, Rafal, Yining Chen, and Piotr Fryzlewicz. 2019. <span>“Narrowest-over-Threshold Detection of Multiple Change Points and Change-Point-Like Features.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 81 (3): 649–72.
 </div>

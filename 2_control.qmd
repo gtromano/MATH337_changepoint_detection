@@ -203,7 +203,7 @@ The great thing of the LR test is that it's extremely flexible, allowing us to d
 
 ### Change-in-variance
 
-To this end we will demostrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicy, we will call our variance $\sigma^2 = \theta$, our parameter of interest, and without loss of generality, we can center our data on zero (e.g. if $x_t \sim N(\mu, \theta)$, then $x_t - \mu = y_t \sim N(0, \theta)$). Then, our p.d.f for one observation will be given by:
+To this end we will demonstrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicity, we will call our variance $\sigma^2 = \theta$, our parameter of interest, and without loss of generality, we can center our data on zero (e.g. if $x_t \sim N(\mu, \theta)$, then $x_t - \mu = y_t \sim N(0, \theta)$). Then, our p.d.f for one observation will be given by:
 
 $$
 L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
@@ -281,7 +281,7 @@ print(combined_plot)
 
 ### Change-in-slope
 
-Another important exaple, and an alternative to detecting a change-in-mean, is detecting a change in slope. In this section, we assume the data is still modeled as a signal plus noise, but the signal itself is a linear function of time (e.g. non-stationary, with a change!). Graphically:
+Another important example, and an alternative to detecting a change-in-mean, is detecting a change in slope. In this section, we assume the data is still modeled as a signal plus noise, but the signal itself is a linear function of time (e.g. non-stationary, with a change!). Graphically:
 
 ```{r echo=FALSE}
 set.seed(1)
@@ -331,7 +331,7 @@ $$
 f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 $$
 
-where $\theta_2$ is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.
+where $\theta_2$ is the new intercept, and $\theta_3$ is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.
 
 For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector $v_\tau$, i.e.,
 
@@ -339,7 +339,7 @@ $$
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 $$
 
-where $v_\tau$ is a contrast vector that is piecewise linear with a change in slope at $\tau$. This vector is constructed such that, under the null hypothesis, the vector $v_\tau^\top y_{1:n}$ has variance 1, and \$ v\_\tau\^\top y\_{1:n}\$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector $v_\tau$, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in @baranowski2019narrowest.
+where $v_\tau$ is a contrast vector that is piecewise linear with a change in slope at $\tau$. This vector is constructed such that, under the null hypothesis, the vector $v_\tau^\top y_{1:n}$ has variance 1, and $v_\tau\^\top y_{1:n}$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector $v_\tau$, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in @baranowski2019narrowest.
 
 ### Revisiting our Simpsons data (again!)
 
@@ -366,7 +366,7 @@ library(changepoint)
 
 data <- cbind(y, 1, 1:length(y))
 
-out <- cpt.reg(data, method="AMOC", minseglen=5, penalty="MBIC", test.stat="Normal")
+out <- cpt.reg(data, method="AMOC") # AMOC is short for "At Most One Change"
 
 print(paste0("Our changepoint estimate (chagepoints): ",  cpts(out)))
 plot(out)

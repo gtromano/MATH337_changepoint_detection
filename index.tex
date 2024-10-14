@@ -1241,8 +1241,8 @@ possible values for \(\tau\) to find the test statistics for our change.
 
 \subsection{Change-in-variance}\label{change-in-variance}
 
-To this end we will demostrate how to construct a test for Gaussian
-change-in-variance, for mean known. For simplicy, we will call our
+To this end we will demonstrate how to construct a test for Gaussian
+change-in-variance, for mean known. For simplicity, we will call our
 variance \(\sigma^2 = \theta\), our parameter of interest, and without
 loss of generality, we can center our data on zero (e.g.~if
 \(x_t \sim N(\mu, \theta)\), then
@@ -1303,7 +1303,7 @@ LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau)
 
 \subsection{Change-in-slope}\label{change-in-slope}
 
-Another important exaple, and an alternative to detecting a
+Another important example, and an alternative to detecting a
 change-in-mean, is detecting a change in slope. In this section, we
 assume the data is still modeled as a signal plus noise, but the signal
 itself is a linear function of time (e.g.~non-stationary, with a
@@ -1338,8 +1338,9 @@ becomes:
 f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 \]
 
-where \(\theta_2\) is the new slope after the changepoint. In other
-words, the model is showing a piecewise linear mean.
+where \(\theta_2\) is the new intercept, and \(\theta_3\) is the new
+slope after the changepoint. In other words, the model is showing a
+piecewise linear mean.
 
 For this model, the log-likelihood ratio test statistic can be written
 as the square of a projection of the data onto a vector \(v_\tau\),
@@ -1352,12 +1353,12 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 where \(v_\tau\) is a contrast vector that is piecewise linear with a
 change in slope at \(\tau\). This vector is constructed such that, under
 the null hypothesis, the vector \(v_\tau^\top y_{1:n}\) has variance 1,
-and \$ v\_\tau\^{}\top y\_\{1:n\}\$ is invariant to adding a linear
-function to the data. These properties uniquely define the contrast
-vector \(v_\tau\), up to an arbitrary sign. Computations on how to
-obtain this likelihood ration test, and how to construct this vector are
-beyond the scope of this module, but should you be curious those are
-detailed in Baranowski, Chen, and Fryzlewicz (2019).
+and \(v_\tau\^\top y_{1:n}\) is invariant to adding a linear function to
+the data. These properties uniquely define the contrast vector
+\(v_\tau\), up to an arbitrary sign. Computations on how to obtain this
+likelihood ration test, and how to construct this vector are beyond the
+scope of this module, but should you be curious those are detailed in
+Baranowski, Chen, and Fryzlewicz (2019).
 
 \subsection{Revisiting our Simpsons data
 (again!)}\label{revisiting-our-simpsons-data-again}
@@ -1394,7 +1395,7 @@ We can then run our model with:
 
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(y, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(y))}
 
-\NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{cpt.reg}\NormalTok{(data, }\AttributeTok{method=}\StringTok{"AMOC"}\NormalTok{, }\AttributeTok{minseglen=}\DecValTok{5}\NormalTok{, }\AttributeTok{penalty=}\StringTok{"MBIC"}\NormalTok{, }\AttributeTok{test.stat=}\StringTok{"Normal"}\NormalTok{)}
+\NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{cpt.reg}\NormalTok{(data, }\AttributeTok{method=}\StringTok{"AMOC"}\NormalTok{) }\CommentTok{\# AMOC is short for "At Most One Change"}
 
 \FunctionTok{print}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"Our changepoint estimate (chagepoints): "}\NormalTok{,  }\FunctionTok{cpts}\NormalTok{(out)))}
 \end{Highlighting}

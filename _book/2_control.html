@@ -408,7 +408,7 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 <p>The great thing of the LR test is that it’s extremely flexible, allowing us to detect other changes then the simple change-in-mean case. As before, the procedure is to compute the LR test conditional on a fixed location of a changepoint, e.g.&nbsp;<span class="math inline">\(LR_\tau\)</span>, and range across all possible values for <span class="math inline">\(\tau\)</span> to find the test statistics for our change.</p>
 <section id="change-in-variance" class="level3" data-number="2.3.1">
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="change-in-variance"><span class="header-section-number">2.3.1</span> Change-in-variance</h3>
-<p>To this end we will demostrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicy, we will call our variance <span class="math inline">\(\sigma^2 = \theta\)</span>, our parameter of interest, and without loss of generality, we can center our data on zero (e.g.&nbsp;if <span class="math inline">\(x_t \sim N(\mu, \theta)\)</span>, then <span class="math inline">\(x_t - \mu = y_t \sim N(0, \theta)\)</span>). Then, our p.d.f for one observation will be given by:</p>
+<p>To this end we will demonstrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicity, we will call our variance <span class="math inline">\(\sigma^2 = \theta\)</span>, our parameter of interest, and without loss of generality, we can center our data on zero (e.g.&nbsp;if <span class="math inline">\(x_t \sim N(\mu, \theta)\)</span>, then <span class="math inline">\(x_t - \mu = y_t \sim N(0, \theta)\)</span>). Then, our p.d.f for one observation will be given by:</p>
 <p><span class="math display">\[
 L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
 \]</span></p>
@@ -452,7 +452,7 @@ LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau)
 </section>
 <section id="change-in-slope" class="level3" data-number="2.3.2">
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="change-in-slope"><span class="header-section-number">2.3.2</span> Change-in-slope</h3>
-<p>Another important exaple, and an alternative to detecting a change-in-mean, is detecting a change in slope. In this section, we assume the data is still modeled as a signal plus noise, but the signal itself is a linear function of time (e.g.&nbsp;non-stationary, with a change!). Graphically:</p>
+<p>Another important example, and an alternative to detecting a change-in-mean, is detecting a change in slope. In this section, we assume the data is still modeled as a signal plus noise, but the signal itself is a linear function of time (e.g.&nbsp;non-stationary, with a change!). Graphically:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -475,12 +475,12 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, n,
 <p><span class="math display">\[
 f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 \]</span></p>
-<p>where <span class="math inline">\(\theta_2\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
+<p>where <span class="math inline">\(\theta_2\)</span> is the new intercept, and <span class="math inline">\(\theta_3\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
 <p>For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector <span class="math inline">\(v_\tau\)</span>, i.e.,</p>
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 \]</span></p>
-<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and $ v_^y_{1:n}$ is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
+<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and <span class="math inline">\(v_\tau\^\top y_{1:n}\)</span> is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
 </section>
 <section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
@@ -502,7 +502,7 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(y, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y))</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.reg</span>(data, <span class="at">method=</span><span class="st">"AMOC"</span>, <span class="at">minseglen=</span><span class="dv">5</span>, <span class="at">penalty=</span><span class="st">"MBIC"</span>, <span class="at">test.stat=</span><span class="st">"Normal"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.reg</span>(data, <span class="at">method=</span><span class="st">"AMOC"</span>) <span class="co"># AMOC is short for "At Most One Change"</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate (chagepoints): "</span>,  <span class="fu">cpts</span>(out)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">

@@ -315,11 +315,11 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <p>But how can we work in case we have more than one change? Well, we need to introduce the cost of a segment.</p>
 <p>If we assume the data is independent and identically distributed within each segment, for segment parameter <span class="math inline">\(\theta\)</span>, then this cost can be obtained through:</p>
 <p><span class="math display">\[
-    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - \log(f(y_i, \theta))
+    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - 2 \log(f(y_i, \theta))
 \]</span></p>
 <p>with <span class="math inline">\(f(y, \theta)\)</span> being the likelihood for data point <span class="math inline">\(y\)</span> if the segment parameter is <span class="math inline">\(\theta\)</span>. Now, for example, in the gaussian case this cost is given by:</p>
 <p><span class="math display">\[
-\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+\mathcal{L}(y_{s:t}) = \frac{1}{\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
 \]</span></p>
 <p>The cost for the full segmentation will be given by the sum across all segments:</p>
 <p><span class="math display">\[

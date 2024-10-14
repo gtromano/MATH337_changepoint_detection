@@ -139,13 +139,13 @@ But how can we work in case we have more than one change? Well, we need to intro
 If we assume the data is independent and identically distributed within each segment, for segment parameter $\theta$, then this cost can be obtained through:
 
 $$
-    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - \log(f(y_i, \theta))
+    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - 2 \log(f(y_i, \theta))
 $$
 
 with $f(y, \theta)$ being the likelihood for data point $y$ if the segment parameter is $\theta$. Now, for example, in the gaussian case this cost is given by:
 
 $$
-\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+\mathcal{L}(y_{s:t}) = \frac{1}{\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
 $$
 
 The cost for the full segmentation will be given by the sum across all segments:

@@ -357,7 +357,7 @@ We won't introduce the method formally, but in an intuitive way, CROPS works in 
 
 We can use CROPS to generate an **elbow plot** for selecting the appropriate penalty value in changepoint detection. In Data Science and Machine Learning, elbow plots are graphs that helps us choosing the appropiate value of a parameter, balancing between model complexity (in our case number of changepoints) and goodness of fit (how tightly our model fits the data).
 
-In case of CROPS, we can plot the penalty value from our range, against the number of changepoints. The curve typically shows a steep drop at first, as many changepoints are detected with low penalties, then flattens as the penalty increases and fewer changepoints are added. The **elbow** (hence its name) is the point where the rate of change in the number of changepoints significantly slows down:
+In case of CROPS, we can plot the number of changepoints against the penalty value from our range. The curve typically shows a steep drop at first, as many changepoints are detected with low penalties, then flattens as the penalty increases and fewer changepoints are added. The **elbow** (hence its name) is the point where the rate of change in the number of changepoints significantly slows down:
 
 ```{r, echo=FALSE, results=FALSE}
 set.seed(123)
@@ -365,7 +365,7 @@ aaa <- c(rnorm(100, 10), rnorm(131, 1), rnorm(144, .5), rnorm(135,2))
 out <- cpt.mean(aaa, method = "PELT", penalty  = "CROPS", pen.value = c(2, 20))
 
 plot(out,diagnostic=TRUE)
-text(x = 5, y = 5.2, labels = "X")
+text(x = 5.2, y = 6, labels = "X")
 ```
 
 The elbow is a point of balance between model fit and complexity. As a rule of thumb, a good choices of a penalty reside in picking either the penalty that generates the segmentation at the elbow, or the one at the point immediately prior.
@@ -376,10 +376,17 @@ Going back to our neuroblastoma example above. We run CROPS for penalties $[2, 4
 out <- cpt.mean(data, method = "PELT", penalty  = "CROPS", pen.value = c(2, 40))
 
 plot(out,diagnostic=TRUE)
-abline(v=4)
+abline(h=4)
 ```
 
 We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!
+
+This gives us:
+
+```{r}
+cpts(out, 4)
+plot(out, ncpts= 4)
+```
 
 ## Exercises
 

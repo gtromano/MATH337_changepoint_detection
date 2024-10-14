@@ -1335,11 +1335,11 @@ changepoint at \(\tau\) after which the slope changes. Thus, the signal
 becomes:
 
 \[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \tau \theta_1 + (t-\tau)\theta_2, \quad t = \tau+1, \dots, n,
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 \]
 
 where \(\theta_2\) is the new slope after the changepoint. In other
-words, the model is showing a continuoos piecewise linear mean.
+words, the model is showing a piecewise linear mean.
 
 For this model, the log-likelihood ratio test statistic can be written
 as the square of a projection of the data onto a vector \(v_\tau\),
@@ -1367,9 +1367,9 @@ belowed show rose rapidly to success, and at one point, started to
 \emph{decline\ldots{}} A much better model would therefore be our
 change-in-slope model!
 
-To run the model, we can take advantage of the \texttt{not} package,
-which by default is a multiple changepoint algorithm (we will see these
-in the next week), but whose simplest case implements exactly our
+To run the model, we can take advantage of the \texttt{changepoint}
+package, which by default is a multiple changepoint package (we will see
+these in the next week), but whose simplest case implements exactly our
 change-in-slope LR test.
 
 Before we proceed, we need to load, clean and standardize our data:
@@ -1390,88 +1390,8 @@ We can then run our model with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(not)}
-
-\NormalTok{r }\OtherTok{\textless{}{-}} \FunctionTok{not}\NormalTok{(y, }\AttributeTok{method =} \StringTok{"max"}\NormalTok{, }\AttributeTok{rand.intervals =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{contrast =} \StringTok{"pcwsLinContMean"}\NormalTok{, }\AttributeTok{intervals =} \FunctionTok{random.intervals}\NormalTok{(n, }\DecValTok{1}\NormalTok{, }\AttributeTok{min.length =}\NormalTok{ (n}\DecValTok{{-}1}\NormalTok{)))}
-
-\FunctionTok{print}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"Our changepoint estimate: "}\NormalTok{,  }\FunctionTok{features}\NormalTok{(r)}\SpecialCharTok{$}\NormalTok{cpt))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-[1] "Our changepoint estimate: NA"
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{plot}\NormalTok{(r)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{2_control_files/figure-pdf/unnamed-chunk-6-1.pdf}
-
-We notice how the test statistics implemented does not detect any
-significant change\ldots{} As this may sound a bit anti-climatic, there
-is still some relaxation on the hypotheses that we can do to obtain a
-better answer. We can, in fact, relax the hypothesis that the regression
-line needs to be continuous, and assume that there might be a change in
-the intercept too, signifying an abrupt change:
-
-\[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
-\]
-
-We can do that by changing the model via the \texttt{contrast} argument:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{r }\OtherTok{\textless{}{-}} \FunctionTok{not}\NormalTok{(y, }\AttributeTok{method =} \StringTok{"max"}\NormalTok{, }\AttributeTok{rand.intervals =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{contrast =} \StringTok{"pcwsLinMean"}\NormalTok{, }\AttributeTok{intervals =} \FunctionTok{random.intervals}\NormalTok{(n, }\DecValTok{1}\NormalTok{, }\AttributeTok{min.length =}\NormalTok{ (n}\DecValTok{{-}1}\NormalTok{)))}
-
-\FunctionTok{print}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"Our changepoint estimate: "}\NormalTok{,  }\FunctionTok{features}\NormalTok{(r)}\SpecialCharTok{$}\NormalTok{cpt))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-[1] "Our changepoint estimate: 176"
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{plot}\NormalTok{(r)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{2_control_files/figure-pdf/unnamed-chunk-7-1.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \FunctionTok{library}\NormalTok{(changepoint)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-Loading required package: zoo
-\end{verbatim}
-
-\begin{verbatim}
-
-Attaching package: 'zoo'
-\end{verbatim}
-
-\begin{verbatim}
-The following objects are masked from 'package:base':
-
-    as.Date, as.Date.numeric
-\end{verbatim}
-
-\begin{verbatim}
-Successfully loaded changepoint package version 2.3
- WARNING: From v.2.3 the default method in cpt.* functions has changed from AMOC to PELT.
- See NEWS for details of all changes.
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(y, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(y))}
 
 \NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{cpt.reg}\NormalTok{(data, }\AttributeTok{method=}\StringTok{"AMOC"}\NormalTok{, }\AttributeTok{minseglen=}\DecValTok{5}\NormalTok{, }\AttributeTok{penalty=}\StringTok{"MBIC"}\NormalTok{, }\AttributeTok{test.stat=}\StringTok{"Normal"}\NormalTok{)}
@@ -1490,11 +1410,14 @@ Successfully loaded changepoint package version 2.3
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{2_control_files/figure-pdf/unnamed-chunk-7-2.pdf}
+\includegraphics{2_control_files/figure-pdf/unnamed-chunk-6-1.pdf}
 
 We can see that we now find a significant changepoint prior to episode
 The Simpsons Spin-Off Showcase, which is anthology episode well over
-into season 8, which is by many considered the last good one!
+into season 8, which, according to our method, is the beginning of the
+decline! However, some among you, might have noticed that there are more
+then one changes in this dataset\ldots{} We will see, in fact, how we
+can improve on our estimation in the following weeks!
 
 \section{Exercises}\label{exercises-1}
 

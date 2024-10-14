@@ -328,10 +328,10 @@ $$
 where $\theta_0$ is the intercept, and $\theta_1$ is the slope. However, under the alternative hypothesis $H_1$, we assume there is a changepoint at $\tau$ after which the slope changes. Thus, the signal becomes:
 
 $$
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \tau \theta_1 + (t-\tau)\theta_2, \quad t = \tau+1, \dots, n,
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 $$
 
-where $\theta_2$ is the new slope after the changepoint. In other words, the model is showing a continuoos piecewise linear mean.
+where $\theta_2$ is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.
 
 For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector $v_\tau$, i.e.,
 
@@ -345,7 +345,7 @@ where $v_\tau$ is a contrast vector that is piecewise linear with a change in sl
 
 So, going back to the Simpsons example... We mentioned how the belowed show rose rapidly to success, and at one point, started to *decline...* A much better model would therefore be our change-in-slope model!
 
-To run the model, we can take advantage of the `not` package, which by default is a multiple changepoint algorithm (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.
+To run the model, we can take advantage of the `changepoint` package, which by default is a multiple changepoint package (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.
 
 Before we proceed, we need to load, clean and standardize our data:
 
@@ -362,30 +362,6 @@ y <- simpsons_episodes$Rating
 We can then run our model with:
 
 ```{r, message=FALSE, warning=FALSE}
-library(not)
-
-r <- not(y, method = "max", rand.intervals = FALSE, contrast = "pcwsLinContMean", intervals = random.intervals(n, 1, min.length = (n-1)))
-
-print(paste0("Our changepoint estimate: ",  features(r)$cpt))
-plot(r)
-
-```
-
-We notice how the test statistics implemented does not detect any significant change... As this may sound a bit anti-climatic, there is still some relaxation on the hypotheses that we can do to obtain a better answer. We can, in fact, relax the hypothesis that the regression line needs to be continuous, and assume that there might be a change in the intercept too, signifying an abrupt change:
-
-$$
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
-$$
-
-We can do that by changing the model via the `contrast` argument:
-
-```{r}
-r <- not(y, method = "max", rand.intervals = FALSE, contrast = "pcwsLinMean", intervals = random.intervals(n, 1, min.length = (n-1)))
-
-print(paste0("Our changepoint estimate: ",  features(r)$cpt))
-plot(r)
-
-
 library(changepoint)
 
 data <- cbind(y, 1, 1:length(y))
@@ -394,9 +370,10 @@ out <- cpt.reg(data, method="AMOC", minseglen=5, penalty="MBIC", test.stat="Norm
 
 print(paste0("Our changepoint estimate (chagepoints): ",  cpts(out)))
 plot(out)
+
 ```
 
-We can see that we now find a significant changepoint prior to episode `r simpsons_episodes[features(r)$cpt + 1, "title"]`, which is anthology episode well over into season 8, which is by many considered the last good one!
+We can see that we now find a significant changepoint prior to episode `r simpsons_episodes[cpts(out) + 1, "title"]`, which is anthology episode well over into season 8, which, according to our method, is the beginning of the decline! However, some among you, might have noticed that there are more then one changes in this dataset... We will see, in fact, how we can improve on our estimation in the following weeks!
 
 ## Exercises
 

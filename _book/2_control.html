@@ -473,9 +473,9 @@ f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, n,
 \]</span></p>
 <p>where <span class="math inline">\(\theta_0\)</span> is the intercept, and <span class="math inline">\(\theta_1\)</span> is the slope. However, under the alternative hypothesis <span class="math inline">\(H_1\)</span>, we assume there is a changepoint at <span class="math inline">\(\tau\)</span> after which the slope changes. Thus, the signal becomes:</p>
 <p><span class="math display">\[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \tau \theta_1 + (t-\tau)\theta_2, \quad t = \tau+1, \dots, n,
+f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
 \]</span></p>
-<p>where <span class="math inline">\(\theta_2\)</span> is the new slope after the changepoint. In other words, the model is showing a continuoos piecewise linear mean.</p>
+<p>where <span class="math inline">\(\theta_2\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
 <p>For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector <span class="math inline">\(v_\tau\)</span>, i.e.,</p>
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
@@ -485,7 +485,7 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
 <p>So, going back to the Simpsons example… We mentioned how the belowed show rose rapidly to success, and at one point, started to <em>decline…</em> A much better model would therefore be our change-in-slope model!</p>
-<p>To run the model, we can take advantage of the <code>not</code> package, which by default is a multiple changepoint algorithm (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.</p>
+<p>To run the model, we can take advantage of the <code>changepoint</code> package, which by default is a multiple changepoint package (we will see these in the next week), but whose simplest case implements exactly our change-in-slope LR test.</p>
 <p>Before we proceed, we need to load, clean and standardize our data:</p>
 <div class="cell" data-warnings="false">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Simpsons ratings data</span></span>
@@ -498,15 +498,17 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 </div>
 <p>We can then run our model with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(not)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinContMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(y, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y))</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.reg</span>(data, <span class="at">method=</span><span class="st">"AMOC"</span>, <span class="at">minseglen=</span><span class="dv">5</span>, <span class="at">penalty=</span><span class="st">"MBIC"</span>, <span class="at">test.stat=</span><span class="st">"Normal"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate (chagepoints): "</span>,  <span class="fu">cpts</span>(out)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Our changepoint estimate: NA"</code></pre>
+<pre><code>[1] "Our changepoint estimate (chagepoints): 176"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -515,62 +517,7 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 </div>
 </div>
 </div>
-<p>We notice how the test statistics implemented does not detect any significant change… As this may sound a bit anti-climatic, there is still some relaxation on the hypotheses that we can do to obtain a better answer. We can, in fact, relax the hypothesis that the regression line needs to be continuous, and assume that there might be a change in the intercept too, signifying an abrupt change:</p>
-<p><span class="math display">\[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
-\]</span></p>
-<p>We can do that by changing the model via the <code>contrast</code> argument:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">not</span>(y, <span class="at">method =</span> <span class="st">"max"</span>, <span class="at">rand.intervals =</span> <span class="cn">FALSE</span>, <span class="at">contrast =</span> <span class="st">"pcwsLinMean"</span>, <span class="at">intervals =</span> <span class="fu">random.intervals</span>(n, <span class="dv">1</span>, <span class="at">min.length =</span> (n<span class="dv">-1</span>)))</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate: "</span>,  <span class="fu">features</span>(r)<span class="sc">$</span>cpt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Our changepoint estimate: 176"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="2_control_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Loading required package: zoo</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'zoo'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:base':
-
-    as.Date, as.Date.numeric</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Successfully loaded changepoint package version 2.3
- WARNING: From v.2.3 the default method in cpt.* functions has changed from AMOC to PELT.
- See NEWS for details of all changes.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(y, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.reg</span>(data, <span class="at">method=</span><span class="st">"AMOC"</span>, <span class="at">minseglen=</span><span class="dv">5</span>, <span class="at">penalty=</span><span class="st">"MBIC"</span>, <span class="at">test.stat=</span><span class="st">"Normal"</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Our changepoint estimate (chagepoints): "</span>,  <span class="fu">cpts</span>(out)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "Our changepoint estimate (chagepoints): 176"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="2_control_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>We can see that we now find a significant changepoint prior to episode The Simpsons Spin-Off Showcase, which is anthology episode well over into season 8, which is by many considered the last good one!</p>
+<p>We can see that we now find a significant changepoint prior to episode The Simpsons Spin-Off Showcase, which is anthology episode well over into season 8, which, according to our method, is the beginning of the decline! However, some among you, might have noticed that there are more then one changes in this dataset… We will see, in fact, how we can improve on our estimation in the following weeks!</p>
 </section>
 </section>
 <section id="exercises" class="level2" data-number="2.4">

@@ -582,7 +582,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 &nbsp;&nbsp;<span class="math inline">\(S \leftarrow S + y_t\)</span><br>
 &nbsp;&nbsp;<span class="math inline">\(\bar{y}_{1:t} \leftarrow S / t\)</span><br>
 &nbsp;&nbsp;<span class="math inline">\(\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)\)</span> // Can you figure out why?<br>
-&nbsp;&nbsp;<span class="math inline">\(C_t \leftarrow \sqrt{\frac{t(n-t)}{n}} |\bar{y}_{1:t} - \bar{y}_{(t+1):n}|\)</span><br>
+&nbsp;&nbsp;<span class="math inline">\(C_t \leftarrow \frac{t(n-t)}{n} (\bar{y}_{1:t} - \bar{y}_{(t+1):n})^2\)</span><br>
 &nbsp;&nbsp;<strong>IF</strong> <span class="math inline">\(C_t &gt; C_{max}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow t\)</span><br>
@@ -628,7 +628,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </ol>
 <!-- -->
 <ol type="a">
-<li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. Suggestion: try to compute the variance of the process.</p></li>
+<li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)\)</span>. This is a random walk model. Let’s start by computing the expected value and variance of <span class="math inline">\(y_t\)</span> across all <span class="math inline">\(t\)</span>. <strong>TIP:</strong> Start by expanding <span class="math inline">\(y_{t}\)</span> in terms of the noise components…</p></li>
 <li><p><span class="math inline">\(y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \&gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)\)</span></p></li>
 </ol>

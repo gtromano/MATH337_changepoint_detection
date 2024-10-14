@@ -441,7 +441,7 @@ However, there's an algorithmic trick... By sequentially computing partial sums,
 |   $S \leftarrow S + y_t$
 |   $\bar{y}_{1:t} \leftarrow S / t$
 |   $\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)$ // Can you figure out why?
-|   $C_t \leftarrow \sqrt{\frac{t(n-t)}{n}} |\bar{y}_{1:t} - \bar{y}_{(t+1):n}|$
+|   $C_t \leftarrow \frac{t(n-t)}{n} (\bar{y}_{1:t} - \bar{y}_{(t+1):n})^2$
 |   **IF** $C_t > C_{max}$
 |     $C_{max} \leftarrow C_t$
 |     $\hat{\tau} \leftarrow t$
@@ -552,7 +552,7 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 ```{=html}
 <!-- -->
 ```
-a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. Suggestion: try to compute the variance of the process.
+a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. This is a random walk model. Let's start by computing the expected value and variance of $y_t$ across all $t$. **TIP:** Start by expanding $y_{t}$ in terms of the noise components...
 
 b.  $y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 

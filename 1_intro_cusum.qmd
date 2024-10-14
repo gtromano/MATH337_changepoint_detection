@@ -571,7 +571,9 @@ c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100
 
 1.  Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.
 
-2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above. You'll be able to load the dataset via:
+2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above. 
+
+  a.    You'll be able to load the dataset via:
 
 ```{r eval=FALSE}
 library(tidyverse)
@@ -584,3 +586,7 @@ simpsons_ratings <- simpsons_ratings[-nrow(simpsons_ratings), ]
 # run your CUSUM algorithm on the Rating variable!
 ```
 
+  b.    To run it on the whole sequence, you'll have to set the threshold $c = \infty$.
+  
+  c.    Assume $\sigma^2 = 1$
+  

@@ -951,8 +951,14 @@ the decline, according to the Gaussian change-in-mean model!
   pseudocode above.
 \item
   Modify your function above to output the CUSUM statistics over all
-  ranges of tau, and recreate the Simpsons plot above. You'll be able to
-  load the dataset via:
+  ranges of tau, and recreate the Simpsons plot above.
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  You'll be able to load the dataset via:
 \end{enumerate}
 
 \begin{Shaded}
@@ -967,6 +973,16 @@ the decline, according to the Gaussian change-in-mean model!
 \CommentTok{\# run your CUSUM algorithm on the Rating variable!}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\item
+  To run it on the whole sequence, you'll have to set the threshold
+  \(c = \infty\).
+\item
+  Assume \(\sigma^2 = 1\)
+\end{enumerate}
 
 \bookmarksetup{startatroot}
 

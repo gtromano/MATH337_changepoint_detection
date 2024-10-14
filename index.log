@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2024.3.15)  14 OCT 2024 12:33
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2024.3.15)  14 OCT 2024 12:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1071,12 +1071,12 @@ File: 2_control_files/figure-pdf/unnamed-chunk-2-1.pdf Graphic file (type pdf)
 File: source_imgs/empirical_thres_comparison.png Graphic file (type bmp)
 <source_imgs/empirical_thres_comparison.png>
 
-Overfull \hbox (10.95612pt too wide) in paragraph at lines 1090--1091
+Overfull \hbox (10.95612pt too wide) in paragraph at lines 1106--1107
 [][] 
  []
 
 [25] [26]
-Overfull \hbox (0.80455pt too wide) detected at line 1139
+Overfull \hbox (0.80455pt too wide) detected at line 1155
 [][][] [] [][] []
  []
 
@@ -1089,7 +1089,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1213 \end{align}
+l.1229 \end{align}
                    
 Here is how much of TeX's memory you used:
  23994 strings out of 476191

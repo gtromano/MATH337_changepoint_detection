@@ -645,7 +645,10 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="lab-1"><span class="header-section-number">1.4.2</span> Lab 1</h3>
 <ol type="1">
 <li><p>Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</p></li>
-<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above. You’ll be able to load the dataset via:</p></li>
+<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.</p></li>
+</ol>
+<ol type="a">
+<li>You’ll be able to load the dataset via:</li>
 </ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -657,6 +660,10 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># run your CUSUM algorithm on the Rating variable!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<ol start="2" type="a">
+<li><p>To run it on the whole sequence, you’ll have to set the threshold <span class="math inline">\(c = \infty\)</span>.</p></li>
+<li><p>Assume <span class="math inline">\(\sigma^2 = 1\)</span></p></li>
+</ol>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">

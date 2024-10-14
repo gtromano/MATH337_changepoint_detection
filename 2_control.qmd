@@ -362,6 +362,8 @@ y <- simpsons_episodes$Rating
 We can then run our model with:
 
 ```{r, message=FALSE, warning=FALSE}
+library(not)
+
 r <- not(y, method = "max", rand.intervals = FALSE, contrast = "pcwsLinContMean", intervals = random.intervals(n, 1, min.length = (n-1)))
 
 print(paste0("Our changepoint estimate: ",  features(r)$cpt))

@@ -1186,7 +1186,7 @@ We proceed similarly for the other two terms:
 \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 - \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 - (n-\tau) \bar{y}_{\tau+1:n}^2
 \]
 
-Putting all together, and getting rid of telescopic sums, we are left
+Putting all together, and getting rid of the partial sums, we are left
 with:
 
 \[
@@ -1233,7 +1233,9 @@ observation will be given by:
 
 \[
 L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
-\] Plugging in the main LR test formula, we find:
+\]
+
+Plugging in the main LR test formula, we find:
 
 \[
 LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\})(\prod_{t=\tau+1}^n  \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}]} \right\}
@@ -1244,7 +1246,7 @@ And taking the log, and simplifying over the constant gives us:
 \[
 \begin{align}
 LR_\tau &= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
-& = -\min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) + \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
+& = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
 \end{align}
 \]
 
@@ -1276,7 +1278,7 @@ Now, as \(f(y_{1:n}, \hat{\theta}) = \bar S_{1:n} + n\) (why?) the final
 LR test simplifies to:
 
 \[
-LR_\tau = \left[  - n \log(\bar S_{1:n}) + \tau \log(\bar S_{1:\tau}) + (n - \tau) \log(\bar S_{(\tau + 1):n}) \right]
+LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau) \log(\bar S_{(\tau + 1):n}) \right]
 \]
 
 \includegraphics{2_control_files/figure-pdf/unnamed-chunk-3-1.pdf}
@@ -1422,6 +1424,55 @@ We can do that by changing the model via the \texttt{contrast} argument:
 \end{Shaded}
 
 \includegraphics{2_control_files/figure-pdf/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(changepoint)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Loading required package: zoo
+\end{verbatim}
+
+\begin{verbatim}
+
+Attaching package: 'zoo'
+\end{verbatim}
+
+\begin{verbatim}
+The following objects are masked from 'package:base':
+
+    as.Date, as.Date.numeric
+\end{verbatim}
+
+\begin{verbatim}
+Successfully loaded changepoint package version 2.3
+ WARNING: From v.2.3 the default method in cpt.* functions has changed from AMOC to PELT.
+ See NEWS for details of all changes.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(y, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(y))}
+
+\NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{cpt.reg}\NormalTok{(data, }\AttributeTok{method=}\StringTok{"AMOC"}\NormalTok{, }\AttributeTok{minseglen=}\DecValTok{5}\NormalTok{, }\AttributeTok{penalty=}\StringTok{"MBIC"}\NormalTok{, }\AttributeTok{test.stat=}\StringTok{"Normal"}\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"Our changepoint estimate (chagepoints): "}\NormalTok{,  }\FunctionTok{cpts}\NormalTok{(out)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] "Our changepoint estimate (chagepoints): 176"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(out)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2_control_files/figure-pdf/unnamed-chunk-7-2.pdf}
 
 We can see that we now find a significant changepoint prior to episode
 The Simpsons Spin-Off Showcase, which is anthology episode well over
@@ -1962,8 +2013,9 @@ The following objects are masked from 'package:base':
 \end{verbatim}
 
 \begin{verbatim}
-Successfully loaded changepoint package version 2.2.4
- See NEWS for details of changes.
+Successfully loaded changepoint package version 2.3
+ WARNING: From v.2.3 the default method in cpt.* functions has changed from AMOC to PELT.
+ See NEWS for details of all changes.
 \end{verbatim}
 
 \includegraphics{3_multiple_changes_files/figure-pdf/unnamed-chunk-16-1.pdf}
@@ -2463,8 +2515,8 @@ appropiate value of a parameter, balancing between model complexity (in
 our case number of changepoints) and goodness of fit (how tightly our
 model fits the data).
 
-In case of CROPS, we can plot the penalty value from our range, against
-the number of changepoints. The curve typically shows a steep drop at
+In case of CROPS, we can plot the number of changepoints against the
+penalty value from our range. The curve typically shows a steep drop at
 first, as many changepoints are detected with low penalties, then
 flattens as the penalty increases and fewer changepoints are added. The
 \textbf{elbow} (hence its name) is the point where the rate of change in
@@ -2485,7 +2537,7 @@ penalties \([2, 40]\), and we then generate the elbow plot:
 \NormalTok{out }\OtherTok{\textless{}{-}} \FunctionTok{cpt.mean}\NormalTok{(data, }\AttributeTok{method =} \StringTok{"PELT"}\NormalTok{, }\AttributeTok{penalty  =} \StringTok{"CROPS"}\NormalTok{, }\AttributeTok{pen.value =} \FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{40}\NormalTok{))}
 
 \FunctionTok{plot}\NormalTok{(out,}\AttributeTok{diagnostic=}\ConstantTok{TRUE}\NormalTok{)}
-\FunctionTok{abline}\NormalTok{(}\AttributeTok{v=}\DecValTok{4}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{h=}\DecValTok{4}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -2493,6 +2545,26 @@ penalties \([2, 40]\), and we then generate the elbow plot:
 
 We can see that the elbow is at 4 changepoints, therefore this could
 suggest that a segmentation with 4 changes might be the best!
+
+This gives us:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cpts}\NormalTok{(out, }\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1]  3 17 51 52
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(out, }\AttributeTok{ncpts=} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{4_algos_and_penalties_files/figure-pdf/unnamed-chunk-9-1.pdf}
 
 \section{Exercises}\label{exercises-3}
 
@@ -2688,7 +2760,7 @@ changes at all:
 \end{Shaded}
 
 \begin{verbatim}
-Created Using changepoint version 2.2.4 
+Created Using changepoint version 2.3 
 Changepoint type      : Change in mean 
 Method of analysis    : PELT 
 Test Statistic  : Normal 

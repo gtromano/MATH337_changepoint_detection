@@ -1,4 +1,5 @@
 # Working with Real Data
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(changepoint)
@@ -6,17 +7,183 @@ library(changepoint)
 
 In practice, working with real-world data presents various challenges that can complicate our analyses. Unlike idealised examples, real data often contain noise, outliers, and other irregularities that can impair the accuracy of the segmentations we aim to generate. The assumptions we make in our models may not hold up well, and this can lead to poor estimates of changepoints. To tackle these issues, it is important to either use robust methods, or consider carefully how we handle the estimation of key parameters within our changepoint detection models.
 
+## Assessing the model fit
+
+### Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics
+
+When dealing with real-world data and changepoint models, it's essential to evaluate how well the model fits the data. Apart from the techniques we saw last week, where we can use an elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals -- the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.
+
+This section introduces three key diagnostic tools for assessing the residuals from a changepoint model: the **histogram of residuals**, the **normal Q-Q plot**, and the **residuals vs. fitted values plot**. These tools help assess whether the assumptions of the model (such as normality and homoscedasticity) hold.
+
+As an example, we will run diagnostics on the following example:
+```{r echo=FALSE}
+#| fig-height: 3
+
+set.seed(42)
+y <- c(rnorm(123), rnorm(452, mean = 2), rnorm(52, mean = 1, sd=1), rnorm(100, mean = 3))
+
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:length(y),
+  y = y
+)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+  theme_minimal()
+
+p
+```
+
+On which PELT returns the segmentation:
+```{r echo=FALSE}
+#| fig-height: 3
+
+# Apply Binary Segmentation and Optimal Partitioning
+out <- cpt.mean(y, method = "PELT")
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:length(y),
+  y = y
+)
+
+op_cpts <- cpts(out)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+
+  # Add Optimal Partitioning changepoints
+  geom_vline(xintercept = op_cpts, linetype = "solid", color = "grey") +
+  theme_minimal()
+
+p
+```
+
+
+#### 1. Histogram of the Residuals
+The histogram of the residuals is a simple but effective tool for visualizing the distribution of residuals. The histogram checks whether the residuals are approximately normally distributed. You should see a bell-shaped histogram centered around zero, indicating that the residuals are symmetrically distributed around the mean with no significant skewness or heavy tails.
+
+```{r}
+hist(residuals(out), main = "Histogram of the residuals")
+```
+
+
+- **What to Watch for:**
+  - Skewness: If the histogram is not symmetric, it could indicate skewness in the residuals, suggesting that the model may not fully capture the data's structure.
+  - Outliers: Large bars far from zero indicate extreme residuals, which could be outliers.
+  - Heavy or light tails: If the histogram shows long tails, it may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors.
+
+#### 2. **Normal Q-Q Plot**
+The normal quantile-quantile (Q-Q) plot compares the distribution of the residuals to a theoretical normal distribution. The idea is to see if the residuals deviate significantly from the straight line that would indicate normality. Points should fall along a straight diagonal line, indicating that the residuals closely follow a normal distribution.
+
+```{r}
+qqnorm(residuals(out), main = "Normal Q-Q Plot of the Residuals")
+qqline(residuals(out), col = "red")
+```
+
+- **What to Watch for:**
+  - **Deviations from the line:** Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values).
+  - **Outliers:** Points far away from the line, especially at the ends, suggest outliers or non-normality in the tails.
+
+The Q-Q plot is a more precise method of checking normality than the histogram since it directly compares the residuals to a normal distribution's quantiles.
+
+#### 3. **Residuals vs. Fitted Values Plot**
+Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values. This suggests the model has adequately captured the relationship between the variables.
+
+```{r}
+plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
+```
+
+
+
+- **What to Watch for:**
+  - To observe cluster of points in the data is normal, as the fitted values are the estimate of our signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting.
+  - Heteroscedasticity (Non-constant variance): If the residuals' spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!
+
+
+### Example: violating heteroschedasticity:
+
+Let's take the data from before, and add increase the variance in one of the segments:
+
+```{r echo=FALSE}
+#| fig-height: 3
+
+set.seed(42)
+y <- c(rnorm(123), rnorm(452, mean = 2), rnorm(52, mean = 1, sd=6), rnorm(100, mean = 3))
+
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:length(y),
+  y = y
+)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+  theme_minimal()
+
+p
+```
+
+A simple PELT change-in-mean fit gives us the segmentation:
+
+```{r echo=FALSE}
+#| fig-height: 3
+
+# Apply Binary Segmentation and Optimal Partitioning
+out <- cpt.mean(y, method = "PELT")
+
+# Create a data frame for plotting
+df <- data.frame(
+  x = 1:length(y),
+  y = y
+)
+
+op_cpts <- cpts(out)
+
+# Plot data with changepoints
+p <- ggplot(df, aes(x = x, y = y)) +
+  geom_point() +
+
+  # Add Optimal Partitioning changepoints
+  geom_vline(xintercept = op_cpts, linetype = "solid", color = "grey") +
+  theme_minimal()
+
+p
+```
+
+With the diagnostics:
+
+```{r echo=FALSE}
+hist(residuals(out), main = "Histogram of the residuals")
+qqnorm(residuals(out), main = "Normal Q-Q Plot of the Residuals")
+qqline(residuals(out), col = "red")
+plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
+
+```
+
+
+We can clearly see from the vertical lines that we have an oversegmentation in the third segment. 
+The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which might be due to the presence of heteroscedasticity in the data.
+However, the residuals vs. fitted values plot provides the strongest evidence of overfitting due to heteroscedasticity, showing that the variance of the residuals is not constant and increases at the extremes.
+
+
 ## Estimating Other Known Parameters
 
-Let’s revisit the classic problem of detecting a change in mean. One of the key assumptions we've relied on so far is that the variance, $\sigma^2$, is fixed, and known. Specifically, we used the following cost function in our models:
+Let's revisit the classic problem of detecting a change in mean. One of the key assumptions we've relied on so far is that the variance, $\sigma^2$, is fixed, and known. Specifically, we used the following cost function in our models:
 
 $$
 \mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
 $$
 
-In our examples, we've typically set $\sigma^2 = 1$. However, this assumption is often unrealistic when working with real data. When the true value of $\sigma^2$ is unknown or incorrectly specified, the results of changepoint detection can be significantly affected. 
+In our examples, we've typically set $\sigma^2 = 1$. However, this assumption is often unrealistic when working with real data. When the true value of $\sigma^2$ is unknown or incorrectly specified, the results of changepoint detection can be significantly affected.
 
--   If we underestimate the variance by choosing a value for $\sigma^2$ that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints. 
+-   If we underestimate the variance by choosing a value for $\sigma^2$ that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints.
 -   Conversely, if we overestimate the variance with a value that is too high, the algorithm may detect too many changes, identifying noise as changepoints.
 
 ### Neuroblastoma Example: The Impact of Mis-specified Variance
@@ -66,6 +233,7 @@ p <- ggplot(df, aes(x = x, y = y)) +
 
 p
 ```
+
 ```{r}
 summary(out_op)
 ```
@@ -76,17 +244,17 @@ In this example, PELT fails to detect any changes because the scale of the data 
 
 One problem with estimating the variance in the change-in-mean scenario, is that depending on the size of the changes, these can skew your estimate...
 
-One way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences $z_t =  y_t - y_{t-1} \ \forall \quad t = 2, \dots, n$:
+One way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences $z_t = y_t - y_{t-1} \ \forall \quad t = 2, \dots, n$:
 
 ```{r}
 qplot(x = 1:(n-1), y = diff(y)) + theme_minimal()
 ```
 
-And compute the sample variance across all these differences as an estimator for our sigma square: $\hat \sigma^2 = \bar S(z_{1:n})$. However, we have not fixed our problem... yet! 
+And compute the sample variance across all these differences as an estimator for our sigma square: $\hat \sigma^2 = \bar S(z_{1:n})$. However, we have not fixed our problem... yet!
 
 What happens exactly at $t = \tau +1$? Well, across these observations, our $z_{\tau + 1}$ appears as an outlier (why?). This can still skew our estimate of the variance.
 
-A solution, is to use robust estimators of the variance. A common choice is the Median Absolute Deviation (MAD), which is less sensitive to outliers and can provide a more reliable estimate of $\bar S$ in  our case.
+A solution, is to use robust estimators of the variance. A common choice is the Median Absolute Deviation (MAD), which is less sensitive to outliers and can provide a more reliable estimate of $\bar S$ in our case.
 
 The formula for MAD is given by:
 
@@ -102,9 +270,9 @@ $$
 \hat \sigma_{\text{MAD}} = 1.4826 \times \text{MAD}
 $$
 
-This scaling factor ensures that $\sigma_{\text{MAD}}$ provides an approximately unbiased estimate of the standard deviation under the assumption of normally distributed data. 
+This scaling factor ensures that $\sigma_{\text{MAD}}$ provides an approximately unbiased estimate of the standard deviation under the assumption of normally distributed data.
 
-We then can divide our observations by this value to obtain ready-to-analyse observations. Go back and check the scale of the data in the segmentations in week 3! 
+We then can divide our observations by this value to obtain ready-to-analyse observations. Go back and check the scale of the data in the segmentations in week 3!
 
 While this trick provides a solution for handling variance estimation in the change-in-mean problem, more sophisticated models may require the estimation of additional parameters. And more advanced techniques are needed to ensure that all relevant parameters are accurately estimated (this is very much an open are of research)!
 
@@ -112,9 +280,7 @@ While this trick provides a solution for handling variance estimation in the cha
 
 A alternative approach for detecting changes in real data, especially when we don't want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.
 
-For example, let us have a look at one of the sequences from the
-Yahoo! Webscope dataset ydata-labeled-time-series-anomalies-v1_0 
-[http://labs.yahoo.com/Academic_Relations]:
+For example, let us have a look at one of the sequences from the Yahoo! Webscope dataset ydata-labeled-time-series-anomalies-v1_0 \[http://labs.yahoo.com/Academic_Relations\]:
 
 ```{r}
 
@@ -126,7 +292,6 @@ ggplot(A1, aes(x = timestamp, y = value)) +
   theme_minimal()
 
 ```
-
 
 Following @haynes2017nonpar, we introduce the NP-PELT approach. Let $F_{i:n}(q)$ denote the unknown cumulative distribution function (CDF) for the segment $y_{1:n}$, where $n$ indexes the data points. Similarly, let $\hat{F}_{1:n}(q)$ be the empirical CDF, which provides an estimate of the true distribution over the segment. The empirical CDF is given by:
 
@@ -191,7 +356,6 @@ y <- A1$value
 cpt.np(y, penalty = "Manual", pen.value = 25 * log(length(y))) |> plot(ylab = "y")
 ```
 
-
 <!-- ## Time dependency -->
 
 <!-- - another issue we might deal with is time dependency  -->
@@ -206,5 +370,37 @@ cpt.np(y, penalty = "Manual", pen.value = 25 * log(length(y))) |> plot(ylab = "y
 
 <!-- - for instance, one such model is the DeCAFS model from Romano et. al (2023).  -->
 
+## Exercises
 
+### Workshop exercises
+
+
+### The simpsons example:
+
+Interpret the residuals diagnostics from the Simpsons dataset:
+
+```{r echo=FALSE}
+# Load Simpsons ratings data
+simpsons_episodes <- read.csv("extra/simpsons_episodes.csv")
+simpsons_episodes <- simpsons_episodes |> 
+  mutate(Episode = id + 1, Season = as.factor(season), Rating = tmdb_rating)
+simpsons_episodes <- simpsons_episodes[-nrow(simpsons_episodes), ]
+
+y <- simpsons_episodes$Rating
+
+library(changepoint)
+
+data <- cbind(y, 1, 1:length(y))
+out <- cpt.reg(data, method="PELT")
+
+
+hist(residuals(out)[, 1], main = "Histogram of the residuals")
+
+# Generate a Q-Q plot for the residuals
+qqnorm(residuals(out)[, 1], main = "Normal Q-Q Plot of the Residuals")
+qqline(residuals(out)[, 1], col = "red")  # Adds a reference line
+
+
+plot(fitted(out), residuals(out)[, 1], xlab = "fitted", ylab="residuals")
+```
 

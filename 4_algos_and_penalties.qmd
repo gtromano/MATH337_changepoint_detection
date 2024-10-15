@@ -365,7 +365,7 @@ aaa <- c(rnorm(100, 10), rnorm(131, 1), rnorm(144, .5), rnorm(135,2))
 out <- cpt.mean(aaa, method = "PELT", penalty  = "CROPS", pen.value = c(2, 20))
 
 plot(out,diagnostic=TRUE)
-text(x = 5.2, y = 6, labels = "X")
+text(x = 3, y = 5, labels = "X")
 ```
 
 The elbow is a point of balance between model fit and complexity. As a rule of thumb, a good choices of a penalty reside in picking either the penalty that generates the segmentation at the elbow, or the one at the point immediately prior.
@@ -376,7 +376,7 @@ Going back to our neuroblastoma example above. We run CROPS for penalties $[2, 4
 out <- cpt.mean(data, method = "PELT", penalty  = "CROPS", pen.value = c(2, 40))
 
 plot(out,diagnostic=TRUE)
-abline(h=4)
+abline(v=3)
 ```
 
 We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!
@@ -384,8 +384,8 @@ We can see that the elbow is at 4 changepoints, therefore this could suggest tha
 This gives us:
 
 ```{r}
-cpts(out, 4)
-plot(out, ncpts= 4)
+cpts(out, 3)
+plot(out, ncpts= 3, type="p", pch=16)
 ```
 
 ## Exercises
@@ -396,51 +396,71 @@ plot(out, ncpts= 4)
 
 2.  The model (not the cost!) for a single segment of a *continuous* change-in-slope is given by:
 
-    $$
-    y_t = \tau\theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
-    $$
+$$
+    y_t = \tau_i \theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
+$${#eq-continuous-slope}
 
-    where $\theta_{\tau_i}$ represents the value of the slope at changepoint $\tau_i$ and $\phi_{\tau_{i+1}}$ is the value at the next changepoint $\tau_{i+1}$. Note, in this example, for simplicity, we assume the intercept is set equal to 0.
+where $\theta_{\tau_i}$ represents the value of the slope at changepoint $\tau_i$ and $\phi_{\tau_{i+1}}$ is the value at the next changepoint $\tau_{i+1}$. Note, in this example, for simplicity, we assume the intercept is set equal to 0.
 
-    This model is a variation from the one we had next week as it enforces continuity, e.g. the value at the end of one segment, needs to be the at the next:
+This model is a variation from the one we had next week as it enforces continuity, e.g. the value at the end of one segment, needs to be the at the next:
 
-    ```{r echo=FALSE}
-    set.seed(1)
-    set.seed(123)
-    n <- 250  # Number of observations
-    tau <- 50 # True changepoint
-    alpha1 <- 1
-    alpha2 <- 5
-    theta1 <- 0.3 # Slope before changepoint
-    theta2 <- -0.2  # Slope after changepoint
-    sigma <- 5  # Noise standard deviation
+```{r echo=FALSE}
+set.seed(1)
+set.seed(123)
+n <- 250  # Number of observations
+tau <- 50 # True changepoint
+alpha1 <- 1
+alpha2 <- 5
+theta1 <- 0.3 # Slope before changepoint
+theta2 <- -0.2  # Slope after changepoint
+sigma <- 5  # Noise standard deviation
 
-    # Generate data with a change in slope at tau
-    x <- 1:n
-    signal <- c(theta1 * x[1:tau], (x[(tau+1):n]) * theta2 + 1)
-    signal2 <- c(theta1 * x[1:tau], tau * theta1 + (x[(tau+1):n] - tau) * theta2)
+# Generate data with a change in slope at tau
+x <- 1:n
+signal <- c(theta1 * x[1:tau], (x[(tau+1):n]) * theta2 + 1)
+signal2 <- c(theta1 * x[1:tau], tau * theta1 + (x[(tau+1):n] - tau) * theta2)
 
-    data_trend <- data.frame(t = x, discontinuous = signal, continuous = signal2)
+data_trend <- data.frame(t = x, discontinuous = signal, continuous = signal2)
 
-    data_trend <- data_trend |> pivot_longer(names_to = "model", values_to = "signal", -t)
+data_trend <- data_trend |> pivot_longer(names_to = "model", values_to = "signal", -t)
 
+# Plot with the corrected geom_line for each segment
+ggplot(data_trend, aes(x = t, y = signal)) +
+  geom_line() +
+  facet_grid(~ model) +
+  theme_minimal()
+```
 
-    # Plot with the corrected geom_line for each segment
-    ggplot(data_trend, aes(x = t, y = signal)) +
-      geom_line() +
-      facet_grid(~ model) +
-      theme_minimal()
-    ```
+  a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
+        Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. 
 
-    a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
-        Once you've done that, rewrite the model for one change by assuming the previous segment starts at 0. You can have a look at week 2!
+  b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
 
-    b.  Writing down the two models for a case where you have two segments, with $\tau= 50$. By setting $\theta_1=0.3$ and $\theta_2=-0.2$, evaluate the value of the signal at times $\tau= 50$ in both models. What do you notice?
+  c.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
 
-    c.   you'll find CROPS segmentations and elbow plot for the change-in-slope model. How many changepoints would you reccomend fo
+```{r echo=FALSE}
+# Load Simpsons ratings data
+simpsons_episodes <- read.csv("extra/simpsons_episodes.csv")
+simpsons_episodes <- simpsons_episodes |> 
+  mutate(Episode = id + 1, Season = as.factor(season), Rating = tmdb_rating)
+simpsons_episodes <- simpsons_episodes[-nrow(simpsons_episodes), ]
 
-        ```{}
-        ```
+y <- simpsons_episodes$Rating
+```
+
+```{r}
+library(changepoint)
+
+data <- cbind(y, 1, 1:length(y))
+out <- cpt.reg(data, method="PELT")
+
+cat("Our changepoint estimates:", cpts(out))
+plot(out, ylab="y", xlab="t", pch=16)
+abline(v = cpts(out), col = "red")
+```
+
+Comment this segmentation. In which way we improved from the segmentation in week 2? What would you change?
+
 
 ### Lab 4
 

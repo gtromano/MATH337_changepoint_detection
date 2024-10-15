@@ -507,7 +507,7 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.mean</span>(data, <span class="at">method =</span> <span class="st">"PELT"</span>, <span class="at">penalty  =</span> <span class="st">"CROPS"</span>, <span class="at">pen.value =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">40</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out,<span class="at">diagnostic=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -519,11 +519,11 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 <p>We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!</p>
 <p>This gives us:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cpts</span>(out, <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cpts</span>(out, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  3 17 51 52</code></pre>
+<pre><code>[1]  3 17 52</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out, <span class="at">ncpts=</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out, <span class="at">ncpts=</span> <span class="dv">3</span>, <span class="at">type=</span><span class="st">"p"</span>, <span class="at">pch=</span><span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -540,10 +540,11 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 <h3 data-number="4.4.1" class="anchored" data-anchor-id="workshop-4"><span class="header-section-number">4.4.1</span> Workshop 4</h3>
 <ol type="1">
 <li><p>Looking at last week workshop exercise solution, which points in the OP recursion would have been pruned by PELT? Check that the PELT pruning condition is true.</p></li>
-<li><p>The model (not the cost!) for a single segment of a <em>continuous</em> change-in-slope is given by:</p>
-<p><span class="math display">\[
-y_t = \tau\theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
-\]</span></p>
+<li><p>The model (not the cost!) for a single segment of a <em>continuous</em> change-in-slope is given by:</p></li>
+</ol>
+<p><span id="eq-continuous-slope"><span class="math display">\[
+    y_t = \tau_i \theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
+\tag{4.1}\]</span></span></p>
 <p>where <span class="math inline">\(\theta_{\tau_i}\)</span> represents the value of the slope at changepoint <span class="math inline">\(\tau_i\)</span> and <span class="math inline">\(\phi_{\tau_{i+1}}\)</span> is the value at the next changepoint <span class="math inline">\(\tau_{i+1}\)</span>. Note, in this example, for simplicity, we assume the intercept is set equal to 0.</p>
 <p>This model is a variation from the one we had next week as it enforces continuity, e.g.&nbsp;the value at the end of one segment, needs to be the at the next:</p>
 <div class="cell">
@@ -557,13 +558,31 @@ y_t = \tau\theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text
 </div>
 <ol type="a">
 <li><p>We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?<br>
-Once you’ve done that, rewrite the model for one change by assuming the previous segment starts at 0. You can have a look at week 2!</p></li>
-<li><p>Writing down the two models for a case where you have two segments, with <span class="math inline">\(\tau= 50\)</span>. By setting <span class="math inline">\(\theta_1=0.3\)</span> and <span class="math inline">\(\theta_2=-0.2\)</span>, evaluate the value of the signal at times <span class="math inline">\(\tau= 50\)</span> in both models. What do you notice?</p></li>
-<li><p>you’ll find CROPS segmentations and elbow plot for the change-in-slope model. How many changepoints would you reccomend fo</p></li>
+Once you’ve done that, rewrite the model for one change by seting <span class="math inline">\(\tau_{i} = 0\)</span>.</p></li>
+<li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-continuous-slope</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2! What are the differences across the three models?</p></li>
+<li><p>The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:</p></li>
 </ol>
-<pre><code>```{}
-```</code></pre></li>
-</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(y, <span class="dv">1</span>, <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(y))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cpt.reg</span>(data, <span class="at">method=</span><span class="st">"PELT"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Our changepoint estimates:"</span>, <span class="fu">cpts</span>(out))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Our changepoint estimates: 176 359 363 585 589 708</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(out, <span class="at">ylab=</span><span class="st">"y"</span>, <span class="at">xlab=</span><span class="st">"t"</span>, <span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">cpts</span>(out), <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="4_algos_and_penalties_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Comment this segmentation. In which way we improved from the segmentation in week 2? What would you change?</p>
 </section>
 <section id="lab-4" class="level3" data-number="4.4.2">
 <h3 data-number="4.4.2" class="anchored" data-anchor-id="lab-4"><span class="header-section-number">4.4.2</span> Lab 4</h3>
@@ -572,51 +591,51 @@ Once you’ve done that, rewrite the model for one change by assuming the previo
 <li>The code below will generate 400 sequences, every 100 sequences you will have a different change-pattern:</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>generate_signal <span class="ot">&lt;-</span> <span class="cf">function</span>(n, <span class="at">pattern =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"up"</span>, <span class="st">"updown"</span>, <span class="st">"rand1"</span>), <span class="at">nbSeg =</span> <span class="dv">8</span>, <span class="at">jumpSize =</span> <span class="dv">1</span>) {</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  type <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(pattern)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (type <span class="sc">==</span> <span class="st">"rand1"</span>) {</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    rand1CP <span class="ot">&lt;-</span> <span class="fu">rpois</span>(nbSeg, <span class="at">lambda =</span> <span class="dv">10</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="fu">round</span>(rand1CP <span class="sc">*</span> n <span class="sc">/</span> <span class="fu">sum</span>(rand1CP)), <span class="dv">1</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    s <span class="ot">&lt;-</span> <span class="fu">sum</span>(r1)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adjust r1 to match sum to n</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> <span class="cf">if</span> (s <span class="sc">&gt;</span> n) {</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> (<span class="fu">sum</span>(r1) <span class="sc">&gt;</span> n) r1[<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)), <span class="dv">1</span>)]] <span class="ot">&lt;-</span> r1[<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)), <span class="dv">1</span>)]] <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      r1</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sample</span>(<span class="fu">rep</span>(<span class="fu">seq_along</span>(r1), n <span class="sc">-</span> s)) <span class="sc">%&gt;%</span> <span class="fu">table</span>() <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">+</span><span class="st">`</span>(r1)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">43</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    rand1Jump <span class="ot">&lt;-</span> <span class="fu">runif</span>(nbSeg, <span class="at">min =</span> <span class="fl">0.5</span>, <span class="at">max =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), nbSeg, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate scenarios</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">switch</span>(</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    type,</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">none =</span> <span class="fu">rep</span>(<span class="dv">0</span>, n),</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">up =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">0</span>, nbSeg <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> jumpSize, <span class="at">each =</span> n <span class="sc">/</span> nbSeg),</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">updown =</span> <span class="fu">rep</span>((<span class="fu">seq</span>(<span class="dv">0</span>, nbSeg <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%%</span> <span class="dv">2</span>) <span class="sc">*</span> jumpSize, <span class="at">each =</span> n <span class="sc">/</span> nbSeg),</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">rand1 =</span> <span class="fu">map2</span>(rand1Jump, r1, <span class="sc">~</span><span class="fu">rep</span>(.x <span class="sc">*</span> jumpSize, .y)) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">pattern =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"up"</span>, <span class="st">"updown"</span>, <span class="st">"rand1"</span>), <span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>full_seqs <span class="ot">&lt;-</span> <span class="fu">pmap</span>(sims, \(pattern, rep) {</span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">generate_signal</span>(<span class="fl">1e4</span>, pattern)</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(rep)</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> mu <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(mu))</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  cps <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">diff</span>(mu) <span class="sc">!=</span> <span class="dv">0</span>)</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="fu">list</span>(<span class="at">y =</span> y, <span class="at">mu =</span> mu, <span class="at">cps =</span> cps, <span class="at">pattern =</span> pattern))</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="co"># each component of the list describes a sequence:</span></span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full_seqs[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>generate_signal <span class="ot">&lt;-</span> <span class="cf">function</span>(n, <span class="at">pattern =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"up"</span>, <span class="st">"updown"</span>, <span class="st">"rand1"</span>), <span class="at">nbSeg =</span> <span class="dv">8</span>, <span class="at">jumpSize =</span> <span class="dv">1</span>) {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  type <span class="ot">&lt;-</span> <span class="fu">match.arg</span>(pattern)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (type <span class="sc">==</span> <span class="st">"rand1"</span>) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    rand1CP <span class="ot">&lt;-</span> <span class="fu">rpois</span>(nbSeg, <span class="at">lambda =</span> <span class="dv">10</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="fu">round</span>(rand1CP <span class="sc">*</span> n <span class="sc">/</span> <span class="fu">sum</span>(rand1CP)), <span class="dv">1</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    s <span class="ot">&lt;-</span> <span class="fu">sum</span>(r1)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Adjust r1 to match sum to n</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    r1 <span class="ot">&lt;-</span> <span class="cf">if</span> (s <span class="sc">&gt;</span> n) {</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">while</span> (<span class="fu">sum</span>(r1) <span class="sc">&gt;</span> n) r1[<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)), <span class="dv">1</span>)]] <span class="ot">&lt;-</span> r1[<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(<span class="fu">which</span>(r1 <span class="sc">&gt;</span> <span class="dv">1</span>)), <span class="dv">1</span>)]] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>      r1</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sample</span>(<span class="fu">rep</span>(<span class="fu">seq_along</span>(r1), n <span class="sc">-</span> s)) <span class="sc">%&gt;%</span> <span class="fu">table</span>() <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>() <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">+</span><span class="st">`</span>(r1)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">43</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    rand1Jump <span class="ot">&lt;-</span> <span class="fu">runif</span>(nbSeg, <span class="at">min =</span> <span class="fl">0.5</span>, <span class="at">max =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>), nbSeg, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Generate scenarios</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">switch</span>(</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    type,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">none =</span> <span class="fu">rep</span>(<span class="dv">0</span>, n),</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">up =</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">0</span>, nbSeg <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> jumpSize, <span class="at">each =</span> n <span class="sc">/</span> nbSeg),</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">updown =</span> <span class="fu">rep</span>((<span class="fu">seq</span>(<span class="dv">0</span>, nbSeg <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">%%</span> <span class="dv">2</span>) <span class="sc">*</span> jumpSize, <span class="at">each =</span> n <span class="sc">/</span> nbSeg),</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">rand1 =</span> <span class="fu">map2</span>(rand1Jump, r1, <span class="sc">~</span><span class="fu">rep</span>(.x <span class="sc">*</span> jumpSize, .y)) <span class="sc">%&gt;%</span> <span class="fu">unlist</span>()</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">expand_grid</span>(<span class="at">pattern =</span> <span class="fu">c</span>(<span class="st">"none"</span>, <span class="st">"up"</span>, <span class="st">"updown"</span>, <span class="st">"rand1"</span>), <span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>full_seqs <span class="ot">&lt;-</span> <span class="fu">pmap</span>(sims, \(pattern, rep) {</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">generate_signal</span>(<span class="fl">1e4</span>, pattern)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(rep)</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> mu <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(mu))</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  cps <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">diff</span>(mu) <span class="sc">!=</span> <span class="dv">0</span>)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="fu">list</span>(<span class="at">y =</span> y, <span class="at">mu =</span> mu, <span class="at">cps =</span> cps, <span class="at">pattern =</span> pattern))</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="co"># each component of the list describes a sequence:</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(full_seqs[[<span class="dv">1</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        Length Class  Mode     
 y       10000  -none- numeric  
@@ -636,15 +655,15 @@ pattern     1  -none- character</code></pre>
 </ol>
 <p>You will need to compare performances in term of Mean Square Error of the fitted signal <span class="math inline">\(\text{MSE} = ||\mu_{1:n} - \hat\mu_{1:n}||^2_2\)</span>. A function has been already coded for you below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mse_loss <span class="ot">&lt;-</span> <span class="cf">function</span>(mu_true, mu_hat) {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>((mu_true <span class="sc">-</span> mu_hat) <span class="sc">^</span> <span class="dv">2</span>))</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mse_loss <span class="ot">&lt;-</span> <span class="cf">function</span>(mu_true, mu_hat) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>((mu_true <span class="sc">-</span> mu_hat) <span class="sc">^</span> <span class="dv">2</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Report results by scenario and algorithm.</p>
 <p><strong>NOTE:</strong> You will be able to access parameters estimates via the function <code>param.est()</code>. To get <span class="math inline">\(\hat\mu_{1:n}\)</span>, necessary for the MSE, we can then do:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="co"># cpt.mean output here</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="fu">param.est</span>(result)<span class="sc">$</span>mean, <span class="at">times =</span> <span class="fu">diff</span>(<span class="fu">c</span>(<span class="dv">0</span>, cp_est, <span class="fu">length</span>(y))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="co"># cpt.mean output here</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="fu">param.est</span>(result)<span class="sc">$</span>mean, <span class="at">times =</span> <span class="fu">diff</span>(<span class="fu">c</span>(<span class="dv">0</span>, cp_est, <span class="fu">length</span>(y))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

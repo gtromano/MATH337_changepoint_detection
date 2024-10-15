@@ -244,12 +244,22 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#estimating-other-known-parameters" id="toc-estimating-other-known-parameters" class="nav-link active" data-scroll-target="#estimating-other-known-parameters"><span class="header-section-number">5.1</span> Estimating Other Known Parameters</a>
+  <li><a href="#assessing-the-model-fit" id="toc-assessing-the-model-fit" class="nav-link active" data-scroll-target="#assessing-the-model-fit"><span class="header-section-number">5.1</span> Assessing the model fit</a>
   <ul class="collapse">
-  <li><a href="#neuroblastoma-example-the-impact-of-mis-specified-variance" id="toc-neuroblastoma-example-the-impact-of-mis-specified-variance" class="nav-link" data-scroll-target="#neuroblastoma-example-the-impact-of-mis-specified-variance"><span class="header-section-number">5.1.1</span> Neuroblastoma Example: The Impact of Mis-specified Variance</a></li>
-  <li><a href="#addressing-mis-specified-variance-with-robust-estimators" id="toc-addressing-mis-specified-variance-with-robust-estimators" class="nav-link" data-scroll-target="#addressing-mis-specified-variance-with-robust-estimators"><span class="header-section-number">5.1.2</span> Addressing Mis-specified Variance with Robust Estimators</a></li>
+  <li><a href="#assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" id="toc-assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" class="nav-link" data-scroll-target="#assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics</a></li>
+  <li><a href="#example-violating-heteroschedasticity" id="toc-example-violating-heteroschedasticity" class="nav-link" data-scroll-target="#example-violating-heteroschedasticity"><span class="header-section-number">5.1.2</span> Example: violating heteroschedasticity:</a></li>
   </ul></li>
-  <li><a href="#non-parametric-models" id="toc-non-parametric-models" class="nav-link" data-scroll-target="#non-parametric-models"><span class="header-section-number">5.2</span> Non-Parametric Models</a></li>
+  <li><a href="#estimating-other-known-parameters" id="toc-estimating-other-known-parameters" class="nav-link" data-scroll-target="#estimating-other-known-parameters"><span class="header-section-number">5.2</span> Estimating Other Known Parameters</a>
+  <ul class="collapse">
+  <li><a href="#neuroblastoma-example-the-impact-of-mis-specified-variance" id="toc-neuroblastoma-example-the-impact-of-mis-specified-variance" class="nav-link" data-scroll-target="#neuroblastoma-example-the-impact-of-mis-specified-variance"><span class="header-section-number">5.2.1</span> Neuroblastoma Example: The Impact of Mis-specified Variance</a></li>
+  <li><a href="#addressing-mis-specified-variance-with-robust-estimators" id="toc-addressing-mis-specified-variance-with-robust-estimators" class="nav-link" data-scroll-target="#addressing-mis-specified-variance-with-robust-estimators"><span class="header-section-number">5.2.2</span> Addressing Mis-specified Variance with Robust Estimators</a></li>
+  </ul></li>
+  <li><a href="#non-parametric-models" id="toc-non-parametric-models" class="nav-link" data-scroll-target="#non-parametric-models"><span class="header-section-number">5.3</span> Non-Parametric Models</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.4</span> Exercises</a>
+  <ul class="collapse">
+  <li><a href="#workshop-exercises" id="toc-workshop-exercises" class="nav-link" data-scroll-target="#workshop-exercises"><span class="header-section-number">5.4.1</span> Workshop exercises</a></li>
+  <li><a href="#the-simpsons-example" id="toc-the-simpsons-example" class="nav-link" data-scroll-target="#the-simpsons-example"><span class="header-section-number">5.4.2</span> The simpsons example:</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -276,20 +286,13 @@ window.Quarto = {
 
 
 <p>In practice, working with real-world data presents various challenges that can complicate our analyses. Unlike idealised examples, real data often contain noise, outliers, and other irregularities that can impair the accuracy of the segmentations we aim to generate. The assumptions we make in our models may not hold up well, and this can lead to poor estimates of changepoints. To tackle these issues, it is important to either use robust methods, or consider carefully how we handle the estimation of key parameters within our changepoint detection models.</p>
-<section id="estimating-other-known-parameters" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="estimating-other-known-parameters"><span class="header-section-number">5.1</span> Estimating Other Known Parameters</h2>
-<p>Let’s revisit the classic problem of detecting a change in mean. One of the key assumptions we’ve relied on so far is that the variance, <span class="math inline">\(\sigma^2\)</span>, is fixed, and known. Specifically, we used the following cost function in our models:</p>
-<p><span class="math display">\[
-\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
-\]</span></p>
-<p>In our examples, we’ve typically set <span class="math inline">\(\sigma^2 = 1\)</span>. However, this assumption is often unrealistic when working with real data. When the true value of <span class="math inline">\(\sigma^2\)</span> is unknown or incorrectly specified, the results of changepoint detection can be significantly affected.</p>
-<ul>
-<li>If we underestimate the variance by choosing a value for <span class="math inline">\(\sigma^2\)</span> that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints.</li>
-<li>Conversely, if we overestimate the variance with a value that is too high, the algorithm may detect too many changes, identifying noise as changepoints.</li>
-</ul>
-<section id="neuroblastoma-example-the-impact-of-mis-specified-variance" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="neuroblastoma-example-the-impact-of-mis-specified-variance"><span class="header-section-number">5.1.1</span> Neuroblastoma Example: The Impact of Mis-specified Variance</h3>
-<p>Consider the neuroblastoma dataset as an example. If we run a changepoint detection method like PELT or BS on this data without any pre-processing, we might observe that the algorithm does not detect any changes at all:</p>
+<section id="assessing-the-model-fit" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="assessing-the-model-fit"><span class="header-section-number">5.1</span> Assessing the model fit</h2>
+<section id="assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics</h3>
+<p>When dealing with real-world data and changepoint models, it’s essential to evaluate how well the model fits the data. Apart from the techniques we saw last week, where we can use an elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals – the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.</p>
+<p>This section introduces three key diagnostic tools for assessing the residuals from a changepoint model: the <strong>histogram of residuals</strong>, the <strong>normal Q-Q plot</strong>, and the <strong>residuals vs.&nbsp;fitted values plot</strong>. These tools help assess whether the assumptions of the model (such as normality and homoscedasticity) hold.</p>
+<p>As an example, we will run diagnostics on the following example:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -299,8 +302,157 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p>On which PELT returns the segmentation:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(out_op)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="histogram-of-the-residuals" class="level4" data-number="5.1.1.1">
+<h4 data-number="5.1.1.1" class="anchored" data-anchor-id="histogram-of-the-residuals"><span class="header-section-number">5.1.1.1</span> 1. Histogram of the Residuals</h4>
+<p>The histogram of the residuals is a simple but effective tool for visualizing the distribution of residuals. The histogram checks whether the residuals are approximately normally distributed. You should see a bell-shaped histogram centered around zero, indicating that the residuals are symmetrically distributed around the mean with no significant skewness or heavy tails.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">residuals</span>(out), <span class="at">main =</span> <span class="st">"Histogram of the residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>What to Watch for:</strong>
+<ul>
+<li>Skewness: If the histogram is not symmetric, it could indicate skewness in the residuals, suggesting that the model may not fully capture the data’s structure.</li>
+<li>Outliers: Large bars far from zero indicate extreme residuals, which could be outliers.</li>
+<li>Heavy or light tails: If the histogram shows long tails, it may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors.</li>
+</ul></li>
+</ul>
+</section>
+<section id="normal-q-q-plot" class="level4" data-number="5.1.1.2">
+<h4 data-number="5.1.1.2" class="anchored" data-anchor-id="normal-q-q-plot"><span class="header-section-number">5.1.1.2</span> 2. <strong>Normal Q-Q Plot</strong></h4>
+<p>The normal quantile-quantile (Q-Q) plot compares the distribution of the residuals to a theoretical normal distribution. The idea is to see if the residuals deviate significantly from the straight line that would indicate normality. Points should fall along a straight diagonal line, indicating that the residuals closely follow a normal distribution.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">residuals</span>(out), <span class="at">main =</span> <span class="st">"Normal Q-Q Plot of the Residuals"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">residuals</span>(out), <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>What to Watch for:</strong>
+<ul>
+<li><strong>Deviations from the line:</strong> Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values).</li>
+<li><strong>Outliers:</strong> Points far away from the line, especially at the ends, suggest outliers or non-normality in the tails.</li>
+</ul></li>
+</ul>
+<p>The Q-Q plot is a more precise method of checking normality than the histogram since it directly compares the residuals to a normal distribution’s quantiles.</p>
+</section>
+<section id="residuals-vs.-fitted-values-plot" class="level4" data-number="5.1.1.3">
+<h4 data-number="5.1.1.3" class="anchored" data-anchor-id="residuals-vs.-fitted-values-plot"><span class="header-section-number">5.1.1.3</span> 3. <strong>Residuals vs.&nbsp;Fitted Values Plot</strong></h4>
+<p>Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values. This suggests the model has adequately captured the relationship between the variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(out), <span class="fu">residuals</span>(out), <span class="at">xlab =</span> <span class="st">"fitted"</span>, <span class="at">ylab=</span><span class="st">"residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>What to Watch for:</strong>
+<ul>
+<li>To observe cluster of points in the data is normal, as the fitted values are the estimate of our signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting.</li>
+<li>Heteroscedasticity (Non-constant variance): If the residuals’ spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="example-violating-heteroschedasticity" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="example-violating-heteroschedasticity"><span class="header-section-number">5.1.2</span> Example: violating heteroschedasticity:</h3>
+<p>Let’s take the data from before, and add increase the variance in one of the segments:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A simple PELT change-in-mean fit gives us the segmentation:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>With the diagnostics:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which might be due to the presence of heteroscedasticity in the data. However, the residuals vs.&nbsp;fitted values plot provides the strongest evidence of overfitting due to heteroscedasticity, showing that the variance of the residuals is not constant and increases at the extremes.</p>
+</section>
+</section>
+<section id="estimating-other-known-parameters" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="estimating-other-known-parameters"><span class="header-section-number">5.2</span> Estimating Other Known Parameters</h2>
+<p>Let’s revisit the classic problem of detecting a change in mean. One of the key assumptions we’ve relied on so far is that the variance, <span class="math inline">\(\sigma^2\)</span>, is fixed, and known. Specifically, we used the following cost function in our models:</p>
+<p><span class="math display">\[
+\mathcal{L}(y_{s:t}) = \frac{1}{2\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+\]</span></p>
+<p>In our examples, we’ve typically set <span class="math inline">\(\sigma^2 = 1\)</span>. However, this assumption is often unrealistic when working with real data. When the true value of <span class="math inline">\(\sigma^2\)</span> is unknown or incorrectly specified, the results of changepoint detection can be significantly affected.</p>
+<ul>
+<li>If we underestimate the variance by choosing a value for <span class="math inline">\(\sigma^2\)</span> that is too small, the changepoint detection algorithm may overlook real changes in the data, resulting in fewer detected changepoints.</li>
+<li>Conversely, if we overestimate the variance with a value that is too high, the algorithm may detect too many changes, identifying noise as changepoints.</li>
+</ul>
+<section id="neuroblastoma-example-the-impact-of-mis-specified-variance" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="neuroblastoma-example-the-impact-of-mis-specified-variance"><span class="header-section-number">5.2.1</span> Neuroblastoma Example: The Impact of Mis-specified Variance</h3>
+<p>Consider the neuroblastoma dataset as an example. If we run a changepoint detection method like PELT or BS on this data without any pre-processing, we might observe that the algorithm does not detect any changes at all:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(out_op)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Created Using changepoint version 2.3 
 Changepoint type      : Change in mean 
@@ -314,19 +466,19 @@ Changepoint Locations :  </code></pre>
 </div>
 <p>In this example, PELT fails to detect any changes because the scale of the data suggests a lower variance than expected, affecting the algorithm’s sensitivity to changes.</p>
 </section>
-<section id="addressing-mis-specified-variance-with-robust-estimators" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="addressing-mis-specified-variance-with-robust-estimators"><span class="header-section-number">5.1.2</span> Addressing Mis-specified Variance with Robust Estimators</h3>
+<section id="addressing-mis-specified-variance-with-robust-estimators" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="addressing-mis-specified-variance-with-robust-estimators"><span class="header-section-number">5.2.2</span> Addressing Mis-specified Variance with Robust Estimators</h3>
 <p>One problem with estimating the variance in the change-in-mean scenario, is that depending on the size of the changes, these can skew your estimate…</p>
-<p>One way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences <span class="math inline">\(z_t =  y_t - y_{t-1} \ \forall \quad t = 2, \dots, n\)</span>:</p>
+<p>One way to solve the issue of this, is that, on the assumption that the data is i.i.d. Gaussian, looking at the lag-1 differences <span class="math inline">\(z_t = y_t - y_{t-1} \ \forall \quad t = 2, \dots, n\)</span>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qplot</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>(n<span class="dv">-1</span>), <span class="at">y =</span> <span class="fu">diff</span>(y)) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qplot</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span>(n<span class="dv">-1</span>), <span class="at">y =</span> <span class="fu">diff</span>(y)) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: `qplot()` was deprecated in ggplot2 3.4.0.</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="5_real_data_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -348,12 +500,12 @@ Changepoint Locations :  </code></pre>
 <p>While this trick provides a solution for handling variance estimation in the change-in-mean problem, more sophisticated models may require the estimation of additional parameters. And more advanced techniques are needed to ensure that all relevant parameters are accurately estimated (this is very much an open are of research)!</p>
 </section>
 </section>
-<section id="non-parametric-models" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="non-parametric-models"><span class="header-section-number">5.2</span> Non-Parametric Models</h2>
+<section id="non-parametric-models" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="non-parametric-models"><span class="header-section-number">5.3</span> Non-Parametric Models</h2>
 <p>A alternative approach for detecting changes in real data, especially when we don’t want to make specific parametric assumptions, is to use a non-parametric cost function. This method allows us to detect general changes in the distribution of the data, not just changes in the mean or variance. One such approach is the Non-Parametric PELT (NP-PELT) method, which focuses on detecting any changes in the underlying distribution of the data.</p>
 <p>For example, let us have a look at one of the sequences from the Yahoo! Webscope dataset ydata-labeled-time-series-anomalies-v1_0 [http://labs.yahoo.com/Academic_Relations]:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>A1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"extra/A1_yahoo_bench.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>A1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"extra/A1_yahoo_bench.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 1427 Columns: 3
 ── Column specification ────────────────────────────────────────────────────────
@@ -363,14 +515,14 @@ dbl (3): timestamp, value, is_anomaly
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(A1, <span class="fu">aes</span>(<span class="at">x =</span> timestamp, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">which</span>(A1<span class="sc">$</span>is_anomaly <span class="sc">==</span> <span class="dv">1</span>), <span class="at">alpha =</span> .<span class="dv">3</span>, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(A1, <span class="fu">aes</span>(<span class="at">x =</span> timestamp, <span class="at">y =</span> value)) <span class="sc">+</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">which</span>(A1<span class="sc">$</span>is_anomaly <span class="sc">==</span> <span class="dv">1</span>), <span class="at">alpha =</span> .<span class="dv">3</span>, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="5_real_data_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -394,22 +546,22 @@ n\hat{F}_{1:n}(q) \sim \mathrm{Binom}(n, F_{1:n}(q)).
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="5_real_data_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>In practice, NP-PELT on the previous sequence gives the following:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint.np)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> A1<span class="sc">$</span>value</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cpt.np</span>(y, <span class="at">penalty =</span> <span class="st">"Manual"</span>, <span class="at">pen.value =</span> <span class="dv">25</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">length</span>(y))) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">ylab =</span> <span class="st">"y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint.np)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> A1<span class="sc">$</span>value</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cpt.np</span>(y, <span class="at">penalty =</span> <span class="st">"Manual"</span>, <span class="at">pen.value =</span> <span class="dv">25</span> <span class="sc">*</span> <span class="fu">log</span>(<span class="fu">length</span>(y))) <span class="sc">|&gt;</span> <span class="fu">plot</span>(<span class="at">ylab =</span> <span class="st">"y"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="5_real_data_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -421,6 +573,38 @@ n\hat{F}_{1:n}(q) \sim \mathrm{Binom}(n, F_{1:n}(q)).
 <!-- - the change in slope case is a way of accounting for time dependency!  -->
 <!-- - alternatively, we could use more sophisticated models that account for this -->
 <!-- - for instance, one such model is the DeCAFS model from Romano et. al (2023).  -->
+</section>
+<section id="exercises" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.4</span> Exercises</h2>
+<section id="workshop-exercises" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="workshop-exercises"><span class="header-section-number">5.4.1</span> Workshop exercises</h3>
+</section>
+<section id="the-simpsons-example" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="the-simpsons-example"><span class="header-section-number">5.4.2</span> The simpsons example:</h3>
+<p>Interpret the residuals diagnostics from the Simpsons dataset:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="5_real_data_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
@@ -428,6 +612,7 @@ n\hat{F}_{1:n}(q) \sim \mathrm{Binom}(n, F_{1:n}(q)).
 Haynes, Kaylea, Paul Fearnhead, and Idris A Eckley. 2017. <span>“A Computationally Efficient Nonparametric Approach for Changepoint Detection.”</span> <em>Statistics and Computing</em> 27: 1293–1305.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

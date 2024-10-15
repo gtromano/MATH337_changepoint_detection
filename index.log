@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2024.3.15)  15 OCT 2024 15:07
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2024.3.15)  15 OCT 2024 15:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1080,7 +1080,7 @@ Overfull \hbox (0.80455pt too wide) detected at line 1154
 [][][] [] [][] []
  []
 
-[27]
+[27] [28]
 
 ! Package amsmath Error: Erroneous nesting of equation structures;
 (amsmath)                trying to recover with `aligned'.
@@ -1089,15 +1089,15 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1228 \end{align}
+l.1265 \end{align}
                    
 Here is how much of TeX's memory you used:
- 23994 strings out of 476191
- 467526 string characters out of 5812072
- 1074136 words of memory out of 5000000
- 44389 multiletter control sequences out of 15000+600000
+ 23996 strings out of 476191
+ 467538 string characters out of 5812072
+ 1083136 words of memory out of 5000000
+ 44391 multiletter control sequences out of 15000+600000
  478596 words of font info for 98 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  108i,9n,121p,10600b,458s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on index.pdf (27 pages).
+Output written on index.pdf (28 pages).

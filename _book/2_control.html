@@ -391,15 +391,13 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 \bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right]
 \]</span></p>
 <p>Plugging in this into our LR:</p>
-<p><span class="math display">\[
-\begin{align}
+<p><span class="math display">\[\begin{align}
 \sigma^2 LR_\tau &amp;= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
 &amp;=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau}^2  - 2 \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \bar{y}_{\tau+1:n}^2)=\\
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
 &amp;= C_\tau^2
-\end{align}
-\]</span></p>
+\end{align}\]</span></p>
 <p>This gives us <span class="math inline">\(LR_\tau = \frac{C_\tau^2}{\sigma^2}\)</span>.</p>
 </section>
 </section>

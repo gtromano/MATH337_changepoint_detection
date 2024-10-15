@@ -215,12 +215,12 @@ $$
 
 And taking the log, and simplifying over the constant gives us:
 
-$$
+
 \begin{align}
 LR_\tau &= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 & = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
 \end{align}
-$$
+
 
 Now to solve the minimisation, we focus on the first term:
 

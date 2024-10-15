@@ -413,12 +413,12 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
     \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) + \beta &lt; \mathcal{L}(y_{1:n})     
 \tag{3.2}\]</span></span></li>
 </ol>
-<p>where the segment cost <span class="math inline">\(\mathcal{L}(\cdot)\)</span>, is as in <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-segment_cost</span></a>.</p>
+<p>where the segment cost <span class="math inline">\(\mathcal{L}(\cdot)\)</span>, is as in <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>.</p>
 <ol start="2" type="1">
-<li><p>If the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-bin_seg_condition</span></a> is true for at least one <span class="math inline">\(\tau \in 1, \dots, n\)</span>, then the <span class="math inline">\(\tau\)</span> that minimizes <span class="math inline">\(\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})\)</span> is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.</p></li>
+<li><p>If the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> is true for at least one <span class="math inline">\(\tau \in 1, \dots, n\)</span>, then the <span class="math inline">\(\tau\)</span> that minimizes <span class="math inline">\(\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})\)</span> is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.</p></li>
 <li><p>If there are no more resulting valid splits, then the procedure ends.</p></li>
 </ol>
-<p>Some of you might have noted how the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-bin_seg_condition</span></a> is closely related to the LR test in <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-lr-test</span></a>. In fact, rearranging equation above, gives us:</p>
+<p>Some of you might have noted how the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> is closely related to the LR test in <a href="2_control.html#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.1</span></a>. In fact, rearranging equation above, gives us:</p>
 <p><span class="math display">\[
 - \mathcal{L}(y_{1:n}) + \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = - \frac{LR_\tau}{2}  &lt; -\beta.
 \]</span></p>
@@ -427,7 +427,7 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 <section id="binary-segmentation-in-action" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="binary-segmentation-in-action"><span class="header-section-number">3.2.1</span> Binary Segmentation in action</h3>
 <p>Having introduced the main idea, we show now how binary segmentation works in action with an example above. Say that we set a <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98.</p>
-<p><strong>Step 1:</strong> We start by computing the cost as in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-bin_seg_condition</span></a>, and for those that are less then <span class="math inline">\(\beta\)</span>, we pick the smallest. This will be our first changepoint estimate, and the first point of split.</p>
+<p><strong>Step 1:</strong> We start by computing the cost as in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>, and for those that are less then <span class="math inline">\(\beta\)</span>, we pick the smallest. This will be our first changepoint estimate, and the first point of split.</p>
 <p>In the plots below, the blue horizontal line is the mean signal estimated for a given split, while in the cusum the pink will represent the values of the LR below the threshold <span class="math inline">\(\beta\)</span>, and red vertical line will show the min of the test statistics. When the cost is below the beta line, this will be our changepoint estimate.</p>
 <p>In our case, we can see that the min of our cost has been achieved for <span class="math inline">\(\hat\tau=100\)</span>, and since this is below the threshold, it’s our first estimated changepoint!</p>
 <div class="cell">
@@ -510,7 +510,7 @@ y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t &lt; \tau_{k+1}, \ k 
 </section>
 <section id="optimal-partitioning" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="optimal-partitioning"><span class="header-section-number">3.3</span> Optimal Partitioning</h2>
-<p>Another solution to avoid the over-fitting problem of <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-segment_cost</span></a> lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the <em>penalised approach</em>.</p>
+<p>Another solution to avoid the over-fitting problem of <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> lies in introducing a penalty term that discourages too many changepoints, avoiding overfitting. This is known as the <em>penalised approach</em>.</p>
 <p>To achieve this, we want to minimize the following cost function:</p>
 <p><span id="eq-pen-cost"><span class="math display">\[
 Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}) + \beta K
@@ -519,7 +519,7 @@ Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, 
 <p>where <span class="math inline">\(Q_{n, \beta}\)</span> represents the optimal cost for segmenting the data up to time <span class="math inline">\(n\)</span> with a penalty $ $ that increases with each additional changepoint <span class="math inline">\(K\)</span>. With the <span class="math inline">\(\beta\)</span> term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.</p>
 <p>Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving <span class="math inline">\(Q_{n, \beta}\)</span> ensures that the segmentation is <strong>globally optimal</strong>, as in the location of the changes are the best possible to minimise our cost.</p>
 <p>Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as <span class="math inline">\(n\)</span> increases…</p>
-<p>Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: <strong>Optimal Partitioning (OP)</strong>, from <span class="citation" data-cites="Jackson">Jackson et al. (<a href="#ref-Jackson" role="doc-biblioref">2005</a>)</span>. OP solves <a href="#eq-pen-cost" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-pen-cost</span></a> exactly through the following recursion.</p>
+<p>Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: <strong>Optimal Partitioning (OP)</strong>, from <span class="citation" data-cites="Jackson">Jackson et al. (<a href="references.html#ref-Jackson" role="doc-biblioref">2005</a>)</span>. OP solves <a href="#eq-pen-cost" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> exactly through the following recursion.</p>
 <p>We start with <span class="math inline">\(\mathcal{Q}_{0, \beta} = -\beta\)</span>, and then, for each <span class="math inline">\(t = 1, \dots, n\)</span>, we compute:</p>
 <p><span id="eq-optimal-partitioning"><span class="math display">\[
     \mathcal{Q}_{t, \beta} = \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right].
@@ -682,7 +682,7 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Jackson" class="csl-entry" role="listitem">
 Jackson, Brad, Jeffrey Scargle, D. Barnes, S. Arabhi, A. Alt, P. Gioumousis, E. Gwin, P. Sangtrakulcharoen, L. Tan, and Tun Tsai. 2005. <span>“An Algorithm for Optimal Partitioning of Data on an Interval.”</span> <em>Signal Processing Letters, IEEE</em> 12 (March): 105–8. <a href="https://doi.org/10.1109/LSP.2001.838216">https://doi.org/10.1109/LSP.2001.838216</a>.
 </div>

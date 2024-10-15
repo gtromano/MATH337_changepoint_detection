@@ -315,7 +315,7 @@ window.Quarto = {
 </ol>
 <section id="sec-cusum-control" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="sec-cusum-control"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
-<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
+<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="references.html#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
 <p><span class="math display">\[
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
 \]</span></p>
@@ -415,12 +415,10 @@ L(y_t | \theta) = \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}.
 LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\})(\prod_{t=\tau+1}^n  \frac{1}{\theta \sqrt{2\pi}} \exp\{-\frac{y_t}{2 \theta}\}]} \right\}
 \]</span></p>
 <p>And taking the log, and simplifying over the constant gives us:</p>
-<p><span class="math display">\[
-\begin{align}
+<p><span class="math display">\[\begin{align}
 LR_\tau &amp;= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 &amp; = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
-\end{align}
-\]</span></p>
+\end{align}\]</span></p>
 <p>Now to solve the minimisation, we focus on the first term:</p>
 <p><span class="math display">\[
 f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  \log(\theta) + \frac{y^2}{\theta} \right) = \left(  n \log(\theta) + \frac{\sum_{t = 1}^n y^2}{\theta} \right).
@@ -478,7 +476,7 @@ f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 \]</span></p>
-<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and <span class="math inline">\(v_\tau\^\top y_{1:n}\)</span> is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
+<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and <span class="math inline">\(v_\tau\^\top y_{1:n}\)</span> is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="references.html#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
 </section>
 <section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
@@ -526,21 +524,21 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <li><p>Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.</p>
 <ol type="a">
 <li><p>Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative</p></li>
-<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-lr-test</span></a> introduced above.</p></li>
+<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.1</span></a> introduced above.</p></li>
 </ol></li>
 </ol>
 </section>
 <section id="lab-2" class="level3" data-number="2.4.2">
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.4.2</span> Lab 2</h3>
 <ol type="1">
-<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics, according to Section <a href="#sec-cusum-control" class="quarto-xref"><span class="quarto-unresolved-ref">sec-cusum-control</span></a>.</p></li>
+<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics, according to Section <a href="#sec-cusum-control" class="quarto-xref"><span>Section 2.1.1</span></a>.</p></li>
 <li><p>Construct a function that, taking as input <span class="math inline">\(n\)</span>, a desired <span class="math inline">\(\alpha\)</span> , and a <code>replicates</code> parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week</p></li>
 <li><p>Compare for a range of increasingly values of n, e.g.&nbsp;<span class="math inline">\(n = 100, 500, 1000, 10.000\)</span>, and for few desired levels of alpha, the Monte Carlo threshold with the theoretically justified threshold. Plot the results, to recreate the plot above.</p></li>
 <li><p>Using the Test the Simpsons dataset, and the monte carlo threshold, find a critical level for your CUSUM statistics, and declare a change with the change-in-mean model.</p></li>
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-baranowski2019narrowest" class="csl-entry" role="listitem">
 Baranowski, Rafal, Yining Chen, and Piotr Fryzlewicz. 2019. <span>“Narrowest-over-Threshold Detection of Multiple Change Points and Change-Point-Like Features.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 81 (3): 649–72.
 </div>

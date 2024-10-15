@@ -223,7 +223,7 @@ As the segmentation retained is effectively the same, there are literally no dis
 
 However, PELT still has some disadvantages:
 
--   PELT pruning works only over some cost functions, those for which the condition above is true. For example, in the continuous change-in-slope case, we have that the cost from the next change depends on the location of the previous one, making it impossible for PELT to prune without loosing optimality.
+-   PELT pruning works only over some cost functions, those for which the condition above is true. For example, in a special case of change-in-slope, as we will see in the workshop, we have that the cost from the next change depends on the location of the previous one, making it impossible for PELT to prune without loosing optimality.
 
 -   We mentioned above how PELT over iterations at which a change is detected. For signals where changes are not frequent, PELT does not benefits from. A more sophisticated approach is that of **FPOP**, that prunes at every iteration. FPOP employs a different type of pruning, called functional pruning, that at every iteration only check costs that are likely associated to a change. However, despite the pruning is stronger FPOP works only over few selected models.
 
@@ -394,7 +394,53 @@ plot(out, ncpts= 4)
 
 1.  Looking at last week workshop exercise solution, which points in the OP recursion would have been pruned by PELT? Check that the PELT pruning condition is true.
 
-2.  Below you'll find CROPS segmentations and elbow plot for the change-in-slope model. How many changepoints would you reccomend for
+2.  The model (not the cost!) for a single segment of a *continuous* change-in-slope is given by:
+
+    $$
+    y_t = \tau\theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
+    $$
+
+    where $\theta_{\tau_i}$ represents the value of the slope at changepoint $\tau_i$ and $\phi_{\tau_{i+1}}$ is the value at the next changepoint $\tau_{i+1}$. Note, in this example, for simplicity, we assume the intercept is set equal to 0.
+
+    This model is a variation from the one we had next week as it enforces continuity, e.g. the value at the end of one segment, needs to be the at the next:
+
+    ```{r echo=FALSE}
+    set.seed(1)
+    set.seed(123)
+    n <- 250  # Number of observations
+    tau <- 50 # True changepoint
+    alpha1 <- 1
+    alpha2 <- 5
+    theta1 <- 0.3 # Slope before changepoint
+    theta2 <- -0.2  # Slope after changepoint
+    sigma <- 5  # Noise standard deviation
+
+    # Generate data with a change in slope at tau
+    x <- 1:n
+    signal <- c(theta1 * x[1:tau], (x[(tau+1):n]) * theta2 + 1)
+    signal2 <- c(theta1 * x[1:tau], tau * theta1 + (x[(tau+1):n] - tau) * theta2)
+
+    data_trend <- data.frame(t = x, discontinuous = signal, continuous = signal2)
+
+    data_trend <- data_trend |> pivot_longer(names_to = "model", values_to = "signal", -t)
+
+
+    # Plot with the corrected geom_line for each segment
+    ggplot(data_trend, aes(x = t, y = signal)) +
+      geom_line() +
+      facet_grid(~ model) +
+      theme_minimal()
+    ```
+
+    a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
+        Once you've done that, rewrite the model for one change by assuming the previous segment starts at 0. You can have a look at week 2!
+
+    b.  Writing down the two models for a case where you have two segments, with $\tau= 50$. By setting $\theta_1=0.3$ and $\theta_2=-0.2$, evaluate the value of the signal at times $\tau= 50$ in both models. What do you notice?
+
+    c.   you'll find CROPS segmentations and elbow plot for the change-in-slope model. How many changepoints would you reccomend fo
+
+        ```{}
+        ```
 
 ### Lab 4
 

@@ -1048,8 +1048,7 @@ being a bit more challenging\ldots{}
   here.
 \end{enumerate}
 
-\subsection{Controlling the max of our
-cusums}\label{controlling-the-max-of-our-cusums}
+\subsection{Controlling the max of our cusums}\label{sec-cusum-control}
 
 Fortunately, for controlling our CUSUM test, we can use the fact that
 \((C_1, ..., C_{n-1})/ \sigma\) are the absolute values of a Gaussian
@@ -1326,16 +1325,16 @@ Under the null hypothesis \(H_0\), we assume that the signal is linear
 with a constant slope over the entire sequence, i.e.,
 
 \[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, n,
+f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, n,
 \]
 
-where \(\theta_0\) is the intercept, and \(\theta_1\) is the slope.
+where \(\alpha_1\) is the intercept, and \(\theta_1\) is the slope.
 However, under the alternative hypothesis \(H_1\), we assume there is a
 changepoint at \(\tau\) after which the slope changes. Thus, the signal
 becomes:
 
 \[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
+f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \theta_2, \quad t = \tau+1, \dots, n,
 \]
 
 where \(\theta_2\) is the new intercept, and \(\theta_3\) is the new
@@ -1426,10 +1425,19 @@ can improve on our estimation in the following weeks!
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\tightlist
 \item
   Compute the LR ratio to detect a change in the success probability of
   a Bernoulli Random Variable.
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    Start by writing down the distribution of the model under the null,
+    and find the MLE. Extend this to the alternative
+  \item
+    Compose the log-likelihood ratio, according to the equation
+    Equation~\ref{eq-lr-test} introduced above.
+  \end{enumerate}
 \end{enumerate}
 
 \subsection{Lab 2}\label{lab-2}
@@ -1439,7 +1447,7 @@ can improve on our estimation in the following weeks!
 \item
   Write a function, that taking as input \(n\) and a desired \(\alpha\)
   level for false positive rate, returns the threshold for the cusum
-  statistics.
+  statistics, according to Section Section~\ref{sec-cusum-control}.
 \item
   Construct a function that, taking as input \(n\), a desired \(\alpha\)
   , and a \texttt{replicates} parameter, runs a Monte Carlo simulation
@@ -1452,8 +1460,9 @@ can improve on our estimation in the following weeks!
   alpha, the Monte Carlo threshold with the theoretically justified
   threshold. Plot the results, to recreate the plot above.
 \item
-  Using the Test the Simpsons dataset, find a critical level for your
-  CUSUM statistics, and declare a change with the change-in-mean model.
+  Using the Test the Simpsons dataset, and the monte carlo threshold,
+  find a critical level for your CUSUM statistics, and declare a change
+  with the change-in-mean model.
 \end{enumerate}
 
 \bookmarksetup{startatroot}
@@ -2218,10 +2227,10 @@ However, PELT still has some disadvantages:
 \begin{itemize}
 \item
   PELT pruning works only over some cost functions, those for which the
-  condition above is true. For example, in the continuous
-  change-in-slope case, we have that the cost from the next change
-  depends on the location of the previous one, making it impossible for
-  PELT to prune without loosing optimality.
+  condition above is true. For example, in a special case of
+  change-in-slope, as we will see in the workshop, we have that the cost
+  from the next change depends on the location of the previous one,
+  making it impossible for PELT to prune without loosing optimality.
 \item
   We mentioned above how PELT over iterations at which a change is
   detected. For signals where changes are not frequent, PELT does not
@@ -2519,8 +2528,46 @@ This gives us:
   OP recursion would have been pruned by PELT? Check that the PELT
   pruning condition is true.
 \item
-  Below you'll find CROPS segmentations and elbow plot for the
-  change-in-slope model. How many changepoints would you reccomend for
+  The model (not the cost!) for a single segment of a \emph{continuous}
+  change-in-slope is given by:
+
+  \[
+  y_t = \tau\theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
+  \]
+
+  where \(\theta_{\tau_i}\) represents the value of the slope at
+  changepoint \(\tau_i\) and \(\phi_{\tau_{i+1}}\) is the value at the
+  next changepoint \(\tau_{i+1}\). Note, in this example, for
+  simplicity, we assume the intercept is set equal to 0.
+
+  This model is a variation from the one we had next week as it enforces
+  continuity, e.g.~the value at the end of one segment, needs to be the
+  at the next:
+
+  \includegraphics{4_algos_and_penalties_files/figure-pdf/unnamed-chunk-10-1.pdf}
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii}.}
+  \item
+    We mentioned that under this model, you would not be able to apply
+    the PELT pruning. Can you identify the elements where there is
+    dependency across segments?\\
+    Once you've done that, rewrite the model for one change by assuming
+    the previous segment starts at 0. You can have a look at week 2!
+  \item
+    Writing down the two models for a case where you have two segments,
+    with \(\tau= 50\). By setting \(\theta_1=0.3\) and
+    \(\theta_2=-0.2\), evaluate the value of the signal at times
+    \(\tau= 50\) in both models. What do you notice?
+  \item
+    you'll find CROPS segmentations and elbow plot for the
+    change-in-slope model. How many changepoints would you reccomend fo
+  \end{enumerate}
+
+\begin{verbatim}
+```{}
+```
+\end{verbatim}
 \end{enumerate}
 
 \subsection{Lab 4}\label{lab-4}

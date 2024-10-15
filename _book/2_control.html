@@ -246,7 +246,7 @@ window.Quarto = {
   <ul>
   <li><a href="#the-asymptotic-distribution-of-the-cusum-statistics" id="toc-the-asymptotic-distribution-of-the-cusum-statistics" class="nav-link active" data-scroll-target="#the-asymptotic-distribution-of-the-cusum-statistics"><span class="header-section-number">2.1</span> The asymptotic distribution of the CUSUM statistics</a>
   <ul class="collapse">
-  <li><a href="#controlling-the-max-of-our-cusums" id="toc-controlling-the-max-of-our-cusums" class="nav-link" data-scroll-target="#controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</a></li>
+  <li><a href="#sec-cusum-control" id="toc-sec-cusum-control" class="nav-link" data-scroll-target="#sec-cusum-control"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</a></li>
   </ul></li>
   <li><a href="#the-likelihood-ratio-test" id="toc-the-likelihood-ratio-test" class="nav-link" data-scroll-target="#the-likelihood-ratio-test"><span class="header-section-number">2.2</span> The Likelihood Ratio Test</a>
   <ul class="collapse">
@@ -313,8 +313,8 @@ window.Quarto = {
 <li>So far, we worked only for one fixed <span class="math inline">\(\tau\)</span>, however, when comparing the maximums, the values of <span class="math inline">\(C_\tau\)</span> are in fact not independent across different <span class="math inline">\(\tau\)</span>s.</li>
 <li>As we will learn later, the CUSUM is a special case of a LR test, as setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model. For this reason, the usual regularity conditions for likelihood-ratio test statistics don’t apply here.</li>
 </ol>
-<section id="controlling-the-max-of-our-cusums" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="controlling-the-max-of-our-cusums"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
+<section id="sec-cusum-control" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="sec-cusum-control"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
 <p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
 <p><span class="math display">\[
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
@@ -469,11 +469,11 @@ y_t = f_t + \epsilon_t, \quad t = 1, \dots, n,
 <p>where the noise vector <span class="math inline">\(\epsilon_{1:n} \sim N(0, 1)\)</span> consists of independent and identically distributed (i.i.d.) normal random variables. In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.</p>
 <p>Under the null hypothesis <span class="math inline">\(H_0\)</span>, we assume that the signal is linear with a constant slope over the entire sequence, i.e.,</p>
 <p><span class="math display">\[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, n,
+f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, n,
 \]</span></p>
-<p>where <span class="math inline">\(\theta_0\)</span> is the intercept, and <span class="math inline">\(\theta_1\)</span> is the slope. However, under the alternative hypothesis <span class="math inline">\(H_1\)</span>, we assume there is a changepoint at <span class="math inline">\(\tau\)</span> after which the slope changes. Thus, the signal becomes:</p>
+<p>where <span class="math inline">\(\alpha_1\)</span> is the intercept, and <span class="math inline">\(\theta_1\)</span> is the slope. However, under the alternative hypothesis <span class="math inline">\(H_1\)</span>, we assume there is a changepoint at <span class="math inline">\(\tau\)</span> after which the slope changes. Thus, the signal becomes:</p>
 <p><span class="math display">\[
-f_t = \theta_0 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \quad f_t = \theta_0 + \theta_2 + \tau \theta_1 + (t-\tau)\theta_3, \quad t = \tau+1, \dots, n,
+f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \theta_2, \quad t = \tau+1, \dots, n,
 \]</span></p>
 <p>where <span class="math inline">\(\theta_2\)</span> is the new intercept, and <span class="math inline">\(\theta_3\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
 <p>For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector <span class="math inline">\(v_\tau\)</span>, i.e.,</p>
@@ -525,16 +525,20 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <section id="workshop-2" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="workshop-2"><span class="header-section-number">2.4.1</span> Workshop 2</h3>
 <ol type="1">
-<li>Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.</li>
+<li><p>Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.</p>
+<ol type="a">
+<li><p>Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative</p></li>
+<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-lr-test</span></a> introduced above.</p></li>
+</ol></li>
 </ol>
 </section>
 <section id="lab-2" class="level3" data-number="2.4.2">
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.4.2</span> Lab 2</h3>
 <ol type="1">
-<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics.</p></li>
+<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics, according to Section <a href="#sec-cusum-control" class="quarto-xref"><span class="quarto-unresolved-ref">sec-cusum-control</span></a>.</p></li>
 <li><p>Construct a function that, taking as input <span class="math inline">\(n\)</span>, a desired <span class="math inline">\(\alpha\)</span> , and a <code>replicates</code> parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week</p></li>
 <li><p>Compare for a range of increasingly values of n, e.g.&nbsp;<span class="math inline">\(n = 100, 500, 1000, 10.000\)</span>, and for few desired levels of alpha, the Monte Carlo threshold with the theoretically justified threshold. Plot the results, to recreate the plot above.</p></li>
-<li><p>Using the Test the Simpsons dataset, find a critical level for your CUSUM statistics, and declare a change with the change-in-mean model.</p></li>
+<li><p>Using the Test the Simpsons dataset, and the monte carlo threshold, find a critical level for your CUSUM statistics, and declare a change with the change-in-mean model.</p></li>
 </ol>
 
 

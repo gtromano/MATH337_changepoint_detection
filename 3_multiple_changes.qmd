@@ -594,16 +594,54 @@ $$
 ### Lab 3
 
 1.  Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.\
+
+Your function should take as input three things:
+
+-   A vector `y`, our observations
+-   A double `penalty`, corresponding to the $\beta$ penalty of our penalised cost
+-   A function `COST`. This function should take as input arguments `y, s, t`, and act as $\mathcal{L}(y_{s:t})$. You fill find a skeleton below.
+
+```{r, eval=FALSE}
+OP <- function (y, penalty, COST) {
+
+  ### pre-compute all the costs here
+
+  ### your initialization here
+  
+  for (t in 1:n) {
+    
+    ### your recursion here
+
+  }
+  
+
+  return(changepoints)
+}
+```
+
+For this exercise, we are implementing the Gaussian change-in-mean case. Therefore, a skeleton for our cost function will be:
+
+```{r, eval=FALSE}
+costMean = function(y, s, t) {
+  
+  # code for computing the Gaussian change-in-mean cost here
+
+  return(your_cost)
+}
+```
+
+You should be then able to call your `OP` function as:
+
+```{r, eval=FALSE}
+set.seed(123)
+y <- c(rnorm(100), rnorm(100, 5), rnorm(100, -1))
+OP(y, 15, costMean)
+```
+
+This should return 100, 200.
+
     **Tips:**
 
     a.  Again, you can pre-compute all the possible $\mathcal{L}(y_{l:u})$, for $u \geq l$ to save computational time.
 
     b.  Be very careful with indexing... R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0...
-
-2.  Install the `changepoint` package. The example signal of Section 3.4, with the same penalty value of $\beta = 2 * log(n)$, compare your implementation of OP, Binary Segmentation, and PELT. You will learn how to do so in the documentation, running `?cpt_mean`. You should make 300 replicates each of your experiment, and compare:
-
-    a.  The absolute error loss from the mean signal, e.g. $||\mu_{1:n} - \hat{\mu}_{1:n}||^2_2$
-
-    b.  The absolute error in the number of changepoints reconstructed, e.g. $|K - \hat{K}|$. What do we observe?
-
-    c.  The runtime for one sequence of PELT agains Binary Segmentation. Evaluate the runtime with package `microbenchmark`.

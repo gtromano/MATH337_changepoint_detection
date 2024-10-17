@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -667,19 +701,53 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 <section id="lab-3" class="level3" data-number="3.4.2">
 <h3 data-number="3.4.2" class="anchored" data-anchor-id="lab-3"><span class="header-section-number">3.4.2</span> Lab 3</h3>
 <ol type="1">
-<li><p>Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.<br>
-<strong>Tips:</strong></p>
-<ol type="a">
-<li><p>Again, you can pre-compute all the possible <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>, for <span class="math inline">\(u \geq l\)</span> to save computational time.</p></li>
-<li><p>Be very careful with indexing… R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0…</p></li>
-</ol></li>
-<li><p>Install the <code>changepoint</code> package. The example signal of Section 3.4, with the same penalty value of <span class="math inline">\(\beta = 2 * log(n)\)</span>, compare your implementation of OP, Binary Segmentation, and PELT. You will learn how to do so in the documentation, running <code>?cpt_mean</code>. You should make 300 replicates each of your experiment, and compare:</p>
-<ol type="a">
-<li><p>The absolute error loss from the mean signal, e.g.&nbsp;<span class="math inline">\(||\mu_{1:n} - \hat{\mu}_{1:n}||^2_2\)</span></p></li>
-<li><p>The absolute error in the number of changepoints reconstructed, e.g.&nbsp;<span class="math inline">\(|K - \hat{K}|\)</span>. What do we observe?</p></li>
-<li><p>The runtime for one sequence of PELT agains Binary Segmentation. Evaluate the runtime with package <code>microbenchmark</code>.</p></li>
-</ol></li>
+<li>Code the Optimal Partitioning algorithm for the Gaussian change-in-mean case.<br>
+</li>
 </ol>
+<p>Your function should take as input three things:</p>
+<ul>
+<li>A vector <code>y</code>, our observations</li>
+<li>A double <code>penalty</code>, corresponding to the <span class="math inline">\(\beta\)</span> penalty of our penalised cost</li>
+<li>A function <code>COST</code>. This function should take as input arguments <code>y, s, t</code>, and act as <span class="math inline">\(\mathcal{L}(y_{s:t})\)</span>. You fill find a skeleton below.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">### pre-compute all the costs here</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">### your initialization here</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="do">### your recursion here</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(changepoints)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For this exercise, we are implementing the Gaussian change-in-mean case. Therefore, a skeleton for our cost function will be:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>costMean <span class="ot">=</span> <span class="cf">function</span>(y, s, t) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code for computing the Gaussian change-in-mean cost here</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(your_cost)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You should be then able to call your <code>OP</code> function as:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">OP</span>(y, <span class="dv">15</span>, costMean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This should return 100, 200.</p>
+<pre><code>**Tips:**
+
+a.  Again, you can pre-compute all the possible $\mathcal{L}(y_{l:u})$, for $u \geq l$ to save computational time.
+
+b.  Be very careful with indexing... R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0...</code></pre>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

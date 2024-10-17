@@ -357,10 +357,10 @@ With this graphical description in mind, we formally describe the Binary Segment
 |     **RETURN** $\{\}$ // No changepoint in segments of length 1 or less
 | 
 | **COMPUTE**
-| $\mathcal{Q} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]$
+| $\mathcal{Q} \leftarrow \underset{\tau \in \{s, \dots, t-1\}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]$
 | 
 | **IF** $\mathcal{Q} < 0$
-|     $\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]$
+|     $\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t-1\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]$
 |      $cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}$
 |      **RETURN** $cp$
 | 
@@ -578,7 +578,7 @@ Some of you might come up with two (very interesting) questions that hopefully w
 
 ### Workshop 3
 
-1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Binary Segmentation, and Optimal Partitioning steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
+1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
 
 $$
 \begin{array}{c|cccc}

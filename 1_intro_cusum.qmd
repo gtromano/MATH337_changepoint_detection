@@ -446,7 +446,7 @@ However, there's an algorithmic trick... By sequentially computing partial sums,
 |     $C_{max} \leftarrow C_t$
 |     $\hat{\tau} \leftarrow t$
 | 
-| **IF** $C_{max}^2 / \sigma > c$
+| **IF** $C_{max} / \sigma^2 > c$
 |   **RETURN** $\hat{\tau}$, $C_{max}$ // Changepoint detected
 | **ELSE**
 |   **RETURN** NULL, $C_{max}$ // No changepoint detected

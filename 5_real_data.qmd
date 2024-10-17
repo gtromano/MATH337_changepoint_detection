@@ -394,13 +394,13 @@ data <- cbind(y, 1, 1:length(y))
 out <- cpt.reg(data, method="PELT")
 
 
-hist(residuals(out)[, 1], main = "Histogram of the residuals")
+hist(residuals(out), main = "Histogram of the residuals")
 
 # Generate a Q-Q plot for the residuals
-qqnorm(residuals(out)[, 1], main = "Normal Q-Q Plot of the Residuals")
-qqline(residuals(out)[, 1], col = "red")  # Adds a reference line
+qqnorm(residuals(out), main = "Normal Q-Q Plot of the Residuals")
+qqline(residuals(out), col = "red")  # Adds a reference line
 
 
-plot(fitted(out), residuals(out)[, 1], xlab = "fitted", ylab="residuals")
+plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
 ```
 

@@ -587,7 +587,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow t\)</span><br>
 <br>
-<strong>IF</strong> <span class="math inline">\(C_{max}^2 / \sigma &gt; c\)</span><br>
+<strong>IF</strong> <span class="math inline">\(C_{max} / \sigma^2 &gt; c\)</span><br>
 &nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\hat{\tau}\)</span>, <span class="math inline">\(C_{max}\)</span> // Changepoint detected<br>
 <strong>ELSE</strong><br>
 &nbsp;&nbsp;<strong>RETURN</strong> NULL, <span class="math inline">\(C_{max}\)</span> // No changepoint detected</div>

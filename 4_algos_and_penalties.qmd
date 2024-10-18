@@ -190,9 +190,9 @@ $$
         \mathcal{L}(y_{l + 1:t}) + \mathcal{L}(y_{t + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
 $$
 
-It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating $\kappa$ to the penalty $\beta$, gives us a computational trick to improve on the efficiency... The PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, if $$\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_t$$ then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future.
+It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating $\kappa$ to the penalty $\beta$, gives us a computational trick to improve on the efficiency... The PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, if $$\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \beta + \kappa \geq \mathcal{Q}_t $$ then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future.
 
-The intuition, is that, when $\kappa = \beta$, our penalty, then we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
+The intuition, is that, when $\kappa = -\beta$, our penalty, then we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
 
 ![](source_imgs/OPPELT.png)
 
@@ -213,7 +213,7 @@ To reduce computational complexity, we can slightly modify the OP algorithm, to 
 |      $\mathcal{Q}_t \leftarrow \min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $\hat\tau \leftarrow \text{arg}\min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the list at the last optimal point
-|      $R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t}) + \beta \leq \mathcal{Q}_t \}$ // prune the non-optimal changepoint locations
+|      $R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t})  \leq \mathcal{Q}_t \}$ // prune the non-optimal changepoint locations
 | 
 | **RETURN** $cp_n$
 

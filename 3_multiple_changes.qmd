@@ -640,8 +640,10 @@ OP(y, 15, costMean)
 
 This should return 100, 200.
 
-    **Tips:**
+```         
+**Tips:**
 
-    a.  Again, you can pre-compute all the possible $\mathcal{L}(y_{l:u})$, for $u \geq l$ to save computational time.
+a.  Again, you can pre-compute all the possible $\mathcal{L}(y_{l:u})$, for $u \geq l$ to save computational time.
 
-    b.  Be very careful with indexing... R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0...
+b.  Be very careful with indexing... R starts indexing at 1, however, in the pseudocode, you have one element that starts at 0...
+```

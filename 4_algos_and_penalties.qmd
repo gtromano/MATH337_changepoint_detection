@@ -431,12 +431,11 @@ ggplot(data_trend, aes(x = t, y = signal)) +
   theme_minimal()
 ```
 
-a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
-    Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$.
+  a.  Can you identify the elements where there is dependency across segments? Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. Would you be able to use PELT pruning with this one?
 
-b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
+  b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
 
-c.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
+3.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
 
 ```{r echo=FALSE}
 # Load Simpsons ratings data

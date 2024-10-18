@@ -557,10 +557,11 @@ Draw <span class="math inline">\(\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] 
 </div>
 </div>
 <ol type="a">
-<li><p>We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?<br>
-Once you’ve done that, rewrite the model for one change by seting <span class="math inline">\(\tau_{i} = 0\)</span>.</p></li>
+<li><p>Can you identify the elements where there is dependency across segments? Once you’ve done that, rewrite the model for one change by seting <span class="math inline">\(\tau_{i} = 0\)</span>. Would you be able to use PELT pruning with this one?</p></li>
 <li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2! What are the differences across the three models?</p></li>
-<li><p>The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:</p></li>
+</ol>
+<ol start="3" type="1">
+<li>The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:</li>
 </ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(changepoint)</span>

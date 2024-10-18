@@ -398,7 +398,7 @@ plot(out, ncpts= 3, type="p", pch=16)
 
 $$
     y_t = \tau_i \theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
-$${#eq-continuous-slope}
+$$ {#eq-continuous-slope}
 
 where $\theta_{\tau_i}$ represents the value of the slope at changepoint $\tau_i$ and $\phi_{\tau_{i+1}}$ is the value at the next changepoint $\tau_{i+1}$. Note, in this example, for simplicity, we assume the intercept is set equal to 0.
 
@@ -431,12 +431,12 @@ ggplot(data_trend, aes(x = t, y = signal)) +
   theme_minimal()
 ```
 
-  a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
-        Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. 
+a.  We mentioned that under this model, you would not be able to apply the PELT pruning. Can you identify the elements where there is dependency across segments?\
+    Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$.
 
-  b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
+b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
 
-  c.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
+c.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
 
 ```{r echo=FALSE}
 # Load Simpsons ratings data
@@ -461,12 +461,13 @@ abline(v = cpts(out), col = "red")
 
 Comment this segmentation. In which way we improved from the segmentation in week 2? What would you change?
 
-
 ### Lab 4
 
-In this lab we will test changepoint algorithms over some artificial data.
+In this lab we will test changepoint algorithms over some artificial data. Each sequence will have one of the following Gaussian change-in-mean patterns:\
+\
+![](source_imgs/scenarios.png)
 
-1.  The code below will generate 400 sequences, every 100 sequences you will have a different change-pattern:
+The code below will generate 400 sequences, which will be stored in a list called `full_seqs`. Every 100 sequences you will have a different change-pattern, across the four different change patterns.
 
 ```{r}
 library(tidyverse)
@@ -516,7 +517,7 @@ return(list(y = y, mu = mu, cps = cps, pattern = pattern))
 summary(full_seqs[[1]])
 ```
 
-Plot four sample sequences, each with a different change pattern, with superimposed signals.
+1.  Plot four sample sequences, each with a different change pattern, with superimposed signals. You should replicate the plot above.
 
 2.  Install the `changepoint` package. By researching `?cpt.mean`, learn about the change in mean function. Run the PELT algorithm for change in mean on the four sequences you picked above, with MBIC penalty.
 
@@ -536,7 +537,7 @@ mse_loss <- function(mu_true, mu_hat) {
 
 Report results by scenario and algorithm.
 
-**NOTE:** You will be able to access parameters estimates via the function `param.est()`. To get $\hat\mu_{1:n}$, necessary for the MSE, we can then do:
+**NOTE:** You will be able to access parameters estimates via the function `param.est()`. To get $\hat\mu_{1:n}$, necessary for the MSE computation above, we can use:
 
 ```{r eval=FALSE}
 

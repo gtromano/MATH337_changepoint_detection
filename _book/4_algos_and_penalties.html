@@ -586,10 +586,10 @@ Once you’ve done that, rewrite the model for one change by seting <span class=
 </section>
 <section id="lab-4" class="level3" data-number="4.4.2">
 <h3 data-number="4.4.2" class="anchored" data-anchor-id="lab-4"><span class="header-section-number">4.4.2</span> Lab 4</h3>
-<p>In this lab we will test changepoint algorithms over some artificial data.</p>
-<ol type="1">
-<li>The code below will generate 400 sequences, every 100 sequences you will have a different change-pattern:</li>
-</ol>
+<p>In this lab we will test changepoint algorithms over some artificial data. Each sequence will have one of the following Gaussian change-in-mean patterns:<br>
+<br>
+<img src="source_imgs/scenarios.png" class="img-fluid"></p>
+<p>The code below will generate 400 sequences, which will be stored in a list called <code>full_seqs</code>. Every 100 sequences you will have a different change-pattern, across the four different change patterns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -644,8 +644,8 @@ cps         0  -none- numeric
 pattern     1  -none- character</code></pre>
 </div>
 </div>
-<p>Plot four sample sequences, each with a different change pattern, with superimposed signals.</p>
-<ol start="2" type="1">
+<ol type="1">
+<li><p>Plot four sample sequences, each with a different change pattern, with superimposed signals. You should replicate the plot above.</p></li>
 <li><p>Install the <code>changepoint</code> package. By researching <code>?cpt.mean</code>, learn about the change in mean function. Run the PELT algorithm for change in mean on the four sequences you picked above, with MBIC penalty.</p></li>
 <li><p>Compare, in a simulation study, across the four different scenarios, performances of:</p>
 <ol type="a">
@@ -660,7 +660,7 @@ pattern     1  -none- character</code></pre>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Report results by scenario and algorithm.</p>
-<p><strong>NOTE:</strong> You will be able to access parameters estimates via the function <code>param.est()</code>. To get <span class="math inline">\(\hat\mu_{1:n}\)</span>, necessary for the MSE, we can then do:</p>
+<p><strong>NOTE:</strong> You will be able to access parameters estimates via the function <code>param.est()</code>. To get <span class="math inline">\(\hat\mu_{1:n}\)</span>, necessary for the MSE computation above, we can use:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="co"># cpt.mean output here</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="fu">param.est</span>(result)<span class="sc">$</span>mean, <span class="at">times =</span> <span class="fu">diff</span>(<span class="fu">c</span>(<span class="dv">0</span>, cp_est, <span class="fu">length</span>(y))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

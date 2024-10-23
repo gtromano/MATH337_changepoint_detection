@@ -190,9 +190,13 @@ $$
         \mathcal{L}(y_{l + 1:t}) + \mathcal{L}(y_{t + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
 $$
 
-It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. Equating $\kappa$ to the penalty $\beta$, gives us a computational trick to improve on the efficiency... The PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, if $$\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) + \beta + \kappa \geq \mathcal{Q}_t $$ then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future.
+It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such a constant exists. When $\kappa$ is equal to the penalty $\beta$, this gives us a computational trick to improve on the efficiency. The PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, if 
 
-The intuition, is that, when $\kappa = -\beta$, our penalty, then we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
+$$\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_t $$ 
+
+then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future.
+
+The intuition, is that we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
 
 ![](source_imgs/OPPELT.png)
 
@@ -213,7 +217,7 @@ To reduce computational complexity, we can slightly modify the OP algorithm, to 
 |      $\mathcal{Q}_t \leftarrow \min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $\hat\tau \leftarrow \text{arg}\min_{\tau \in R_t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the list at the last optimal point
-|      $R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t})  \leq \mathcal{Q}_t \}$ // prune the non-optimal changepoint locations
+|      $R_{t+1} \leftarrow \{\tau \in \{R_t \cup \{t\}\} : \mathcal{Q}_\tau + \mathcal{L}(y_{\tau + 1:t}) \leq \mathcal{Q}_t \}$ // prune the non-optimal changepoint locations
 | 
 | **RETURN** $cp_n$
 
@@ -231,7 +235,15 @@ However, PELT still has some disadvantages:
 
 In BS, one of the issues that may arise, is an incorrect segmentation. WBS, @Fryzlewicz:2014, is a multiple changepoints procedures that improve on the BS changepoint estimation via computing the initial segmentation cost of BS multiple times over $M + 1$ random subsets of the sequence, $y_{s_1:t_1}, \dots, y_{s_M:t_M}, y_{1:n}$, picking the best subset according to what achieves the smallest segmentation cost and reiterating the procedure over that sample accordingly. The idea behind WBS lies in the fact that a favorable subset of the data $y_{s_m:t_m}$ could be drawn which contains a true change sufficiently separated from both sides $s_m, t_m$ of the sequence. By the inclusion of the $y_{1:n}$ entire sequence among the subsets, it is guaranteed that WBS will do no worse than the simple BS algorithm.
 
-We can formally provide a description of WBS as a recursive procedure again, just adding a couple of alterations to the original Binary Segmentation:
+We can formally provide a description of WBS as a recursive procedure. 
+
+We first start by drawing the set of intervals $\mathcal{F} = \{ [s_1, t_1], \dots, [s_M, t_M] \}$ where:
+
+$$
+s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
+$$
+
+Then, WBS will have just a couple of alterations to the original Binary Segmentation:
 
 ------------------------------------------------------------------------
 
@@ -246,7 +258,7 @@ We can formally provide a description of WBS as a recursive procedure again, jus
 | **IF** $t - s \leq 1$
 |     **RETURN** $\{\}$ // No changepoint in segments of length 1 or less
 | 
-| Draw $\mathcal{M} = \{ [s_1, t_1], \dots, [s_M, t_M] \}$ tuples of subset indexes;
+| $\mathcal{M}_{s,e} =$ Set of those indices m for which $[s_m, t_m] \in \mathcal{F}$ is such that $[s_m, t_m] \subset [s, t]$.
 | $\mathcal{M} \leftarrow \mathcal{M} \cup \{[1, n]\}$
 | **COMPUTE**
 | $\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]$
@@ -431,10 +443,13 @@ ggplot(data_trend, aes(x = t, y = signal)) +
   theme_minimal()
 ```
 
-  a.  Can you identify the elements where there is dependency across segments? Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. Would you be able to use PELT pruning with this one?
+a.  Can you identify the elements where there is dependency across segments? Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. Would you be able to use PELT pruning with this one?
 
-  b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
+b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
 
+```{=html}
+<!-- -->
+```
 3.  The PELT algorithm will only be able to deal with the discontinuous model. We will now revisit the Simpsons dataset, fitting this multiple changes model. This can be achieved via:
 
 ```{r echo=FALSE}

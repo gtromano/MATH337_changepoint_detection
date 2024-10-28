@@ -89,7 +89,7 @@ Understanding and working with subsets of time series data is important for many
 
 ### Stationary, non-stationary, and piecewise stationary time series
 
-Time series can be classified into different categories based on their statistical properties over time. The three main types are **stationary**, **non-stationary**, and **piecewise stationary** time series. For example:
+Time series can be classified into different categories based on their statistical properties over time. For example, let us look at this example below:
 
 ```{r, echo=FALSE}
 # Load the necessary library
@@ -107,7 +107,7 @@ y3 <- y1 + c(rep(0, 50), rep(5, 50))       # Piecewise stationary
 data <- data.frame(
   time = rep(1:100, 3),                    # Time index
   value = c(y1, y2, y3),                   # Values from the three time series
-  type = factor(rep(c("A: stationary", "B: non-stationary", "C: piecewise stationary"), each = 100)) # Labels
+  type = factor(rep(c("A: stationary w.r.t the mean", "B: Linearly increasing trend", "C: Piecewise stationary in the mean"), each = 100)) # Labels
 )
 
 # Plot the three time series using ggplot
@@ -120,7 +120,9 @@ ggplot(data, aes(x = time, y = value)) +
   theme(legend.position = "none")                      # Remove legend since facet labels are clear
 ```
 
-1.  **Stationary Time Series**: A time series is said to be *stationary* if its statistical properties---such as the mean, variance, and autocovariance---are constant over time. This implies that the behavior of the series doesn't change as time progresses.
+**Stationarity in the mean and variance.** For the scope of this Section, and in many examples of this module, we will be talking about stationarity in the mean and variance of a process.
+
+1.  **Stationary Time Series**: A time series is said to be *stationary* in mean and variance, if its mean and variance are constant over time.
 
 Mathematically, for a stationary time series $y_t$, the expected value and variance are constant over time: $$
     \mathbb{E}(y_t) = \mu \quad \text{and} \quad \text{Var}(y_t) = \sigma^2 \quad \forall \in \{1, ..., n\}
@@ -167,22 +169,20 @@ On the other hand, **offline analysis** processes all the data at once, typicall
 
 For instance, to give few examples:
 
-1.  **ECG**: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.
+1.   **Spectroscopy data.** Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.**\
+    **![Electron emission spectroscopy data, Frick, K., Munk, A., & Sieling, H. (2014).](source_imgs/photon_emission.png)
+
+2.  **ECG**: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.
 
     ![Electrocardiograms (heart monitoring), Fotoohinasab et al, Asilomar conference 2020.](source_imgs/intro-ecg.png)
 
-2.  **Cancer Diagnosis**: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma. This is a typical example of an offline analysis.
+3.  **Cancer Diagnosis**: Identifying breakpoints in DNA copy number data is important for diagnosing some types of cancer, such as neuroblastoma. This is a typical example of an offline analysis.
 
     ![DNA copy number data, breakpoints associated with aggressive cancer, Hocking et al, Bioinformatics 2014.](source_imgs/intro-breakpoints.png)
 
-3.  **Engineering Monitoring**: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures: this is often analysed in real-time on with online methods, with the aim of detecting an issue as quickly as possible.
+4.  **Engineering Monitoring**: Detecting changes in CPU monitoring data in servers can help in identifying potential issues or failures: this is often analysed in real-time on with online methods, with the aim of detecting an issue as quickly as possible.
 
     ![Temperature data from a CPU of an AWS server. Source Romano et al., (2023)](source_imgs/CPU-monitoring.png)
-
-4.   **Spectroscopy data.** Test.**\
-    **![](source_imgs/photon_emission.png)
-
-5.  
 
 In this module, we will focus exclusively on **offline** changepoint detection, where we assume that all the data is available for analysis from the start.
 
@@ -425,7 +425,7 @@ $$
 
 Thus, the maximum of the CUSUM statistic occurs at $\tau = 2$, with $C_{max} = 12.05$. To detect a changepoint, we would compare $C_{max}$ to a threshold value $c$. If $C_{max} > c$, we conclude that there is a changepoint at $\hat{\tau} = 2$.
 
-### Algorithmic Formulation of the CUSUM Statistic
+### Algorithmic Formulation of the CUSUM Statistic {#sec-algorithmic-formulation-of-the-cusum-statistic}
 
 This process seems rather long, as for every step, we need to precompute the means... A naive implementation of the cusum, in fact, takes $\mathcal{O}(n^2)$ computations.
 
@@ -572,9 +572,11 @@ c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100
 
 ### Lab 1
 
-1.  Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.
+1.  Code the CUSUM algorithm for a unknown change location, based on the pseudocode of Section @sec-algorithmic-formulation-of-the-cusum-statistic.
 
-2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.
+2.  Modify your function above to output the CUSUM statistics over all ranges of tau.
+
+3.  Recreate the "CUSUM Statistics over time" plot for the Simpsons data above.
 
 ```{=html}
 <!-- -->

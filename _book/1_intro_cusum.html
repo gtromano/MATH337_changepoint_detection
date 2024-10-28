@@ -259,7 +259,7 @@ window.Quarto = {
   <li><a href="#the-cusum-statistics" id="toc-the-cusum-statistics" class="nav-link" data-scroll-target="#the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</a></li>
   <li><a href="#searching-for-all-taus" id="toc-searching-for-all-taus" class="nav-link" data-scroll-target="#searching-for-all-taus"><span class="header-section-number">1.3.2</span> Searching for all <span class="math inline">\(\tau\)</span>s</a></li>
   <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3.3</span> Example</a></li>
-  <li><a href="#algorithmic-formulation-of-the-cusum-statistic" id="toc-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
+  <li><a href="#sec-algorithmic-formulation-of-the-cusum-statistic" id="toc-sec-algorithmic-formulation-of-the-cusum-statistic" class="nav-link" data-scroll-target="#sec-algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</a></li>
   <li><a href="#example-a-large-sequence" id="toc-example-a-large-sequence" class="nav-link" data-scroll-target="#example-a-large-sequence"><span class="header-section-number">1.3.5</span> Example: a large sequence</a></li>
   </ul></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.4</span> Exercises</a>
@@ -335,7 +335,7 @@ window.Quarto = {
 </section>
 <section id="stationary-non-stationary-and-piecewise-stationary-time-series" class="level3" data-number="1.1.2">
 <h3 data-number="1.1.2" class="anchored" data-anchor-id="stationary-non-stationary-and-piecewise-stationary-time-series"><span class="header-section-number">1.1.2</span> Stationary, non-stationary, and piecewise stationary time series</h3>
-<p>Time series can be classified into different categories based on their statistical properties over time. The three main types are <strong>stationary</strong>, <strong>non-stationary</strong>, and <strong>piecewise stationary</strong> time series. For example:</p>
+<p>Time series can be classified into different categories based on their statistical properties over time. For example, let us look at this example below:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -345,8 +345,9 @@ window.Quarto = {
 </div>
 </div>
 </div>
+<p><strong>Stationarity in the mean and variance.</strong> For the scope of this Section, and in many examples of this module, we will be talking about stationarity in the mean and variance of a process.</p>
 <ol type="1">
-<li><strong>Stationary Time Series</strong>: A time series is said to be <em>stationary</em> if its statistical properties—such as the mean, variance, and autocovariance—are constant over time. This implies that the behavior of the series doesn’t change as time progresses.</li>
+<li><strong>Stationary Time Series</strong>: A time series is said to be <em>stationary</em> in mean and variance, if its mean and variance are constant over time.</li>
 </ol>
 <p>Mathematically, for a stationary time series <span class="math inline">\(y_t\)</span>, the expected value and variance are constant over time: <span class="math display">\[
     \mathbb{E}(y_t) = \mu \quad \text{and} \quad \text{Var}(y_t) = \sigma^2 \quad \forall \in \{1, ..., n\}
@@ -390,6 +391,8 @@ y_t = \begin{cases}
 <p>On the other hand, <strong>offline analysis</strong> processes all the data at once, typically after it has been fully collected. The aim here is to provide an accurate detection of changepoints, rather than a rapid one. This approach is common in fields like genome analysis or audiology, where the focus is on understanding the structure of the data post-collection.</p>
 <p>For instance, to give few examples:</p>
 <ol type="1">
+<li><p><strong>Spectroscopy data.</strong> Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.<strong><br>
+</strong><img src="source_imgs/photon_emission.png" class="img-fluid" alt="Electron emission spectroscopy data, Frick, K., Munk, A., &amp; Sieling, H. (2014)."></p></li>
 <li><p><strong>ECG</strong>: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -411,9 +414,6 @@ y_t = \begin{cases}
 <figcaption>Temperature data from a CPU of an AWS server. Source Romano et al., (2023)</figcaption>
 </figure>
 </div></li>
-<li><p><strong>Spectroscopy data.</strong> Test.<strong><br>
-</strong><img src="source_imgs/photon_emission.png" class="img-fluid"></p></li>
-<li></li>
 </ol>
 <p>In this module, we will focus exclusively on <strong>offline</strong> changepoint detection, where we assume that all the data is available for analysis from the start.</p>
 <section id="types-of-changes-in-time-series" class="level3" data-number="1.2.1">
@@ -567,8 +567,8 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </ul>
 <p>Thus, the maximum of the CUSUM statistic occurs at <span class="math inline">\(\tau = 2\)</span>, with <span class="math inline">\(C_{max} = 12.05\)</span>. To detect a changepoint, we would compare <span class="math inline">\(C_{max}\)</span> to a threshold value <span class="math inline">\(c\)</span>. If <span class="math inline">\(C_{max} &gt; c\)</span>, we conclude that there is a changepoint at <span class="math inline">\(\hat{\tau} = 2\)</span>.</p>
 </section>
-<section id="algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.4">
-<h3 data-number="1.3.4" class="anchored" data-anchor-id="algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</h3>
+<section id="sec-algorithmic-formulation-of-the-cusum-statistic" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="sec-algorithmic-formulation-of-the-cusum-statistic"><span class="header-section-number">1.3.4</span> Algorithmic Formulation of the CUSUM Statistic</h3>
 <p>This process seems rather long, as for every step, we need to precompute the means… A naive implementation of the cusum, in fact, takes <span class="math inline">\(\mathcal{O}(n^2)\)</span> computations.</p>
 <p>However, there’s an algorithmic trick… By sequentially computing partial sums, e.g.&nbsp;<span class="math inline">\(S_n = \sum_{i=1}^n y_i\)</span>, we can shorten out our computations significantly. In this way the means directly as you go:</p>
 <hr>
@@ -647,8 +647,9 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <section id="lab-1" class="level3" data-number="1.4.2">
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="lab-1"><span class="header-section-number">1.4.2</span> Lab 1</h3>
 <ol type="1">
-<li><p>Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</p></li>
-<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.</p></li>
+<li><p>Code the CUSUM algorithm for a unknown change location, based on the pseudocode of Section <a href="#sec-algorithmic-formulation-of-the-cusum-statistic" class="quarto-xref"><span>Section 1.3.4</span></a>.</p></li>
+<li><p>Modify your function above to output the CUSUM statistics over all ranges of tau.</p></li>
+<li><p>Recreate the “CUSUM Statistics over time” plot for the Simpsons data above.</p></li>
 </ol>
 <!-- -->
 <ol type="a">

@@ -179,6 +179,11 @@ For instance, to give few examples:
 
     ![Temperature data from a CPU of an AWS server. Source Romano et al., (2023)](source_imgs/CPU-monitoring.png)
 
+4.   **Spectroscopy data.** Test.**\
+    **![](source_imgs/photon_emission.png)
+
+5.  
+
 In this module, we will focus exclusively on **offline** changepoint detection, where we assume that all the data is available for analysis from the start.
 
 ### Types of Changes in Time Series
@@ -549,18 +554,16 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 
 1.  Determine if the following processes are stationary, piecewise stationary, or non-stationary:
 
-```{=html}
 <!-- -->
-```
+
 a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{1:n} \sim N(0, 1)$. This is a random walk model. Let's start by computing the expected value and variance of $y_t$ across all $t$. **TIP:** Start by expanding $y_{t}$ in terms of the noise components...
 
 b.  $y_t = \epsilon*t + 3* \cdot \mathbb{1}(t \> 50), \quad t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 
 c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100} \sim N(0, 1)$
 
-```{=html}
 <!-- -->
-```
+
 2.  In this exercise we will show that the difference $\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}$, multiplied by the normalizing constant $1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}$, follows a standard normal distribution. **Hint:**
 
     a.  Compute the expected value and variance of the difference
@@ -571,9 +574,12 @@ c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{1:100
 
 1.  Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.
 
-2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above. 
+2.  Modify your function above to output the CUSUM statistics over all ranges of tau, and recreate the Simpsons plot above.
 
-  a.    You'll be able to load the dataset via:
+```{=html}
+<!-- -->
+```
+a.  You'll be able to load the dataset via:
 
 ```{r eval=FALSE}
 library(tidyverse)
@@ -586,7 +592,6 @@ simpsons_ratings <- simpsons_ratings[-nrow(simpsons_ratings), ]
 # run your CUSUM algorithm on the Rating variable!
 ```
 
-  b.    To run it on the whole sequence, you'll have to set the threshold $c = \infty$.
-  
-  c.    Assume $\sigma^2 = 1$
-  
+b.  To run it on the whole sequence, you'll have to set the threshold $c = \infty$.
+
+c.  Assume $\sigma^2 = 1$

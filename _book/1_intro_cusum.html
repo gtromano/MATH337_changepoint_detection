@@ -264,7 +264,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.4</span> Exercises</a>
   <ul class="collapse">
-  <li><a href="#workshop-1" id="toc-workshop-1" class="nav-link" data-scroll-target="#workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</a></li>
+  <li><a href="#code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." id="toc-code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." class="nav-link" data-scroll-target="#code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above."><span class="header-section-number">1.4.1</span> Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</a></li>
   <li><a href="#lab-1" id="toc-lab-1" class="nav-link" data-scroll-target="#lab-1"><span class="header-section-number">1.4.2</span> Lab 1</a></li>
   </ul></li>
   </ul>
@@ -632,8 +632,9 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </section>
 <section id="exercises" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">1.4</span> Exercises</h2>
-<section id="workshop-1" class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</h3>
+<section id="code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above."><span class="header-section-number">1.4.1</span> Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</h3>
+<p>Workshop 1</p>
 <ol type="1">
 <li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
 </ol>
@@ -645,10 +646,10 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </ol>
 <!-- -->
 <ol start="2" type="1">
-<li><p>In this exercise we will show that the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span>, multiplied by the normalizing constant <span class="math inline">\(1/\sigma^2\sqrt{\frac{\tau(n-\tau)}{n}}\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
+<li><p>In this exercise we will show that: <span class="math display">\[ \frac{1}{\sigma^2}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \]</span> follows a standard normal distribution. <strong>Hint:</strong></p>
 <ol type="a">
-<li><p>Compute the expected value and variance of the difference</p></li>
-<li><p>Conclude that if you standardise the sum, this follows a normal distribution.</p></li>
+<li><p>Compute the expected value and variance of the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span></p></li>
+<li><p>Conclude that if you standardise the sum, this follows a standard normal distribution.</p></li>
 </ol></li>
 </ol>
 </section>

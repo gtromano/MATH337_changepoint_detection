@@ -18,22 +18,21 @@ Across five weeks we will cover the following topics:
 
 We will be using R as the programming language for this module. If you're unfamiliar with it, make sure you cover the first three weeks of [MATH245](https://lumath245.github.io/_book/index.html).
 
-Every week, you are expected to follow two lectures, one workshop, and one computer aided lab. Over the lecture, we will cover the basics concepts of changepoint detection. 
+Every week, you are expected to follow two lectures, one workshop, and one computer aided lab. Over the lecture, we will cover the basics concepts of changepoint detection.
 
-At the end of each chapter, you will find exercises that will be carried in the workshop and the lab. 
-During the workshop, you will be dealing with computations and details about the methodologies introduced at your own pace, and, finally, during the workshops, you'll give a go at programming the various algorithms and running real-world examples.
+At the end of each chapter, you will find exercises that will be carried in the workshop and the lab. During the workshop, you will be dealing with computations and details about the methodologies, and, finally, during the lab sessions, you'll give a go at programming the various algorithms and running real-world examples.
 
 **You will find the solutions to the exercises on the Moodle page, released weekly**. If you cannot access the Moodle page, and you still would like to have these solutions, please get in touch with me.
 
 ## Source files, and attributions {.unnumbered}
 
-The notes are released as open-source on GitHub under the [CC BY-NC 4.0 License](https://github.com/gtromano/MATH337_changepoint_detection?tab=License-1-ov-file). You can access the repository at the following link: [https://github.com/gtromano/MATH337_changepoint_detection](https://github.com/gtromano/MATH337_changepoint_detection).
+The notes are released as open-source on GitHub under the [CC BY-NC 4.0 License](https://github.com/gtromano/MATH337_changepoint_detection?tab=License-1-ov-file). You can access the repository at the following link: <https://github.com/gtromano/MATH337_changepoint_detection>.
 
 The materials in this course are based on and share elements with the following resources:
 
-- Fearnhead, P., & Fryzlewicz, P. (2022). Detecting a single change-point. *arXiv preprint arXiv:2210.07066*.
-- [Rebecca Killick's Introduction to Changepoint Detection](https://github.com/rkillick/intro-changepoint-course) - a half-day introductory course on changepoint detection.
-- [Rebecca Killick's Further Changepoint Topics](https://github.com/rkillick/further-changepoints-course) - an extended course on changepoint detection.
-- [Toby Hocking's Course on Unsupervised Learning](https://github.com/tdhock/2023-08-unsupervised-learning), which includes changepoint detection.
+-   Fearnhead, P., & Fryzlewicz, P. (2022). Detecting a single change-point. *arXiv preprint arXiv:2210.07066*.
+-   [Rebecca Killick's Introduction to Changepoint Detection](https://github.com/rkillick/intro-changepoint-course) - a half-day introductory course on changepoint detection.
+-   [Rebecca Killick's Further Changepoint Topics](https://github.com/rkillick/further-changepoints-course) - an extended course on changepoint detection.
+-   [Toby Hocking's Course on Unsupervised Learning](https://github.com/tdhock/2023-08-unsupervised-learning), which includes changepoint detection.
 
 I would like to express my gratitude to the authors of these resources. In addition, materials were sourced from various academic papers, which are referenced throughout the body of these notes.

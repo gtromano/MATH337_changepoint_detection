@@ -183,7 +183,7 @@ On the other hand, **offline analysis** processes all the data at once, typicall
 To give few examples:
 
 1.   **Spectroscopy data.** Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.**\
-    **![Electron emission spectroscopy data, Frick, K., Munk, A., & Sieling, H. (2014).](source_imgs/photon_emission.png)
+    **![Electron emission spectroscopy data, Frick, K., Munk, A., & Sieling, H. (2014).](source_imgs/photon_emission.png){width=110%}
 
 2.  **ECG**: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.
 
@@ -387,7 +387,7 @@ for (i in 1:14) {
 If we detect a changepoint (i.e., if $C^2_{max} > c$), we can estimate its location by:
 
 $$
-\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2
+\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2.
 $$
 
 In other words, $\hat{\tau}$ is the value of $\tau$ that maximizes the CUSUM statistic.
@@ -395,7 +395,7 @@ In other words, $\hat{\tau}$ is the value of $\tau$ that maximizes the CUSUM sta
 A simple estimate of the size of the change is then given by:
 
 $$
-\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}
+\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}.
 $$
 
 This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.

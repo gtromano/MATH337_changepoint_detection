@@ -400,7 +400,7 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 <p>To give few examples:</p>
 <ol type="1">
 <li><p><strong>Spectroscopy data.</strong> Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.<strong><br>
-</strong><img src="source_imgs/photon_emission.png" class="img-fluid" alt="Electron emission spectroscopy data, Frick, K., Munk, A., &amp; Sieling, H. (2014)."></p></li>
+</strong><img src="source_imgs/photon_emission.png" class="img-fluid" style="width:110.0%" alt="Electron emission spectroscopy data, Frick, K., Munk, A., &amp; Sieling, H. (2014)."></p></li>
 <li><p><strong>ECG</strong>: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -537,12 +537,12 @@ C^2_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2.
 </div>
 <p>If we detect a changepoint (i.e., if <span class="math inline">\(C^2_{max} &gt; c\)</span>), we can estimate its location by:</p>
 <p><span class="math display">\[
-\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2
+\hat{\tau} = \arg\max_{\tau \in \{1,\ldots,n-1\}}  C_\tau^2.
 \]</span></p>
 <p>In other words, <span class="math inline">\(\hat{\tau}\)</span> is the value of <span class="math inline">\(\tau\)</span> that maximizes the CUSUM statistic.</p>
 <p>A simple estimate of the size of the change is then given by:</p>
 <p><span class="math display">\[
-\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}
+\Delta\hat{\mu} = \bar{y}_{(\hat{\tau}+1):n} - \bar{y}_{1:\hat{\tau}}.
 \]</span></p>
 <p>This estimate represents the difference between the mean of the data after the estimated changepoint and the mean of the data before the estimated changepoint.</p>
 </section>

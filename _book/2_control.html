@@ -366,11 +366,11 @@ y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
 f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
 \]</span></p>
 <p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:</p>
-<p><span class="math display">\[\begin{align}
+<span class="math display">\[\begin{align}
   LR_\tau = &amp; -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\
 
   &amp;+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
-\end{align}\]</span></p>
+\end{align}\]</span>
 <p>This simplifies to:</p>
 <p><span class="math display">\[
 = \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right].

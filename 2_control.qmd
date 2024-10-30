@@ -84,7 +84,7 @@ Fortunately, for controlling our CUSUM test, we can use the fact that $(C_1, ...
 
 $$
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
-$${#eq-cusum_control}
+$$ {#eq-cusum_control}
 
 where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant.
 
@@ -106,11 +106,11 @@ This asymptotic result suggests that the threshold $c_\alpha$ for $C_\tau^2/\sig
 
 In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:
 
-1.    Simulate many time series under the null hypothesis (no changepoint),
+1.  Simulate many time series under the null hypothesis (no changepoint),
 
-2.    Calculate the test statistic $C_\tau^2/\sigma^2$ for each one of the replicates. 
+2.  Calculate the test statistic $C_\tau^2/\sigma^2$ for each one of the replicates.
 
-3.    Set the threshold to be the $(1-\alpha)$ percentile of the distribution of the test statistics from simulated data.
+3.  Set the threshold to be the $(1-\alpha)$ percentile of the distribution of the test statistics from simulated data.
 
 This leads to have less conservative thresholds.
 
@@ -150,12 +150,13 @@ $$
 
 Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:
 
+```{=tex}
 \begin{align}
   LR_\tau = & -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\ 
 
   &+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
 \end{align}
-
+```
 This simplifies to:
 
 $$
@@ -259,7 +260,7 @@ Taking the derivative with respect to $\theta$, gives:
 
 $$
 \frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}.
-$$ 
+$$
 
 Setting equal to zero and solving for $\theta$:
 

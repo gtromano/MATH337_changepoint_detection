@@ -362,9 +362,9 @@ LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n f(y_{t}| \theta)}{\
 y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
 \]</span></p>
 <p>Our p.d.f. will be:</p>
-<p>$$</p>
-<p>f(y_t | ) = {- (y_t - )^2}.</p>
-<p>$$</p>
+<p><span class="math display">\[
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
+\]</span></p>
 <p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:</p>
 <p><span class="math display">\[\begin{align}
   LR_\tau = &amp; -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\

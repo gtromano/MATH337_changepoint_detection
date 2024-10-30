@@ -145,9 +145,7 @@ $$
 Our p.d.f. will be:
 
 $$
-
 f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
-
 $$
 
 Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:

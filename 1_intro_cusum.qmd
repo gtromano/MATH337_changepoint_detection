@@ -182,8 +182,10 @@ On the other hand, **offline analysis** processes all the data at once, typicall
 
 To give few examples:
 
-1.   **Spectroscopy data.** Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.**\
-    **![Electron emission spectroscopy data, Frick, K., Munk, A., & Sieling, H. (2014).](source_imgs/photon_emission.png){width=110%}
+
+1.  **Spectroscopy data.** Changepoint detection is useful in spectroscopy data to segment time series of electron emissions into regions of approximately constant intensity, accounting for large-scale fluctuations in laser power and beam pointing.
+
+    ![Electron emission spectroscopy data, Frick, K., Munk, A., & Sieling, H. (2014).](source_imgs/photon_emission.png)
 
 2.  **ECG**: Detecting changes or abnormalities in electrocardiogram (ECG) data can help in diagnosing heart conditions.
 

@@ -292,12 +292,12 @@ window.Quarto = {
 <p>We will employ some concepts from asymptotic theory: in time series analysis, an asymptotic distribution refers to the distribution that our test statistic approaches as the length of the time series <span class="math inline">\(n\)</span> becomes very large.</p>
 <section id="the-asymptotic-distribution-of-the-cusum-statistics" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="the-asymptotic-distribution-of-the-cusum-statistics"><span class="header-section-number">2.1</span> The asymptotic distribution of the CUSUM statistics</h2>
-<p>We have learned that the chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables. More formally, if <span class="math inline">\(z_1, \cdots, z_k\)</span> are independent, standard Normal random variables, then:</p>
+<p>If <span class="math inline">\(z_1, \cdots, z_k\)</span> are independent, standard Normal random variables, then:</p>
 <p><span class="math display">\[
-\sum_{i=1}^k z^2_i \sim \chi^2_k
+\sum_{i=1}^k z^2_i \sim \chi^2_k,
 \]</span></p>
-<p>We have met this distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom (k). For <span class="math inline">\(k=1\)</span>, it’s highly skewed, but as k increases, it becomes more symmetric and approaches a normal distribution.</p>
-<p>We learned that, when properly normalized <span class="math inline">\(C_\tau\)</span> follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed <span class="math inline">\(\tau\)</span>, <span class="math inline">\(C_\tau^2/\sigma^2\)</span>, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:</p>
+<p>where <span class="math inline">\(\chi^2_k\)</span> is a chi-squared distribution with <span class="math inline">\(k\)</span> degrees of freedom. The chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables: we have met the chi-squared distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom. For <span class="math inline">\(k=1\)</span>, it’s highly skewed, but as <span class="math inline">\(k\)</span> increases, it becomes more symmetric and approaches a normal distribution.</p>
+<p>Last week, we found out that <span class="math inline">\(C_\tau\)</span> follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed <span class="math inline">\(\tau\)</span>, <span class="math inline">\(C_\tau^2/\sigma^2\)</span>, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -391,13 +391,13 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 \bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right]
 \]</span></p>
 <p>Plugging in this into our LR:</p>
-<p><span class="math display">\[\begin{align}
+<span class="math display">\[\begin{align}
 \sigma^2 LR_\tau &amp;= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
 &amp;=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau}^2  - 2 \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \bar{y}_{\tau+1:n}^2)=\\
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
 &amp;= C_\tau^2
-\end{align}\]</span></p>
+\end{align}\]</span>
 <p>This gives us <span class="math inline">\(LR_\tau = \frac{C_\tau^2}{\sigma^2}\)</span>.</p>
 </section>
 </section>
@@ -415,10 +415,10 @@ L(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
 LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\sqrt{2\pi\theta }} \exp\{-\frac{y_t}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\sqrt{2\pi\theta_1}} \exp\{-\frac{y_t}{2 \theta_1}\})(\prod_{t=\tau+1}^n  \frac{1}{\sqrt{2\pi\theta_2}} \exp\{-\frac{y_t}{2 \theta_2}\}]} \right\}
 \]</span></p>
 <p>And taking the log, and simplifying over the constant gives us:</p>
-<p><span class="math display">\[\begin{align}
+<span class="math display">\[\begin{align}
 LR_\tau &amp;= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 &amp; = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
-\end{align}\]</span></p>
+\end{align}\]</span>
 <p>Now to solve the minimisation, we focus on the first term:</p>
 <p><span class="math display">\[
 f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  \log(\theta) + \frac{y^2}{\theta} \right) = \left(  n \log(\theta) + \frac{\sum_{t = 1}^n y^2}{\theta} \right).

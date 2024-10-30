@@ -11,15 +11,15 @@ We will employ some concepts from asymptotic theory: in time series analysis, an
 
 ## The asymptotic distribution of the CUSUM statistics
 
-We have learned that the chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables. More formally, if $z_1, \cdots, z_k$ are independent, standard Normal random variables, then:
+If $z_1, \cdots, z_k$ are independent, standard Normal random variables, then:
 
 $$
-\sum_{i=1}^k z^2_i \sim \chi^2_k
+\sum_{i=1}^k z^2_i \sim \chi^2_k,
 $$
 
-We have met this distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom (k). For $k=1$, it's highly skewed, but as k increases, it becomes more symmetric and approaches a normal distribution.
+where $\chi^2_k$ is a chi-squared distribution with $k$ degrees of freedom. The chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables: we have met the chi-squared distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom. For $k=1$, it's highly skewed, but as $k$ increases, it becomes more symmetric and approaches a normal distribution.
 
-We learned that, when properly normalized $C_\tau$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
+Last week, we found out that $C_\tau$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
 
 ```{r echo=FALSE}
 LR <- function(x) {
@@ -185,6 +185,7 @@ $$
 
 Plugging in this into our LR:
 
+```{=tex}
 \begin{align}
 \sigma^2 LR_\tau &= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
 &=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
@@ -192,7 +193,7 @@ Plugging in this into our LR:
 &= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
 &= C_\tau^2
 \end{align}
-
+```
 This gives us $LR_\tau = \frac{C_\tau^2}{\sigma^2}$.
 
 ## Towards More General Models
@@ -215,13 +216,12 @@ $$
 
 And taking the log, and simplifying over the constant gives us:
 
-
+```{=tex}
 \begin{align}
 LR_\tau &= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 & = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
 \end{align}
-
-
+```
 Now to solve the minimisation, we focus on the first term:
 
 $$
@@ -379,9 +379,9 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 1.  Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.
 
-    a. Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative
-    
-    b. Compose the log-likelihood ratio, according to the equation @eq-lr-test introduced above.
+    a.  Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative
+
+    b.  Compose the log-likelihood ratio, according to the equation @eq-lr-test introduced above.
 
 ### Lab 2
 

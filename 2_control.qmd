@@ -153,10 +153,10 @@ Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p
 ```{=tex}
 \begin{align}
   LR_\tau = & -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\ 
-
   &+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
 \end{align}
 ```
+
 This simplifies to:
 
 $$

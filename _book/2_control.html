@@ -376,35 +376,36 @@ f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_
 \]</span></p>
 <p>To solve the minimization over <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_2\)</span>, we plug-in values <span class="math inline">\(\hat\mu = \bar{y}_{1:n}\)</span> on the first term, and <span class="math inline">\(\hat\mu_1 = \bar{y}_{1:\tau}\)</span>, <span class="math inline">\(\hat\mu_2 = \bar{y}_{(\tau+1):n}\)</span> for the second term:</p>
 <p><span class="math display">\[
-LR_\tau = \frac{1}{\sigma^2} \left[ \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right]
+LR_\tau = \frac{1}{\sigma^2} \left[ \sum_{i=1}^n (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^\tau (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^n (y_i - \bar{y}_{(\tau+1):n})^2 \right].
 \]</span></p>
 <p>This is the likelihood ratio test statistic for a change in mean in a Gaussian model, which is essentially the CUSUM statistics squared, rescaled by the known variance:</p>
 <p><span class="math display">\[
-LR_\tau = \frac{C_\tau^2}{\sigma^2}
+LR_\tau = \frac{C_\tau^2}{\sigma^2}.
 \]</span></p>
-<p>This is possible to prove directly with some tedious computations.</p>
+<p>It is possible to prove this directly with some tedious computations.</p>
 <p><strong>Proof</strong>. We start by writing down <span class="math inline">\(\sigma^2 LR\)</span>. This will be:</p>
 <p><span class="math display">\[
-\sigma^2 LR_\tau = \sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{\tau+1:n})^2
+\sigma^2 LR_\tau = \sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 - \sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 - \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{\tau+1:n})^2.
 \]</span></p>
 <p>Now we need to expand each term. Starting with the first:</p>
 <p><span class="math display">\[
-\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2  - 2 \bar{y}_{1:n} \sum_{i=1}^{n} y_i + n \bar{y}_{1:n}^2
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2  - 2 \bar{y}_{1:n} \sum_{i=1}^{n} y_i + n \bar{y}_{1:n}^2.
 \]</span></p>
 <p>As <span class="math inline">\(\sum_{i=1}^{n} y_i = n \bar{y}_{1:n}\)</span>, we notice that we can simplify the last two terms. We are left with:</p>
 <p><span class="math display">\[
-\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 - n \bar{y}_{1:\tau}^2
+\sum_{i=1}^{n} (y_i - \bar{y}_{1:n})^2 = \sum_{i=1}^{n} y_i^2 - n \bar{y}_{1:\tau}^2.
 \]</span></p>
 <p>We proceed similarly for the other two terms:</p>
 <p><span class="math display">\[
-\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 - \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 - (n-\tau) \bar{y}_{\tau+1:n}^2
+\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 = \sum_{i=1}^{\tau} y_i^2 - \tau \bar{y}_{1:\tau}^2, \quad \sum_{i=\tau + 1}^{n} (y_i - \bar{y}_{\tau+1:n})^2 = \sum_{i=\tau+1}^{n} y_i^2 - (n-\tau) \bar{y}_{\tau+1:n}^2.
 \]</span></p>
 <p>Putting all together, and getting rid of the partial sums, we are left with:</p>
 <p><span class="math display">\[
 \sigma^2 LR_\tau = - n \bar{y}_{1:n}^2 + \tau \bar{y}_{1:\tau}^2 + (n - \tau) \bar{y}_{\tau+1:n}^2.
-\]</span> Now, recall that <span class="math inline">\(\bar{y}_{1:n} = \frac{1}{n} \left[ \tau \bar{y}_{1:\tau} + (n - \tau) \bar{y}_{\tau+1:n} \right]\)</span>, and:</p>
+\]</span></p>
+<p>Now, recall that <span class="math inline">\(\bar{y}_{1:n} = \frac{1}{n} \left[ \tau \bar{y}_{1:\tau} + (n - \tau) \bar{y}_{\tau+1:n} \right]\)</span>, and:</p>
 <p><span class="math display">\[
-\bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right]
+\bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right].
 \]</span></p>
 <p>Plugging in this into our LR:</p>
 <span class="math display">\[\begin{align}
@@ -412,7 +413,7 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 &amp;=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau}^2  - 2 \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \bar{y}_{\tau+1:n}^2)=\\
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
-&amp;= C_\tau^2
+&amp;= C_\tau^2.
 \end{align}\]</span>
 <p>This gives us <span class="math inline">\(LR_\tau = \frac{C_\tau^2}{\sigma^2}\)</span>.</p>
 </section>

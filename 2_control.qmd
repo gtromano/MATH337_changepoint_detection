@@ -19,7 +19,15 @@ $$
 
 where $\chi^2_k$ is a chi-squared distribution with $k$ degrees of freedom. The chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables: we have met the chi-squared distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom. For $k=1$, it's highly skewed, but as $k$ increases, it becomes more symmetric and approaches a normal distribution.
 
-Last week, we found out that $C_\tau$ follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed $\tau$, $C_\tau^2/\sigma^2$, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
+Last week, we found out that, under the null hypothesis of no change:
+
+$$\frac{1}{\sigma^2}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \sim N(0, 1).$$
+
+Therefore, our test statistics for a fixed $\tau$:
+
+$$\frac{C_\tau^2}{\sigma} \sim \chi^2_1.$$
+
+If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
 
 ```{r echo=FALSE}
 LR <- function(x) {
@@ -66,7 +74,8 @@ However, as the change is unknown, our actual test statistic for detecting a cha
 
 For this reason, calculating the distribution of this maximum ends up being a bit more challenging...
 
-1.  So far, we worked only for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
+1.  So far, we only studied the behaviour of the statistics for one fixed $\tau$, however, when comparing the maximums, the values of $C_\tau$ are in fact not independent across different $\tau$s.
+
 2.  As we will learn later, the CUSUM is a special case of a LR test, as setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model. For this reason, the usual regularity conditions for likelihood-ratio test statistics don't apply here.
 
 ### Controlling the max of our cusums {#sec-cusum-control}
@@ -75,7 +84,7 @@ Fortunately, for controlling our CUSUM test, we can use the fact that $(C_1, ...
 
 $$
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
-$$
+$${#eq-cusum_control}
 
 where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant.
 
@@ -93,13 +102,23 @@ $$
 
 To find the threshold, as $\max_\tau \frac{C_{\tau}^2 }{\sigma^2} > c$, we just have to square our value above, e.g. $c_\alpha = \tilde{c}^2$.
 
-This asymptotic result suggests that the threshold $c_\alpha$ for $C_τ^2/σ^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
+This asymptotic result suggests that the threshold $c_\alpha$ for $C_\tau^2/\sigma^2$ should increase with $n$ at a rate of approximately $2 \log \log n$. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.
 
-In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. This, as we will see, it's much better as it ends up having less conservative thresholds:
+In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:
+
+1.    Simulate many time series under the null hypothesis (no changepoint),
+
+2.    Calculate the test statistic $C_\tau^2/\sigma^2$ for each one of the replicates. 
+
+3.    Set the threshold to be the $(1-\alpha)$ percentile of the distribution of the test statistics from simulated data.
+
+This leads to have less conservative thresholds.
+
+**Theoretical vs Empirical Thresholds** The figure below shows, for various levels of $\alpha = 0.01, 0.05, 0.1$, thresholds $c_\alpha$ computed from the theoretical distribution of @eq-cusum_control against the Monte Carlo thresholds obtained from empirical simulations under the null.
 
 ![](source_imgs/empirical_thres_comparison.png)
 
-We will see how to obtain this thresholds in the Lab.
+We will see how to compute in practice the theoretical and empirical thresholds in the Lab!
 
 ## The Likelihood Ratio Test
 
@@ -110,29 +129,39 @@ In general, the Likelihood Ratio Test is a method for comparing two nested model
 Suppose we have a set of observations $x_1, x_2, \dots, x_n$. Under the null hypothesis $H_0$, we assume that all the data is generated by the same model without a changepoint. Under the alternative hypothesis $H_1$, there is a single changepoint at $\tau$, such that the model for the data changes after $\tau$. The LRT statistic is given by:
 
 $$
-LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n L(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n L(y_{t}| \theta_1))(\prod_{t=1}^n L(y_{t}| \theta_2)]} \right\}
+LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n f(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n f(y_{t}| \theta_1))(\prod_{t=1}^n f(y_{t}| \theta_2)]} \right\}
 $$ {#eq-lr-test}
 
 The LRT compares the likelihood of the data under two models to determine which one is more likely: the enumerator, is the likelihood under the null hypothesis of no changepoint, while the denominator represents the likelihood of the data under the alternative hypothesis, where we optimise for two different parameters before and after the changepoint at $\tau$.
 
 ### Example: Gaussian change-in-mean
 
-The CUSUM statistics, in fact, is nothing but a specific case of this model. To see this, we start from our piecewise costant signal, plus noise, $x_i = f_i + \epsilon_i, \quad i = 1, \dots, n$. Under this model our data, a linear combination of a Gaussian, is distributed as:
+As a first example, we show how the CUSUM statistics is nothing but a specific case of the GLR. To see this, we start from our piecewise costant signal, plus noise, $x_i = f_i + \epsilon_i, \quad i = 1, \dots, n$. Under this model our data, a linear combination of a Gaussian, is distributed as:
 
 $$
 y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
 $$
 
-Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian kernel into the LR above, and take the logarithm:
+Our p.d.f. will be:
 
 $$
-LR_\tau = -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left( -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right]
+
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
+
 $$
+
+Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:
+
+\begin{align}
+  LR_\tau = & -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\ 
+
+  &+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
+\end{align}
 
 This simplifies to:
 
 $$
-= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
+= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right].
 $$
 
 To solve the minimization over $\mu_1$ and $\mu_2$, we plug-in values $\hat\mu = \bar{y}_{1:n}$ on the first term, and $\hat\mu_1 = \bar{y}_{1:\tau}$, $\hat\mu_2 = \bar{y}_{(\tau+1):n}$ for the second term:
@@ -205,7 +234,7 @@ The great thing of the LR test is that it's extremely flexible, allowing us to d
 To this end we will demonstrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicity, we will call our variance $\sigma^2 = \theta$, our parameter of interest, and without loss of generality, we can center our data on zero (e.g. if $x_t \sim N(\mu, \theta)$, then $x_t - \mu = y_t \sim N(0, \theta)$). Then, our p.d.f for one observation will be given by:
 
 $$
-L(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
 $$
 
 Plugging in the main LR test formula, we find:
@@ -231,8 +260,10 @@ $$
 Taking the derivative with respect to $\theta$, gives:
 
 $$
-\frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}
-$$ Setting equal to zero and solving for $\theta$:
+\frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}.
+$$ 
+
+Setting equal to zero and solving for $\theta$:
 
 $$
 n \theta - \sum_{t = 1}^n y^2 = 0

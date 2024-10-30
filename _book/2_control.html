@@ -297,7 +297,11 @@ window.Quarto = {
 \sum_{i=1}^k z^2_i \sim \chi^2_k,
 \]</span></p>
 <p>where <span class="math inline">\(\chi^2_k\)</span> is a chi-squared distribution with <span class="math inline">\(k\)</span> degrees of freedom. The chi-squared distribution is a continuous probability distribution that models the sum of squares of k independent standard normal random variables: we have met the chi-squared distribution already in hypothesis testing and constructing confidence intervals. The shape of the distribution depends on its degrees of freedom. For <span class="math inline">\(k=1\)</span>, it’s highly skewed, but as <span class="math inline">\(k\)</span> increases, it becomes more symmetric and approaches a normal distribution.</p>
-<p>Last week, we found out that <span class="math inline">\(C_\tau\)</span> follows a standard normal distribution under the null hypothesis of no change. Therefore, our test statistics for a fixed <span class="math inline">\(\tau\)</span>, <span class="math inline">\(C_\tau^2/\sigma^2\)</span>, follows a chi-squared distribution with 1 degree of freedom, being the square of a standard random variable. If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:</p>
+<p>Last week, we found out that, under the null hypothesis of no change:</p>
+<p><span class="math display">\[\frac{1}{\sigma^2}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \sim N(0, 1).\]</span></p>
+<p>Therefore, our test statistics for a fixed <span class="math inline">\(\tau\)</span>:</p>
+<p><span class="math display">\[\frac{C_\tau^2}{\sigma} \sim \chi^2_1.\]</span></p>
+<p>If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -310,15 +314,15 @@ window.Quarto = {
 <p>However, as the change is unknown, our actual test statistic for detecting a change is <span class="math inline">\(\max_\tau C_\tau^2/σ^2\)</span>.</p>
 <p>For this reason, calculating the distribution of this maximum ends up being a bit more challenging…</p>
 <ol type="1">
-<li>So far, we worked only for one fixed <span class="math inline">\(\tau\)</span>, however, when comparing the maximums, the values of <span class="math inline">\(C_\tau\)</span> are in fact not independent across different <span class="math inline">\(\tau\)</span>s.</li>
-<li>As we will learn later, the CUSUM is a special case of a LR test, as setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model. For this reason, the usual regularity conditions for likelihood-ratio test statistics don’t apply here.</li>
+<li><p>So far, we only studied the behaviour of the statistics for one fixed <span class="math inline">\(\tau\)</span>, however, when comparing the maximums, the values of <span class="math inline">\(C_\tau\)</span> are in fact not independent across different <span class="math inline">\(\tau\)</span>s.</p></li>
+<li><p>As we will learn later, the CUSUM is a special case of a LR test, as setting the size of the actual change in mean to 0 effectively removes the changepoint parameter from the model. For this reason, the usual regularity conditions for likelihood-ratio test statistics don’t apply here.</p></li>
 </ol>
 <section id="sec-cusum-control" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="sec-cusum-control"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
-<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="references.html#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
-<p><span class="math display">\[
+<p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
+<p><span id="eq-cusum_control"><span class="math display">\[
 \lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
-\]</span></p>
+\tag{2.1}\]</span></span></p>
 <p>where <span class="math inline">\(a_n = (2 \log \log n)^{-1/2}\)</span> and <span class="math inline">\(b_n = a_n^{-1} + 0.5a_n \log \log \log n\)</span> are a scaling and a centering constant.</p>
 <p>The right side of this equation is the CDF of a Gumbell distribution. As we learned from likelihood inference, to find the threshold <span class="math inline">\(c_{\alpha}\)</span> for a given false probability rate, we first set the right-hand side equal to <span class="math inline">\(1 - \alpha\)</span>, and solve for <span class="math inline">\(u_\alpha\)</span>. This gives:</p>
 <p><span class="math display">\[
@@ -329,10 +333,17 @@ u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{2\pi^{-1/2}} \right).
 \tilde{c} = (a_n u_\alpha + b_n),
 \]</span></p>
 <p>To find the threshold, as <span class="math inline">\(\max_\tau \frac{C_{\tau}^2 }{\sigma^2} &gt; c\)</span>, we just have to square our value above, e.g.&nbsp;<span class="math inline">\(c_\alpha = \tilde{c}^2\)</span>.</p>
-<p>This asymptotic result suggests that the threshold <span class="math inline">\(c_\alpha\)</span> for <span class="math inline">\(C_τ^2/σ^2\)</span> should increase with <span class="math inline">\(n\)</span> at a rate of approximately <span class="math inline">\(2 \log \log n\)</span>. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.</p>
-<p>In practice, it’s often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This approach involves simulating many time series under the null hypothesis (no changepoint) and calculating the test statistic for each. The distribution of these simulated test statistics can then be used to set appropriate thresholds. This, as we will see, it’s much better as it ends up having less conservative thresholds:</p>
+<p>This asymptotic result suggests that the threshold <span class="math inline">\(c_\alpha\)</span> for <span class="math inline">\(C_\tau^2/\sigma^2\)</span> should increase with <span class="math inline">\(n\)</span> at a rate of approximately <span class="math inline">\(2 \log \log n\)</span>. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.</p>
+<p>In practice, it’s often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:</p>
+<ol type="1">
+<li><p>Simulate many time series under the null hypothesis (no changepoint),</p></li>
+<li><p>Calculate the test statistic <span class="math inline">\(C_\tau^2/\sigma^2\)</span> for each one of the replicates.</p></li>
+<li><p>Set the threshold to be the <span class="math inline">\((1-\alpha)\)</span> percentile of the distribution of the test statistics from simulated data.</p></li>
+</ol>
+<p>This leads to have less conservative thresholds.</p>
+<p><strong>Theoretical vs Empirical Thresholds</strong> The figure below shows, for various levels of <span class="math inline">\(\alpha = 0.01, 0.05, 0.1\)</span>, thresholds <span class="math inline">\(c_\alpha\)</span> computed from the theoretical distribution of <a href="#eq-cusum_control" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cusum_control</span></a> against the Monte Carlo thresholds obtained from empirical simulations under the null.</p>
 <p><img src="source_imgs/empirical_thres_comparison.png" class="img-fluid"></p>
-<p>We will see how to obtain this thresholds in the Lab.</p>
+<p>We will see how to compute in practice the theoretical and empirical thresholds in the Lab!</p>
 </section>
 </section>
 <section id="the-likelihood-ratio-test" class="level2" data-number="2.2">
@@ -341,22 +352,28 @@ u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{2\pi^{-1/2}} \right).
 <p>In general, the Likelihood Ratio Test is a method for comparing two nested models: one under the null hypothesis, which assumes no changepoint, and one under the alternative hypothesis, which assumes a changepoint exists at some unknown position <span class="math inline">\(\tau\)</span>.</p>
 <p>Suppose we have a set of observations <span class="math inline">\(x_1, x_2, \dots, x_n\)</span>. Under the null hypothesis <span class="math inline">\(H_0\)</span>, we assume that all the data is generated by the same model without a changepoint. Under the alternative hypothesis <span class="math inline">\(H_1\)</span>, there is a single changepoint at <span class="math inline">\(\tau\)</span>, such that the model for the data changes after <span class="math inline">\(\tau\)</span>. The LRT statistic is given by:</p>
 <p><span id="eq-lr-test"><span class="math display">\[
-LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n L(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n L(y_{t}| \theta_1))(\prod_{t=1}^n L(y_{t}| \theta_2)]} \right\}
-\tag{2.1}\]</span></span></p>
+LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n f(y_{t}| \theta)}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^n f(y_{t}| \theta_1))(\prod_{t=1}^n f(y_{t}| \theta_2)]} \right\}
+\tag{2.2}\]</span></span></p>
 <p>The LRT compares the likelihood of the data under two models to determine which one is more likely: the enumerator, is the likelihood under the null hypothesis of no changepoint, while the denominator represents the likelihood of the data under the alternative hypothesis, where we optimise for two different parameters before and after the changepoint at <span class="math inline">\(\tau\)</span>.</p>
 <section id="example-gaussian-change-in-mean" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="example-gaussian-change-in-mean"><span class="header-section-number">2.2.1</span> Example: Gaussian change-in-mean</h3>
-<p>The CUSUM statistics, in fact, is nothing but a specific case of this model. To see this, we start from our piecewise costant signal, plus noise, <span class="math inline">\(x_i = f_i + \epsilon_i, \quad i = 1, \dots, n\)</span>. Under this model our data, a linear combination of a Gaussian, is distributed as:</p>
+<p>As a first example, we show how the CUSUM statistics is nothing but a specific case of the GLR. To see this, we start from our piecewise costant signal, plus noise, <span class="math inline">\(x_i = f_i + \epsilon_i, \quad i = 1, \dots, n\)</span>. Under this model our data, a linear combination of a Gaussian, is distributed as:</p>
 <p><span class="math display">\[
 y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
 \]</span></p>
-<p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian kernel into the LR above, and take the logarithm:</p>
-<p><span class="math display">\[
-LR_\tau = -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left( -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right]
-\]</span></p>
+<p>Our p.d.f. will be:</p>
+<p>$$</p>
+<p>f(y_t | ) = {- (y_t - )^2}.</p>
+<p>$$</p>
+<p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:</p>
+<p><span class="math display">\[\begin{align}
+  LR_\tau = &amp; -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\
+
+  &amp;+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
+\end{align}\]</span></p>
 <p>This simplifies to:</p>
 <p><span class="math display">\[
-= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right]
+= \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right].
 \]</span></p>
 <p>To solve the minimization over <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_2\)</span>, we plug-in values <span class="math inline">\(\hat\mu = \bar{y}_{1:n}\)</span> on the first term, and <span class="math inline">\(\hat\mu_1 = \bar{y}_{1:\tau}\)</span>, <span class="math inline">\(\hat\mu_2 = \bar{y}_{(\tau+1):n}\)</span> for the second term:</p>
 <p><span class="math display">\[
@@ -408,7 +425,7 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="change-in-variance"><span class="header-section-number">2.3.1</span> Change-in-variance</h3>
 <p>To this end we will demonstrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicity, we will call our variance <span class="math inline">\(\sigma^2 = \theta\)</span>, our parameter of interest, and without loss of generality, we can center our data on zero (e.g.&nbsp;if <span class="math inline">\(x_t \sim N(\mu, \theta)\)</span>, then <span class="math inline">\(x_t - \mu = y_t \sim N(0, \theta)\)</span>). Then, our p.d.f for one observation will be given by:</p>
 <p><span class="math display">\[
-L(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
 \]</span></p>
 <p>Plugging in the main LR test formula, we find:</p>
 <p><span class="math display">\[
@@ -425,8 +442,9 @@ f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  \log(\theta) + \frac{y^2}{\theta} \r
 \]</span></p>
 <p>Taking the derivative with respect to <span class="math inline">\(\theta\)</span>, gives:</p>
 <p><span class="math display">\[
-\frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}
-\]</span> Setting equal to zero and solving for <span class="math inline">\(\theta\)</span>:</p>
+\frac{d}{d\theta} f(y_{1:n}, \theta) = \frac{n}{\theta} - \frac{\sum_{t = 1}^n y^2}{\theta^2}.
+\]</span></p>
+<p>Setting equal to zero and solving for <span class="math inline">\(\theta\)</span>:</p>
 <p><span class="math display">\[
 n \theta - \sum_{t = 1}^n y^2 = 0
 \]</span></p>
@@ -476,7 +494,7 @@ f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 \]</span></p>
-<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and <span class="math inline">\(v_\tau\^\top y_{1:n}\)</span> is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="references.html#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
+<p>where <span class="math inline">\(v_\tau\)</span> is a contrast vector that is piecewise linear with a change in slope at <span class="math inline">\(\tau\)</span>. This vector is constructed such that, under the null hypothesis, the vector <span class="math inline">\(v_\tau^\top y_{1:n}\)</span> has variance 1, and <span class="math inline">\(v_\tau\^\top y_{1:n}\)</span> is invariant to adding a linear function to the data. These properties uniquely define the contrast vector <span class="math inline">\(v_\tau\)</span>, up to an arbitrary sign. Computations on how to obtain this likelihood ration test, and how to construct this vector are beyond the scope of this module, but should you be curious those are detailed in <span class="citation" data-cites="baranowski2019narrowest">Baranowski, Chen, and Fryzlewicz (<a href="#ref-baranowski2019narrowest" role="doc-biblioref">2019</a>)</span>.</p>
 </section>
 <section id="revisiting-our-simpsons-data-again" class="level3" data-number="2.3.3">
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="revisiting-our-simpsons-data-again"><span class="header-section-number">2.3.3</span> Revisiting our Simpsons data (again!)</h3>
@@ -524,21 +542,21 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <li><p>Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.</p>
 <ol type="a">
 <li><p>Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative</p></li>
-<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.1</span></a> introduced above.</p></li>
+<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-lr-test</span></a> introduced above.</p></li>
 </ol></li>
 </ol>
 </section>
 <section id="lab-2" class="level3" data-number="2.4.2">
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="lab-2"><span class="header-section-number">2.4.2</span> Lab 2</h3>
 <ol type="1">
-<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics, according to Section <a href="#sec-cusum-control" class="quarto-xref"><span>Section 2.1.1</span></a>.</p></li>
+<li><p>Write a function, that taking as input <span class="math inline">\(n\)</span> and a desired <span class="math inline">\(\alpha\)</span> level for false positive rate, returns the threshold for the cusum statistics, according to Section <a href="#sec-cusum-control" class="quarto-xref"><span class="quarto-unresolved-ref">sec-cusum-control</span></a>.</p></li>
 <li><p>Construct a function that, taking as input <span class="math inline">\(n\)</span>, a desired <span class="math inline">\(\alpha\)</span> , and a <code>replicates</code> parameter, runs a Monte Carlo simulation to tune an empirical penalty for the CUSUM change-in-mean on a simple Gaussian signal. Tip: You can reuse the function for computing the CUSUM statistics that you built the last week</p></li>
 <li><p>Compare for a range of increasingly values of n, e.g.&nbsp;<span class="math inline">\(n = 100, 500, 1000, 10.000\)</span>, and for few desired levels of alpha, the Monte Carlo threshold with the theoretically justified threshold. Plot the results, to recreate the plot above.</p></li>
 <li><p>Using the Test the Simpsons dataset, and the monte carlo threshold, find a critical level for your CUSUM statistics, and declare a change with the change-in-mean model.</p></li>
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-baranowski2019narrowest" class="csl-entry" role="listitem">
 Baranowski, Rafal, Yining Chen, and Piotr Fryzlewicz. 2019. <span>“Narrowest-over-Threshold Detection of Multiple Change Points and Change-Point-Like Features.”</span> <em>Journal of the Royal Statistical Society Series B: Statistical Methodology</em> 81 (3): 649–72.
 </div>

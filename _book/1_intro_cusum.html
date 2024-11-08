@@ -244,10 +244,10 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#piecewise-stationary-time-series" id="toc-piecewise-stationary-time-series" class="nav-link active" data-scroll-target="#piecewise-stationary-time-series"><span class="header-section-number">1.1</span> Piecewise Stationary Time Series</a>
+  <li><a href="#introduction-to-time-series" id="toc-introduction-to-time-series" class="nav-link active" data-scroll-target="#introduction-to-time-series"><span class="header-section-number">1.1</span> Introduction to Time Series</a>
   <ul class="collapse">
   <li><a href="#what-is-a-time-series" id="toc-what-is-a-time-series" class="nav-link" data-scroll-target="#what-is-a-time-series"><span class="header-section-number">1.1.1</span> What is a time series?</a></li>
-  <li><a href="#stationary-non-stationary-and-piecewise-stationary-time-series" id="toc-stationary-non-stationary-and-piecewise-stationary-time-series" class="nav-link" data-scroll-target="#stationary-non-stationary-and-piecewise-stationary-time-series"><span class="header-section-number">1.1.2</span> Stationary, non-stationary, and piecewise stationary time series</a></li>
+  <li><a href="#properties-of-time-series" id="toc-properties-of-time-series" class="nav-link" data-scroll-target="#properties-of-time-series"><span class="header-section-number">1.1.2</span> Properties of time series</a></li>
   </ul></li>
   <li><a href="#introduction-to-changepoints" id="toc-introduction-to-changepoints" class="nav-link" data-scroll-target="#introduction-to-changepoints"><span class="header-section-number">1.2</span> Introduction to changepoints</a>
   <ul class="collapse">
@@ -292,8 +292,8 @@ window.Quarto = {
 </header>
 
 
-<section id="piecewise-stationary-time-series" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="piecewise-stationary-time-series"><span class="header-section-number">1.1</span> Piecewise Stationary Time Series</h2>
+<section id="introduction-to-time-series" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="introduction-to-time-series"><span class="header-section-number">1.1</span> Introduction to Time Series</h2>
 <p>In this module, we will be dealing with <strong>time series</strong>. A time series is a sequence of observations recorded over time (or space), where the order of the data points is crucial.</p>
 <section id="what-is-a-time-series" class="level3" data-number="1.1.1">
 <h3 data-number="1.1.1" class="anchored" data-anchor-id="what-is-a-time-series"><span class="header-section-number">1.1.1</span> What is a time series?</h3>
@@ -327,14 +327,14 @@ window.Quarto = {
   y_{1:n} = (y_1, y_2, \dots, y_n).
 \]</span></p>
 <p>Here, <span class="math inline">\(n\)</span> is the total length of the sequence, and <span class="math inline">\(y_t\)</span> represents the observed value at time <span class="math inline">\(t\)</span>, for <span class="math inline">\(t = 1, 2, \dots, n\)</span>. In our previous example, for instance, <span class="math inline">\(n = 100\)</span>.</p>
-<p>Often, we are also interested in subsets of a time series, especially when investigating specific “windows” or “chunks” of the data. A subset of a time series, starting from time <span class="math inline">\(l\)</span> to time <span class="math inline">\(u\)</span>, will be denoted by the following:</p>
+<p>Often, we are also interested in subsets of a time series, especially when investigating specific “windows” or “chunks” of the data. A subset of a time series, starting from time <span class="math inline">\(l\)</span> to time <span class="math inline">\(u\)</span>, with <span class="math inline">\(s \leq u\)</span>, will be denoted by the following:</p>
 <p><span class="math display">\[
-  y_{l:u} = (y_l, y_{l+1}, \dots, y_u).
+  y_{l:u} = (y_l, y_{l+1}, \dots, y_u),
 \]</span></p>
-<p>Understanding and working with subsets of time series data is important for many applications, such as when detecting changes in the behavior or properties of the time series over specific intervals.</p>
+<p>Where if <span class="math inline">\(l = u\)</span>, <span class="math inline">\(y_{l:l} = (y_l)\)</span>.</p>
 </section>
-<section id="stationary-non-stationary-and-piecewise-stationary-time-series" class="level3" data-number="1.1.2">
-<h3 data-number="1.1.2" class="anchored" data-anchor-id="stationary-non-stationary-and-piecewise-stationary-time-series"><span class="header-section-number">1.1.2</span> Stationary, non-stationary, and piecewise stationary time series</h3>
+<section id="properties-of-time-series" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="properties-of-time-series"><span class="header-section-number">1.1.2</span> Properties of time series</h3>
 <p>Time series can have various statistical properties that explain how they behave over time, and they can be characterized based on those. Let us look at three examples of time series:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -646,7 +646,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 <!-- -->
 <ol type="a">
 <li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{t} \sim N(0, 1)\)</span>. This is a random walk model. Let’s start by computing the expected value and variance of <span class="math inline">\(y_t\)</span> across all <span class="math inline">\(t\)</span>. <strong>TIP:</strong> Start by expanding <span class="math inline">\(y_{t}\)</span> in terms of the noise components…</p></li>
-<li><p><span class="math inline">\(y_t = t \epsilon_t  + 3 \mathbb{1}(t &gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)\)</span></p></li>
+<li><p><span class="math inline">\(y_t = t \epsilon_t + 3 \mathbb{1}(t &gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)\)</span></p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)\)</span></p></li>
 </ol>
 <!-- -->

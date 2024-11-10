@@ -362,8 +362,7 @@ y_t = \begin{cases}
     \epsilon_t &amp; \text{for } t \leq 50 \\
     \epsilon_t + 5 &amp; \text{for } t &gt; 50
     \end{cases}, \quad \epsilon_t \sim \mathcal{N}(0, 1)
-\]</span> This abrupt change at <span class="math inline">\(t = 50\)</span> introduces a piecewise structure to the data, where the data is seen following a distribution prior to the change, <span class="math inline">\(y_t \sim N(0, 1)\)</span> up to a certain time point <span class="math inline">\(t=50\)</span>, and <span class="math inline">\(y_t \sim N(5, 1)\)</span> after. What can we say about time <span class="math inline">\(t=150\)</span>? Well, to make assumptions we have to assume that other changes are happening. However, it is far more interesting to find out where this change happened.<br>
-In many examples of this module, we will be studying processes that are piecewise stationary in the mean and variance, as in this example.</p></li>
+\]</span> This abrupt change at <span class="math inline">\(t = 50\)</span> introduces a piecewise structure to the data, where the data is seen following a distribution prior to the change, <span class="math inline">\(y_t \sim N(0, 1)\)</span> up to a certain time point <span class="math inline">\(t=50\)</span>, and <span class="math inline">\(y_t \sim N(5, 1)\)</span> after. In many examples of this module, we will be studying processes that are piecewise stationary in the mean and variance, as in this example.</p></li>
 </ol>
 <p><strong>Stationarity in the mean and variance.</strong> A time series is said to be <em>stationary</em> in mean and variance, if its mean and variance are constant over time. That is, for a time series <span class="math inline">\(y_{1:n}\)</span>: <span class="math display">\[
     \mathbb{E}(y_t) = \mu \quad \text{and} \quad \text{Var}(y_t) = \sigma^2 \quad \forall \in \{1, ..., n\}
@@ -433,7 +432,7 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="types-of-changes-in-time-series"><span class="header-section-number">1.2.1</span> Types of Changes in Time Series</h3>
 <p>Depending on the model, we could seek for different types of changes in the structure of a time series. Some of the most common types of changes include shifts in mean, variance, and trends in regression. For example, the CPU example above exihibited, in addition to some extreme observations, both changes in mean and variance.</p>
 <ul>
-<li>A <strong>change in mean</strong> occurs when the average level of an otherwise stationary time series shifts from one point to another. This type of change is often encountered in real-world data when there is a sudden shift in the process generating the data, such as a change in policy, market conditions, or external factors affecting the system.</li>
+<li>A <strong>change in mean</strong> occurs when the average level of an otherwise stationary time series shifts from one point to another.</li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
@@ -446,7 +445,7 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 </div>
 <p>In the plot above, the red lines indicate the true mean values of the different segments.</p>
 <ul>
-<li>A <strong>change in variance</strong> refers to a shift in the variability of the time series data, even when the mean remains constant. This type of change is important in scenarios where the stability of a process fluctuates over time. For example, in financial markets, periods of high volatility (high variance) may be followed by periods of relative calm (low variance).</li>
+<li>A <strong>change in variance</strong> refers to a shift in the variability of the time series data, even when the mean remains constant.</li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
@@ -459,7 +458,7 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 </div>
 <section id="change-in-regression-slope" class="level4" data-number="1.2.1.1">
 <h4 data-number="1.2.1.1" class="anchored" data-anchor-id="change-in-regression-slope"><span class="header-section-number">1.2.1.1</span> 3. Change in Regression (Slope)</h4>
-<p>A <strong>change in regression</strong> or slope occurs when the underlying relationship between time and the values of the time series changes. This could reflect a shift in the growth or decline rate of a process. For example, a company’s revenue might grow steadily over a period, then plateau, and later exhibit a quadratic or nonlinear growth trend.</p>
+<p>A <strong>change in regression</strong> or slope occurs when the underlying relationship between time, and/or other auxiliary variables, and the values of the time series changes.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -495,8 +494,8 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 <p><span class="math display">\[
 y_t = \mu_t + \epsilon_t, \quad t = 1, \dots, n,
 \]</span></p>
-<p>where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, \sigma^2)\)</span> represents Gaussian noise with mean 0 and known variance <span class="math inline">\(\sigma^2\)</span>, and <span class="math inline">\(\mu_t \in \mathbb{R}\)</span> is the signal at time <span class="math inline">\(t\)</span>. The vector of noise terms <span class="math inline">\(\epsilon_{1:n}\)</span> is often referred to as Gaussian noise, and hence, this model is known as <em>the signal plus noise model</em>, where the signal is given by <span class="math inline">\(\mu_{1:n}\)</span> and the noise by <span class="math inline">\(\epsilon_{1:n}\)</span>.</p>
-<p>In <em>the change-in-mean problem</em>, our goal is to determine whether the signal remains constant throughout the entire sequence, or if there exists a point <span class="math inline">\(\tau\)</span>, where the mean shifts. In other words, we are testing whether</p>
+<p>where <span class="math inline">\(\epsilon_t \sim \mathcal{N}(0, \sigma^2)\)</span> represents Gaussian noise with mean 0 and known variance <span class="math inline">\(\sigma^2\)</span>, and <span class="math inline">\(\mu_t \in \mathbb{R}\)</span> is the signal at time <span class="math inline">\(t\)</span>, with <span class="math inline">\(\mathbb{E}(y_t) = \mu_t\)</span>. The vector of noise terms <span class="math inline">\(\epsilon_{1:n}\)</span> is often referred to as Gaussian noise, and hence, this model is known as <em>the signal plus noise model</em>, where the signal is given by <span class="math inline">\(\mu_{1:n}\)</span> and the noise by <span class="math inline">\(\epsilon_{1:n}\)</span>.</p>
+<p>In <em>the single change-in-mean problem</em>, our goal is to determine whether the signal remains constant throughout the entire sequence, or if there exists a point <span class="math inline">\(\tau\)</span>, where the mean shifts. In other words, we are testing whether</p>
 <p><span class="math display">\[
 \mu_1 = \mu_2 = \dots = \mu_n \quad \text{(no changepoint)},
 \]</span></p>

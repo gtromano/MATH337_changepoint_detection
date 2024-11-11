@@ -197,6 +197,10 @@ To give few examples:
 
     ![Temperature data from a CPU of an AWS server. Source Romano et al., (2023)](source_imgs/CPU-monitoring.png)
 
+5.  **Gamma Ray-Burst detection.** Efficient online changepoint detection algorithms can detect gamma-ray bursts from gamma-ray counts on satellites in space. These bursts events happen in just a fraction of a second, and are related to supernova implosions.\
+    \
+    ![Gamma-ray counts over time, with a gamma-ray burst highligted in red. Source Ward & al. (2024)](source_imgs/gamma_ray_burst.jpg)
+
 In this module, we will focus exclusively on **offline** changepoint detection, where we assume that all the data is available for analysis from the start.
 
 ### Types of Changes in Time Series

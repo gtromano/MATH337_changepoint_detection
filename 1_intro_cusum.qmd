@@ -583,7 +583,7 @@ c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{t} \s
 
 <!-- -->
 
-2.  In this exercise we will show that: $$ \frac{1}{\sigma^2}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) $$ follows a standard normal distribution. **Hint:**
+2.  In this exercise we will show that: $$ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) $$ follows a standard normal distribution. **Hint:**
 
     a.  Compute the expected value and variance of the difference $\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}$
 

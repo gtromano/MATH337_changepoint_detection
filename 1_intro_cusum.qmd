@@ -450,7 +450,7 @@ However, there's an algorithmic trick: by sequentially computing partial sums, e
 
 ------------------------------------------------------------------------
 
-| **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$, variance $\sigma$.
+| **INPUT:** Time series $y = (y_1, ..., y_n)$, threshold $c$, variance $\sigma^2$.
 | **OUTPUT:** Changepoint estimate $\hat{\tau}$, maximum CUSUM statistic $C_{max}$
 | 
 | $n \leftarrow$ length of $y$
@@ -492,7 +492,7 @@ LR <- function(x) {
 }
 ```
 
-We can see how the cusum behaves across different values of $\tau = 1, \dots, n-1$ in the example below:
+We can see how the value $C^2_t$ in the algorithm above behaves across different values of $t = 1, \dots, n-1$ in the example below:
 
 ```{r echo=FALSE}
 set.seed(123)

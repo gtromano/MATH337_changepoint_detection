@@ -465,7 +465,7 @@ However, there's an algorithmic trick: by sequentially computing partial sums, e
 |   $\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)$ // Can you figure out why?
 |   $C^2_t \leftarrow \frac{t(n-t)}{n} (\bar{y}_{1:t} - \bar{y}_{(t+1):n})^2$
 |   **IF** $C^2_t > C_{max}$
-|     $C_{max} \leftarrow C_t$
+|     $C_{max} \leftarrow C_t^2$
 |     $\hat{\tau} \leftarrow t$
 | 
 | **IF** $C_{max} / \sigma^2 > c$
@@ -583,7 +583,7 @@ c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{t} \s
 
 <!-- -->
 
-2.  In this exercise we will show that: $$ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) $$ follows a standard normal distribution. **Hint:**
+2.  In this exercise we will show that: $$ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) $$ in case of no change, e.g. for $\mu_1 = \mu_2 = \dots = \mu_n = \mu$, follows a standard normal distribution. **Hint:**
 
     a.  Compute the expected value and variance of the difference $\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}$
 

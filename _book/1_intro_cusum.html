@@ -602,7 +602,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 &nbsp;&nbsp;<span class="math inline">\(\bar{y}_{(t+1):n} \leftarrow (S_n - S) / (n - t)\)</span> // Can you figure out why?<br>
 &nbsp;&nbsp;<span class="math inline">\(C^2_t \leftarrow \frac{t(n-t)}{n} (\bar{y}_{1:t} - \bar{y}_{(t+1):n})^2\)</span><br>
 &nbsp;&nbsp;<strong>IF</strong> <span class="math inline">\(C^2_t &gt; C_{max}\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(C_{max} \leftarrow C_t^2\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow t\)</span><br>
 <br>
 <strong>IF</strong> <span class="math inline">\(C_{max} / \sigma^2 &gt; c\)</span><br>
@@ -653,7 +653,7 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </ol>
 <!-- -->
 <ol start="2" type="1">
-<li><p>In this exercise we will show that: <span class="math display">\[ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \]</span> follows a standard normal distribution. <strong>Hint:</strong></p>
+<li><p>In this exercise we will show that: <span class="math display">\[ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \]</span> in case of no change, e.g.&nbsp;for <span class="math inline">\(\mu_1 = \mu_2 = \dots = \mu_n = \mu\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
 <ol type="a">
 <li><p>Compute the expected value and variance of the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span></p></li>
 <li><p>Conclude that if you standardise the sum, this follows a standard normal distribution.</p></li>

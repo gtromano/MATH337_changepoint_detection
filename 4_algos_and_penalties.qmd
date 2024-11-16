@@ -184,20 +184,19 @@ Good news is, despite both algorithms have drawbacks, following *recent developm
 
 ### PELT: an efficient solution to OP
 
-In OP, we can reduce the numbers of checks to be performed at each iteration, reducing the complexity. This operation is called *pruning*. Specifically, given a cost function  $\mathcal{L}(\cdot)$, on the condition that there exists a constant $\kappa$ such that for every $l < \tau < u$:
+In OP, we can reduce the numbers of checks to be performed at each iteration, reducing the complexity. This operation is called *pruning*. Specifically, given a cost function $\mathcal{L}(\cdot)$, on the condition that there exists a constant $\kappa$ such that for every $l < \tau < u$:
 
 $$
         \mathcal{L}(y_{l + 1:\tau}) + \mathcal{L}(y_{\tau + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
 $$
 
-It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant $\kappa$ exists. 
+It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant $\kappa$ exists.
 
 Then, for any $\tau < s$, if
 
 $$
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-$$
-holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.
+$$ holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.
 
 Using this condition, the PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, by setting $\kappa = 0$, if
 

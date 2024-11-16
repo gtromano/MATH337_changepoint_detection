@@ -497,7 +497,7 @@ A formal description of the algorithm can be found below:
 | **OUTPUT:** Optimal changepoint vector $cp_n$
 | 
 | Initialize $\mathcal{Q}_0 \leftarrow -\beta$
-| Initialize $cp_0 \leftarrow \{\}$
+| Initialize $cp_0 \leftarrow \{\}$ // a set of vectors ordered by time
 | 
 | **FOR** $t = 1, \dots, n$
 |      $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
@@ -507,6 +507,16 @@ A formal description of the algorithm can be found below:
 | **RETURN** $cp_n$
 
 ------------------------------------------------------------------------
+
+**Note.** To implement the line $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$, we could either use an inner for cycle and iteratively compute $\mathcal{Q}_t$ for each $\tau$, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:
+
+```{r, echo=FALSE, eval=FALSE}
+costs = map_dbl(1:t, \(tau) Q[tau] + L(y[(tau+1):t]) + beta)
+Q[t + 1] = max(costs)
+tau_hat = argmax(costs)
+```
+
+We range across `1:t` as R index starts from 1. Remeber that the `map_dbl()` function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.
 
 Running the Optimal Partitioning method on our example scenario, with the same penalty $\beta = 2 \log(400) =$ `{r} round(2 * log(400), 2)` as above, gives changepoint locations $\tau_{1:4} = \{100, 203, 301\}$.
 

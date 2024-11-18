@@ -21,11 +21,11 @@ where $\chi^2_k$ is a chi-squared distribution with $k$ degrees of freedom. The 
 
 Last week, we found out that, under the null hypothesis of no change:
 
-$$\frac{1}{\sigma^2}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \sim N(0, 1).$$
+$$\frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \sim N(0, 1).$$
 
 Therefore, our test statistics for a fixed $\tau$:
 
-$$\frac{C_\tau^2}{\sigma} \sim \chi^2_1.$$
+$$\frac{C_\tau^2}{\sigma^2} \sim \chi^2_1.$$
 
 If we take the example of last week, and remove the changepoint, we can observe that the cusum statistics stays constant, and relatively small:
 
@@ -156,7 +156,6 @@ Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p
   &+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
 \end{align}
 ```
-
 This simplifies to:
 
 $$
@@ -205,7 +204,7 @@ Putting all together, and getting rid of the partial sums, we are left with:
 
 $$
 \sigma^2 LR_\tau = - n \bar{y}_{1:n}^2 + \tau \bar{y}_{1:\tau}^2 + (n - \tau) \bar{y}_{\tau+1:n}^2.
-$$ 
+$$
 
 Now, recall that $\bar{y}_{1:n} = \frac{1}{n} \left[ \tau \bar{y}_{1:\tau} + (n - \tau) \bar{y}_{\tau+1:n} \right]$, and:
 

@@ -622,7 +622,7 @@ Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, 
 <strong>OUTPUT:</strong> Optimal changepoint vector <span class="math inline">\(cp_n\)</span><br>
 <br>
 Initialize <span class="math inline">\(\mathcal{Q}_0 \leftarrow -\beta\)</span><br>
-Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span><br>
+Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span> // a set of vectors ordered by time<br>
 <br>
 <strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
@@ -631,6 +631,8 @@ Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span><br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(cp_n\)</span></div>
 <hr>
+<p><strong>Note.</strong> To implement the line <span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span>, we could either use an inner for cycle and iteratively compute <span class="math inline">\(\mathcal{Q}_t\)</span> for each <span class="math inline">\(\tau\)</span>, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:</p>
+<p>We range across <code>1:t</code> as R index starts from 1. Remeber that the <code>map_dbl()</code> function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.</p>
 <p>Running the Optimal Partitioning method on our example scenario, with the same penalty <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98 as above, gives changepoint locations <span class="math inline">\(\tau_{1:4} = \{100, 203, 301\}\)</span>.</p>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
@@ -653,7 +655,7 @@ Attaching package: 'zoo'</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -668,7 +670,7 @@ Attaching package: 'zoo'</code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="3_multiple_changes_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

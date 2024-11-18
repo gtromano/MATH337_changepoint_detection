@@ -357,9 +357,9 @@ LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n f(y_{t}| \theta)}{\
 <p>The LRT compares the likelihood of the data under two models to determine which one is more likely: the enumerator, is the likelihood under the null hypothesis of no changepoint, while the denominator represents the likelihood of the data under the alternative hypothesis, where we optimise for two different parameters before and after the changepoint at <span class="math inline">\(\tau\)</span>.</p>
 <section id="example-gaussian-change-in-mean" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="example-gaussian-change-in-mean"><span class="header-section-number">2.2.1</span> Example: Gaussian change-in-mean</h3>
-<p>As a first example, we show how the CUSUM statistics is nothing but a specific case of the GLR. To see this, we start from our piecewise costant signal, plus noise, <span class="math inline">\(x_i = f_i + \epsilon_i, \quad i = 1, \dots, n\)</span>. Under this model our data, a linear combination of a Gaussian, is distributed as:</p>
+<p>As a first example, we show how the CUSUM statistics is nothing but a specific case of the GLR. To see this, we start from our piecewise costant signal, plus noise, <span class="math inline">\(y_t = f_t + \epsilon_t, \quad t = 1, \dots, n\)</span>. Under this model our data, a linear combination of a Gaussian, is distributed as:</p>
 <p><span class="math display">\[
-y_{i} \sim N(\mu_i, \sigma^2), \quad i = 1, \dots, n
+y_{t} \sim N(\mu_t, \sigma^2), \quad t = 1, \dots, n
 \]</span></p>
 <p>Our p.d.f. will be:</p>
 <p><span class="math display">\[

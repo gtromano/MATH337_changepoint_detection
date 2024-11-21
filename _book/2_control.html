@@ -450,7 +450,7 @@ n \theta - \sum_{t = 1}^n y^2 = 0
 \]</span></p>
 <p>Which gives us: <span class="math inline">\(\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}\)</span> the sample variance.</p>
 <p>Solving the optimization for <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span> similarly, gives us the values <span class="math inline">\(\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 = \bar S_{(\tau+1):n}\)</span>.</p>
-<p>Now, as <span class="math inline">\(f(y_{1:n}, \hat{\theta}) = \bar S_{1:n} + n\)</span> (why?) the final LR test simplifies to:</p>
+<p>Now, as <span class="math inline">\(f(y_{1:n}, \hat{\theta}) = n \log( \bar{S}_{1:n}) + n\)</span> (why?) the final LR test simplifies to:</p>
 <p><span class="math display">\[
 LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau) \log(\bar S_{(\tau + 1):n}) \right]
 \]</span></p>
@@ -478,9 +478,8 @@ LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau)
 </div>
 <p>More formally, let our data be modeled as:</p>
 <p><span class="math display">\[
-y_t = f_t + \epsilon_t, \quad t = 1, \dots, n,
-\]</span></p>
-<p>where the noise vector <span class="math inline">\(\epsilon_{1:n} \sim N(0, 1)\)</span> consists of independent and identically distributed (i.i.d.) normal random variables. In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.</p>
+y_t = f_t + \epsilon_t, \ \epsilon_t \sim N(0, 1) \quad t = 1, \dots, n.
+\]</span> In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.</p>
 <p>Under the null hypothesis <span class="math inline">\(H_0\)</span>, we assume that the signal is linear with a constant slope over the entire sequence, i.e.,</p>
 <p><span class="math display">\[
 f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, n,
@@ -489,7 +488,7 @@ f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, n,
 <p><span class="math display">\[
 f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \theta_2, \quad t = \tau+1, \dots, n,
 \]</span></p>
-<p>where <span class="math inline">\(\theta_2\)</span> is the new intercept, and <span class="math inline">\(\theta_3\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
+<p>where <span class="math inline">\(\alpha_2\)</span> is the new intercept, and <span class="math inline">\(\theta_2\)</span> is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.</p>
 <p>For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector <span class="math inline">\(v_\tau\)</span>, i.e.,</p>
 <p><span class="math display">\[
 LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,

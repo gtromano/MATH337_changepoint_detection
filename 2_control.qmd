@@ -273,7 +273,7 @@ Which gives us: $\hat\theta = \frac{\sum_{t = 1}^n y^2}{n} = \bar S_{1:n}$ the s
 
 Solving the optimization for $\theta_1$ and $\theta_2$ similarly, gives us the values $\hat \theta_1 = \bar S_{1:\tau}, \ \hat \theta_2 = \bar S_{(\tau+1):n}$.
 
-Now, as $f(y_{1:n}, \hat{\theta}) = \bar S_{1:n} + n$ (why?) the final LR test simplifies to:
+Now, as $f(y_{1:n}, \hat{\theta}) = n \log( \bar{S}_{1:n}) + n$ (why?) the final LR test simplifies to:
 
 $$
 LR_\tau = \left[  n \log(\bar S_{1:n}) - \tau \log(\bar S_{1:\tau}) - (n - \tau) \log(\bar S_{(\tau + 1):n}) \right]
@@ -343,10 +343,9 @@ ggplot(data_trend, aes(x = x, y = y)) +
 More formally, let our data be modeled as:
 
 $$
-y_t = f_t + \epsilon_t, \quad t = 1, \dots, n,
+y_t = f_t + \epsilon_t, \ \epsilon_t \sim N(0, 1) \quad t = 1, \dots, n.
 $$
-
-where the noise vector $\epsilon_{1:n} \sim N(0, 1)$ consists of independent and identically distributed (i.i.d.) normal random variables. In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.
+In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.
 
 Under the null hypothesis $H_0$, we assume that the signal is linear with a constant slope over the entire sequence, i.e.,
 
@@ -360,7 +359,7 @@ $$
 f_t = \alpha_1 + t\theta_1, \quad t = 1, \dots, \tau; \quad f_t = \alpha_2 + t \theta_2, \quad t = \tau+1, \dots, n,
 $$
 
-where $\theta_2$ is the new intercept, and $\theta_3$ is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.
+where $\alpha_2$ is the new intercept, and $\theta_2$ is the new slope after the changepoint. In other words, the model is showing a piecewise linear mean.
 
 For this model, the log-likelihood ratio test statistic can be written as the square of a projection of the data onto a vector $v_\tau$, i.e.,
 

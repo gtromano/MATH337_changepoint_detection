@@ -425,11 +425,11 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}.
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="change-in-variance"><span class="header-section-number">2.3.1</span> Change-in-variance</h3>
 <p>To this end we will demonstrate how to construct a test for Gaussian change-in-variance, for mean known. For simplicity, we will call our variance <span class="math inline">\(\sigma^2 = \theta\)</span>, our parameter of interest, and without loss of generality, we can center our data on zero (e.g.&nbsp;if <span class="math inline">\(x_t \sim N(\mu, \theta)\)</span>, then <span class="math inline">\(x_t - \mu = y_t \sim N(0, \theta)\)</span>). Then, our p.d.f for one observation will be given by:</p>
 <p><span class="math display">\[
-f(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t}{2 \theta}\}.
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t^2}{2 \theta}\}.
 \]</span></p>
 <p>Plugging in the main LR test formula, we find:</p>
 <p><span class="math display">\[
-LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\sqrt{2\pi\theta }} \exp\{-\frac{y_t}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\sqrt{2\pi\theta_1}} \exp\{-\frac{y_t}{2 \theta_1}\})(\prod_{t=\tau+1}^n  \frac{1}{\sqrt{2\pi\theta_2}} \exp\{-\frac{y_t}{2 \theta_2}\}]} \right\}
+LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\sqrt{2\pi\theta }} \exp\{-\frac{y_t^2}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\sqrt{2\pi\theta_1}} \exp\{-\frac{y_t^2}{2 \theta_1}\})(\prod_{t=\tau+1}^n  \frac{1}{\sqrt{2\pi\theta_2}} \exp\{-\frac{y_t^2}{2 \theta_2}\}]} \right\}
 \]</span></p>
 <p>And taking the log, and simplifying over the constant gives us:</p>
 <span class="math display">\[\begin{align}

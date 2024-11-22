@@ -136,17 +136,39 @@ Well, so far we only worked with one scheme that tried to split a sequence in a 
 
 But how can we work in case we have more than one change? Well, we need to introduce the cost of a segment.
 
+#### The cost of a segment
+
 If we assume the data is independent and identically distributed within each segment, for segment parameter $\theta$, then this cost can be obtained through:
 
 $$
-    \mathcal{L}(y_{s+1:t}) = \min_\theta \sum_{i = s + 1}^{t} - 2 \log(f(y_i, \theta))
+    \mathcal{L}(y_{s+1:t}) =  - 2  \min_\theta \sum_{i = s + 1}^{t} \log(f(y_i, \theta))
+$${#eq-segment_cost}
+
+with $f(y, \theta)$ being the likelihood for data point $y$ if the segment parameter is $\theta$.
+
+**Example.** Now, for example, in the Gaussian case, recall our p.d.f. is given by:
+
+$$
+f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
+$$
+Taking the log and summing across all data points in the segment:
+
+$$
+\sum_{i = s + 1}^{t} \log f(y_t | \theta) = \frac{t - s + 1}{2} \log(2\pi \sigma^2) -\frac{1}{2 \sigma^2} \sum_{i = s + 1}^{t} (y_t - \mu)^2.
 $$
 
-with $f(y, \theta)$ being the likelihood for data point $y$ if the segment parameter is $\theta$. Now, for example, in the gaussian case this cost is given by:
+This is maximized for  $\bar{y}_{s+1:t} = \frac{1}{t - s} \sum_{i = s + 1}^{t} y_t$. Therefore, plugging this into our equation @eq-segment_cost, the cost of a segment will be given by:
 
 $$
-\mathcal{L}(y_{s:t}) = \frac{1}{\sigma^2}  \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s:t} \right)^2
+\mathcal{L}(y_{s:t}) = (t - s + 1) \log(2\pi \sigma^2) + \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
 $$
+
+Remember, we can get rid of all constants terms as those do not contribute to our optimization. Doing so, our cost will be simply:
+$$
+\mathcal{L}(y_{s:t}) = \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
+$$
+
+#### Obtaining the cost of the full segmentation
 
 The cost for the full segmentation will be given by the sum across all segments:
 

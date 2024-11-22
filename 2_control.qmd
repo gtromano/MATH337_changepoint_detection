@@ -83,7 +83,7 @@ For this reason, calculating the distribution of this maximum ends up being a bi
 Fortunately, for controlling our CUSUM test, we can use the fact that $(C_1, ..., C_{n-1})/ \sigma$ are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. @yao1986asymptotic, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:
 
 $$
-\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2π^{-1/2}\exp(-u_\alpha)\},
+\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-(2\pi)^{-1/2}\exp(-u_\alpha)\},
 $$ {#eq-cusum_control}
 
 where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log n$ are a scaling and a centering constant.
@@ -91,7 +91,7 @@ where $a_n = (2 \log \log n)^{-1/2}$ and $b_n = a_n^{-1} + 0.5a_n \log \log \log
 The right side of this equation is the CDF of a Gumbell distribution. As we learned from likelihood inference, to find the threshold $c_{\alpha}$ for a given false probability rate, we first set the right-hand side equal to $1 - \alpha$, and solve for $u_\alpha$. This gives:
 
 $$
-u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{2\pi^{-1/2}} \right).
+u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{(2\pi)^{-1/2}} \right).
 $$
 
 Then, we can find the critical value by looking into the left side of the equation:

@@ -13,7 +13,7 @@ In real-world data, it is common to encounter situations where more than one cha
 
 To motivate this discussion, we return to the example from week 1: detecting active genomic regions using *ChIP-seq data*. Our goal here is to identify copy number variations (CNVs)---structural changes in the genome where DNA sections are duplicated or deleted. These variations can impact gene expression and are linked to diseases like cancer, including neuroblastoma. The dataset we'll examine consists of logratios of genomic probe intensities, which help us detect changes in the underlying DNA structure.
 
-Statistically our objective is to segment this logratio sequence into regions with different means, corresponding to different genomic states:
+Statistically, our objective is to segment this logratio sequence into regions with different means, corresponding to different genomic states:
 
 ```{r echo=FALSE, results=TRUE}
 data(neuroblastoma, package="neuroblastoma")
@@ -32,7 +32,9 @@ As seen from the plot, the data is noisy, but there are visible shifts in the lo
 
 ### Towards multiple changes
 
-Under this framework, the observed sequence $y_t$ can be modeled as a piecewise constant signal with changes in the mean occurring at each changepoint $\tau_k$. A plausible model for the change-in-mean signal is given by
+Under this framework, the observed sequence $y_t$ can be modeled as a piecewise constant signal with changes in the mean occurring at each changepoint $\tau_k$.
+
+**Multiple Changes-in-Mean.** A plausible model for the change-in-mean signal is given by
 
 $$
 y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t < \tau_{k+1}, \ k = 0, 1, \dots, K,
@@ -91,9 +93,24 @@ combined_plot <- ggarrange(p1, p2, align = "hv", nrow = 2)
 print(combined_plot)
 ```
 
-From this, we notice that our test still has power to detect some of the changes, but the estimate that we get, is initially wrong. $\Delta \mu = |\mu_1 - \mu_2|$. Is power lost when there is more then one change in our test?
+One thing we could do, would be to set a threshold, say 50, record the windows over which the CUSUM is over the threshold, and pick the argmax in each of our windows as the candidate changepoints.
 
-Well, to answer this question, we can compare the values of the CUSUM statistic ran on the whole dataset (as above), with the values of the CUSUM, ran on a subset containing only one change:
+```{r echo = FALSE}
+#| fig-height: 2
+
+# Plot 2: CUSUM trace
+p2 <- ggplot(cusum_df, aes(x = x, y = CUSUM)) +
+  geom_line() +
+  geom_line(data = cusum_df |> filter(CUSUM > 50), aes(x = x, y = CUSUM), col = "lightblue") +
+  geom_point(data = cusum_df[c(100, 300), ], aes(x = x, y = CUSUM), col = "red") +
+  geom_hline(yintercept = 50, col = "lightblue", lwd = 1) +
+  theme_minimal()
+p2
+```
+
+However, from this simple example we notice that we miss already one changepoint, that of time 200... In fact, in some scenarios, such as this one, detection power of the CUSUM statistic lost when there is more then one change in our test.
+
+To make it even worse, if we compare the values of the CUSUM statistic ran on the whole dataset (as above), against with the values of the CUSUM, ran on a subset limited to only only the first two segments $y_{1:200}$:
 
 ```{r echo = FALSE}
 up <- 200
@@ -126,9 +143,11 @@ combined_plot <- ggarrange(p1, p2, align = "hv", nrow = 2)
 print(combined_plot)
 ```
 
-We can see that max of the old cusum (the line in grey) is much lower than the one where we isolate the sequence on one single change! So there is an effective loss of power in this scenario in analyzing all changes together, as some changes are masking the effects of others...
+We can see that max of the CUSUM across the entire dataset (the line in grey, that we computed before) is much lower than the one where we isolate the sequence on one single change!
 
-This gives us motivation to move towards some methodology that tries to estimate all changes locations jointly, rather then one at a time!
+So there is an effective loss of power in this scenario when analyzing all changes together, as some segments means are masking the effects of others with the CUSUM...
+
+This gives us motivation to move towards some strategy that tries to estimate all changes locations jointly, rather then looking for one!
 
 ### The cost of a segmentation
 

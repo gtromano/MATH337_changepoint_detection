@@ -32,12 +32,12 @@ As seen from the plot, the data is noisy, but there are visible shifts in the lo
 
 ### Towards multiple changes
 
-Under this framework, the observed sequence $y_t$ can be modeled as a piecewise constant signal with changes in the mean occurring at each changepoint $\tau_k$.
+Under this framework, the observed sequence $y_t$ can be modeled as a piecewise constant signal with changes in the parameter, occurring at each changepoint $\tau_1, \dots, \tau_k, \dots, \tau_K$, where $\tau_k < \tau_{k+1}$, with $K$ being the maximum number of changes that we have in the sequence, corresponding to $K+1$ segments. Also - for the sake of notation, in the rest of this module we will set $\tau_0 = 0$ and $\tau_{K+1} = n$.
 
 **Multiple Changes-in-Mean.** A plausible model for the change-in-mean signal is given by
 
 $$
-y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k \leq t < \tau_{k+1}, \ k = 0, 1, \dots, K,
+y_t = \mu_k + \epsilon_t, \quad \text{for} \ \tau_k + 1 \leq t < \tau_{k+1}, \ k = 0, 1, \dots, K,
 $$
 
 where $\mu_k$ is the mean of the $k$-th segment, and $\epsilon_t \sim \mathcal{N}(0, \sigma^2)$ are independent Gaussian noise terms with mean 0 and (known) variance $\sigma^2$.
@@ -168,21 +168,21 @@ with $f(y, \theta)$ being the likelihood for data point $y$ if the segment param
 **Example.** Now, for example, in the Gaussian case, recall our p.d.f. is given by:
 
 $$
-f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
+f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i - \mu)^2\}.
 $$ Taking the log and summing across all data points in the segment:
 
 $$
-\sum_{i = s + 1}^{t} -2 \log f(y_t | \theta) = -2 \left [ -\frac{t - s + 1}{2} \log(2\pi \sigma^2) -\frac{1}{2 \sigma^2} \sum_{i = s + 1}^{t} (y_t - \mu)^2 \right].
+\sum_{i = s + 1}^{t} -2 \log f(y_i | \theta) = -2 \left [ -\frac{t - s + 1}{2} \log(2\pi \sigma^2) -\frac{1}{2 \sigma^2} \sum_{i = s + 1}^{t} (y_t - \mu)^2 \right].
 $$
 
 This is minimized for $\bar{y}_{s+1:t} = \frac{1}{t - s} \sum_{i = s + 1}^{t} y_t$. Therefore, plugging this into our equation @eq-segment_cost, the cost of a segment will be given by:
 
 $$
-\mathcal{L}(y_{s:t}) = (t - s + 1) \log(2\pi \sigma^2) + \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
+\mathcal{L}(y_{s+1:t}) = (t - s + 1) \log(2\pi \sigma^2) + \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
 $$
 
 Remember, we can get rid of all constants terms as those do not contribute to our optimization. Doing so, our cost will be simply: $$
-\mathcal{L}(y_{s:t}) = \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
+\mathcal{L}(y_{s+1:t}) = \frac{1}{\sigma^2} \sum_{i = s}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
 $$
 
 #### Obtaining the cost of the full segmentation
@@ -193,13 +193,13 @@ $$
 \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}})
 $$
 
-Interestingly, the cost of a full segmentation is closely related to the LR test. Consider, a single Gaussian change-in-mean at time $\tau$, splitting the data into two segments: $y_{1:\tau}$ and $y_{\tau+1:n}$. The cost of this segmentation is:
+Interestingly, the cost of a full segmentation is closely related to the LR test. Consider, a single Gaussian change-in-mean, e.g. $K=1$ at time $\tau_1 = \tau$, splitting the data into two segments: $y_{1:\tau}$ and $y_{\tau+1:n}$. The cost of this segmentation is:
 
 $$
 \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = \frac{1}{\sigma^2} \left[\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{(\tau+1):n})^2 \right]
 $$
 
-Which is essentially the same LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
+Which is essentially minus the LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
 
 ### The "best" segmentation
 

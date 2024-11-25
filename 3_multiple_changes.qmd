@@ -400,7 +400,7 @@ With this graphical description in mind, we formally describe the Binary Segment
 | 
 | **IF** $\mathcal{Q} < 0$
 |     $\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t-1\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]$
-|      $cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}$
+|      $cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) \}$
 |      **RETURN** $cp$
 | 
 | **RETURN** $\{\}$ // No changepoint if $-LR/2$ is above penalty $- \beta$
@@ -418,7 +418,7 @@ Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, 
  \right],
 $$ {#eq-pen-cost}
 
-where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$ with a penalty \$ \beta \$ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
+where $Q_{n, \beta}$ represents the optimal cost for segmenting the data up to time $n$ with a penalty $\beta$ that increases with each additional changepoint $K$. With the $\beta$ term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.
 
 Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving $Q_{n, \beta}$ ensures that the segmentation is **globally optimal**, as in the location of the changes are the best possible to minimise our cost.
 

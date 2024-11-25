@@ -564,7 +564,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 <br>
 <strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\tau \in \{s, \dots, t-1\}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{BinSeg}(y_{s:\hat{\tau}}, \beta), \text{BinSeg}(y_{\hat{\tau}+1:t}, \beta) \}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>
@@ -579,7 +579,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}) + \beta K
 \right],
 \tag{3.3}\]</span></span></p>
-<p>where <span class="math inline">\(Q_{n, \beta}\)</span> represents the optimal cost for segmenting the data up to time <span class="math inline">\(n\)</span> with a penalty $ $ that increases with each additional changepoint <span class="math inline">\(K\)</span>. With the <span class="math inline">\(\beta\)</span> term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.</p>
+<p>where <span class="math inline">\(Q_{n, \beta}\)</span> represents the optimal cost for segmenting the data up to time <span class="math inline">\(n\)</span> with a penalty <span class="math inline">\(\beta\)</span> that increases with each additional changepoint <span class="math inline">\(K\)</span>. With the <span class="math inline">\(\beta\)</span> term, for every new changepoint added, the cost of the full segmentation increases, discouraging therefore models with too many changepoints.</p>
 <p>Unlike Binary Segmentation, which works iteratively and makes local decisions about potential changepoints, and as we have seen it is prone to errors, solving <span class="math inline">\(Q_{n, \beta}\)</span> ensures that the segmentation is <strong>globally optimal</strong>, as in the location of the changes are the best possible to minimise our cost.</p>
 <p>Now, directly solving this problem using a brute-force search is computationally prohibitive, as it would require checking every possible combination of changepoints across the sequence: the number of possible segmentations grows exponentially as <span class="math inline">\(n\)</span> increases…</p>
 <p>Fortunately, this problem can be solved efficiently using a sequential, dynamic programming algorithm: <strong>Optimal Partitioning (OP)</strong>, from <span class="citation" data-cites="Jackson">Jackson et al. (<a href="references.html#ref-Jackson" role="doc-biblioref">2005</a>)</span>. OP solves <a href="#eq-pen-cost" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> exactly through the following recursion.</p>

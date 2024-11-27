@@ -269,7 +269,7 @@ Well, there are different solutions to this problem. The first one we will see, 
 
 ## Binary Segmentation
 
-Binary Segmentation (BS) is a procedure from \cite{scott1974cluster} and \cite{sen1975tests}. Binary segmentation works like this:
+Binary Segmentation (BS) is a procedure from @scott1974cluster and @sen1975tests. Binary segmentation works like this:
 
 1.  Start with a test for a change $\tau$ that splits a sequence into two segments and to check if the cost over those two segments, plus a penalty $\beta \in \mathbb{R}$, is smaller then the cost computed on the whole sequence: $$
         \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) + \beta < \mathcal{L}(y_{1:n})     
@@ -549,7 +549,7 @@ A formal description of the algorithm can be found below:
 
 **Note.** To implement the line $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$, we could either use an inner for cycle and iteratively compute $\mathcal{Q}_t$ for each $\tau$, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:
 
-```{r, echo=FALSE, eval=FALSE}
+```{r, eval=FALSE}
 costs = map_dbl(1:t, \(tau) Q[tau] + L(y[(tau+1):t]) + beta)
 Q[t + 1] = max(costs)
 tau_hat = argmax(costs)

@@ -470,7 +470,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 </section>
 <section id="binary-segmentation" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="binary-segmentation"><span class="header-section-number">3.2</span> Binary Segmentation</h2>
-<p>Binary Segmentation (BS) is a procedure from and . Binary segmentation works like this:</p>
+<p>Binary Segmentation (BS) is a procedure from <span class="citation" data-cites="scott1974cluster">Scott and Knott (<a href="references.html#ref-scott1974cluster" role="doc-biblioref">1974</a>)</span> and <span class="citation" data-cites="sen1975tests">Sen and Srivastava (<a href="references.html#ref-sen1975tests" role="doc-biblioref">1975</a>)</span>. Binary segmentation works like this:</p>
 <ol type="1">
 <li>Start with a test for a change <span class="math inline">\(\tau\)</span> that splits a sequence into two segments and to check if the cost over those two segments, plus a penalty <span class="math inline">\(\beta \in \mathbb{R}\)</span>, is smaller then the cost computed on the whole sequence: <span id="eq-bin_seg_condition"><span class="math display">\[
     \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) + \beta &lt; \mathcal{L}(y_{1:n})     
@@ -661,6 +661,11 @@ Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span> // a set of
 <strong>RETURN</strong> <span class="math inline">\(cp_n\)</span></div>
 <hr>
 <p><strong>Note.</strong> To implement the line <span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span>, we could either use an inner for cycle and iteratively compute <span class="math inline">\(\mathcal{Q}_t\)</span> for each <span class="math inline">\(\tau\)</span>, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>costs <span class="ot">=</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>t, \(tau) Q[tau] <span class="sc">+</span> <span class="fu">L</span>(y[(tau<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>t]) <span class="sc">+</span> beta)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Q[t <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">=</span> <span class="fu">max</span>(costs)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">=</span> <span class="fu">argmax</span>(costs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <p>We range across <code>1:t</code> as R index starts from 1. Remeber that the <code>map_dbl()</code> function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.</p>
 <p>Running the Optimal Partitioning method on our example scenario, with the same penalty <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98 as above, gives changepoint locations <span class="math inline">\(\tau_{1:4} = \{100, 203, 301\}\)</span>.</p>
 <div class="cell">
@@ -742,36 +747,36 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 <li>A function <code>COST</code>. This function should take as input arguments <code>y, s, t</code>, and act as <span class="math inline">\(\mathcal{L}(y_{s:t})\)</span>. You fill find a skeleton below.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">### pre-compute all the costs here</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">### your initialization here</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="do">### your recursion here</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(changepoints)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">### pre-compute all the costs here</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">### your initialization here</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="do">### your recursion here</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(changepoints)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For this exercise, we are implementing the Gaussian change-in-mean case. Therefore, a skeleton for our cost function will be:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>costMean <span class="ot">=</span> <span class="cf">function</span>(y, s, t) {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code for computing the Gaussian change-in-mean cost here</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(your_cost)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>costMean <span class="ot">=</span> <span class="cf">function</span>(y, s, t) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code for computing the Gaussian change-in-mean cost here</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(your_cost)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You should be then able to call your <code>OP</code> function as:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">OP</span>(y, <span class="dv">15</span>, costMean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">OP</span>(y, <span class="dv">15</span>, costMean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This should return 100, 200.</p>
 <pre><code>**Tips:**
@@ -784,6 +789,12 @@ b.  Be very careful with indexing... R starts indexing at 1, however, in the pse
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Jackson" class="csl-entry" role="listitem">
 Jackson, Brad, Jeffrey Scargle, D. Barnes, S. Arabhi, A. Alt, P. Gioumousis, E. Gwin, P. Sangtrakulcharoen, L. Tan, and Tun Tsai. 2005. <span>“An Algorithm for Optimal Partitioning of Data on an Interval.”</span> <em>Signal Processing Letters, IEEE</em> 12 (March): 105–8. <a href="https://doi.org/10.1109/LSP.2001.838216">https://doi.org/10.1109/LSP.2001.838216</a>.
+</div>
+<div id="ref-scott1974cluster" class="csl-entry" role="listitem">
+Scott, Andrew Jhon, and Martin Knott. 1974. <span>“A Cluster Analysis Method for Grouping Means in the Analysis of Variance.”</span> <em>Biometrics</em>, 507–12.
+</div>
+<div id="ref-sen1975tests" class="csl-entry" role="listitem">
+Sen, Ashish, and Muni S Srivastava. 1975. <span>“On Tests for Detecting Change in Mean.”</span> <em>The Annals of Statistics</em>, 98–108.
 </div>
 </div>
 </section>

@@ -550,12 +550,12 @@ A formal description of the algorithm can be found below:
 **Note.** To implement the line $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$, we could either use an inner for cycle and iteratively compute $\mathcal{Q}_t$ for each $\tau$, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:
 
 ```{r, eval=FALSE}
-costs = map_dbl(1:t, \(tau) Q[tau] + L(y[(tau+1):t]) + beta)
+costs = map_dbl(1:t, \(tau) Q[tau] + L(y[(tau):t]) + beta)
 Q[t + 1] = max(costs)
 tau_hat = argmax(costs)
 ```
 
-We range across `1:t` as R index starts from 1. Remeber that the `map_dbl()` function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.
+We range across `1:t` as R index starts from 1, so everything is shifted by 1 (that's why in the cost we have just $\tau$ instead of $\tau + 1$. Remember that the `map_dbl()` function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.
 
 Running the Optimal Partitioning method on our example scenario, with the same penalty $\beta = 2 \log(400) =$ `{r} round(2 * log(400), 2)` as above, gives changepoint locations $\tau_{1:4} = \{100, 203, 301\}$.
 
@@ -627,7 +627,7 @@ Some of you might come up with two (very interesting) questions that hopefully w
 
 ### Workshop 3
 
-1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
+1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, and a penalty $\beta = 5$ calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps for the Gaussian change-in-mean case. **TIP**: To speed up computations, you want to pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
 
 $$
 \begin{array}{c|cccc}
@@ -648,7 +648,7 @@ Your function should take as input three things:
 
 -   A vector `y`, our observations
 -   A double `penalty`, corresponding to the $\beta$ penalty of our penalised cost
--   A function `COST`. This function should take as input arguments `y, s, t`, and act as $\mathcal{L}(y_{s:t})$. You fill find a skeleton below.
+-   A function `COST`. This function should take as input arguments `y, s, t`, and act as $\mathcal{L}(y_{s:t})$. You fill find a skeleton below. Note: with adequate indexing, you can pass to COST just the data `y`!
 
 ```{r, eval=FALSE}
 OP <- function (y, penalty, COST) {

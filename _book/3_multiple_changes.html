@@ -662,11 +662,11 @@ Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span> // a set of
 <hr>
 <p><strong>Note.</strong> To implement the line <span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span>, we could either use an inner for cycle and iteratively compute <span class="math inline">\(\mathcal{Q}_t\)</span> for each <span class="math inline">\(\tau\)</span>, or we could use a vectorized approach. If we created a vectorized version of our function, it would look something like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>costs <span class="ot">=</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>t, \(tau) Q[tau] <span class="sc">+</span> <span class="fu">L</span>(y[(tau<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>t]) <span class="sc">+</span> beta)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>costs <span class="ot">=</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span>t, \(tau) Q[tau] <span class="sc">+</span> <span class="fu">L</span>(y[(tau)<span class="sc">:</span>t]) <span class="sc">+</span> beta)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Q[t <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">=</span> <span class="fu">max</span>(costs)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tau_hat <span class="ot">=</span> <span class="fu">argmax</span>(costs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We range across <code>1:t</code> as R index starts from 1. Remeber that the <code>map_dbl()</code> function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.</p>
+<p>We range across <code>1:t</code> as R index starts from 1, so everything is shifted by 1 (that’s why in the cost we have just <span class="math inline">\(\tau\)</span> instead of <span class="math inline">\(\tau + 1\)</span>. Remember that the <code>map_dbl()</code> function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.</p>
 <p>Running the Optimal Partitioning method on our example scenario, with the same penalty <span class="math inline">\(\beta = 2 \log(400) =\)</span> 11.98 as above, gives changepoint locations <span class="math inline">\(\tau_{1:4} = \{100, 203, 301\}\)</span>.</p>
 <div class="cell">
 <div class="cell-output cell-output-stderr">
@@ -721,7 +721,7 @@ Attaching package: 'zoo'</code></pre>
 <section id="workshop-3" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="workshop-3"><span class="header-section-number">3.4.1</span> Workshop 3</h3>
 <ol type="1">
-<li>For the vector <span class="math inline">\(y_{1:4} = (0.5, -0.1, 12.1, 12.4)\)</span>, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
+<li>For the vector <span class="math inline">\(y_{1:4} = (0.5, -0.1, 12.1, 12.4)\)</span>, and a penalty <span class="math inline">\(\beta = 5\)</span> calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps for the Gaussian change-in-mean case. <strong>TIP</strong>: To speed up computations, you want to pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
 </ol>
 <p><span class="math display">\[
 \begin{array}{c|cccc}
@@ -744,7 +744,7 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 <ul>
 <li>A vector <code>y</code>, our observations</li>
 <li>A double <code>penalty</code>, corresponding to the <span class="math inline">\(\beta\)</span> penalty of our penalised cost</li>
-<li>A function <code>COST</code>. This function should take as input arguments <code>y, s, t</code>, and act as <span class="math inline">\(\mathcal{L}(y_{s:t})\)</span>. You fill find a skeleton below.</li>
+<li>A function <code>COST</code>. This function should take as input arguments <code>y, s, t</code>, and act as <span class="math inline">\(\mathcal{L}(y_{s:t})\)</span>. You fill find a skeleton below. Note: with adequate indexing, you can pass to COST just the data <code>y</code>!</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>

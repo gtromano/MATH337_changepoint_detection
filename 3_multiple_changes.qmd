@@ -551,8 +551,8 @@ A formal description of the algorithm can be found below:
 
 ```{r, eval=FALSE}
 costs = map_dbl(1:t, \(tau) Q[tau] + L(y[(tau):t]) + beta)
-Q[t + 1] = max(costs)
-tau_hat = argmax(costs)
+Q[t + 1] = min(costs)
+tau_hat = which.min(costs)
 ```
 
 We range across `1:t` as R index starts from 1, so everything is shifted by 1 (that's why in the cost we have just $\tau$ instead of $\tau + 1$. Remember that the `map_dbl()` function is used to apply a function to each element of a vector and return a new vector. This would be more efficient and faster. We will code the Optimal Partitioning algorithm in the lab.

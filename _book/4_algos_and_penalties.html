@@ -343,23 +343,42 @@ window.Quarto = {
 <section id="pelt-an-efficient-solution-to-op" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="pelt-an-efficient-solution-to-op"><span class="header-section-number">4.2.1</span> PELT: an efficient solution to OP</h3>
 <p>In OP, we can reduce the numbers of checks to be performed at each iteration, reducing the complexity. This operation is called <em>pruning</em>. Specifically, given a cost function <span class="math inline">\(\mathcal{L}(\cdot)\)</span>, on the condition that there exists a constant <span class="math inline">\(\kappa\)</span> such that for every <span class="math inline">\(l &lt; \tau &lt; u\)</span>:</p>
-<p><span class="math display">\[
+<p><span id="eq-inequality"><span class="math display">\[
         \mathcal{L}(y_{l + 1:\tau}) + \mathcal{L}(y_{\tau + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
-\]</span></p>
+\tag{4.1}\]</span></span></p>
 <p>It is possible to <em>prune</em> without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant <span class="math inline">\(\kappa\)</span> exists.</p>
 <p>Then, for any <span class="math inline">\(\tau &lt; t\)</span>, if</p>
-<p><span class="math display">\[
+<p><span id="eq-PELT_condition"><span class="math display">\[
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-\]</span> holds, then for any <span class="math inline">\(T &gt; t\)</span>, <span class="math inline">\(\tau\)</span> can never be the optimal change location prior to time <span class="math inline">\(T\)</span>.<br>
+\tag{4.2}\]</span></span></p>
+<p>holds, then for any <span class="math inline">\(T &gt; t\)</span>, <span class="math inline">\(\tau\)</span> can never be the optimal change location prior to time <span class="math inline">\(T\)</span>.<br>
 </p>
-<p>Using this condition, the PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>. That is, by setting <span class="math inline">\(\kappa = 0\)</span>, if</p>
+<p><strong>Proof.</strong></p>
+<p>Assume that <a href="#eq-PELT_condition" class="quarto-xref">Equation&nbsp;<span>4.2</span></a> from above is true. Then, for <span class="math inline">\(\tau &lt; t &lt; T\)</span>:</p>
+<p><span class="math display">\[
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K \geq \mathcal{Q}_{t, \beta} + \beta.
+\]</span></p>
+<p>Summing <span class="math inline">\(\mathcal{L}(y_{t+1:T})\)</span> on both sides:</p>
+<p><span class="math display">\[
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K + \mathcal{L}(y_{t+1:T}) \geq \mathcal{Q}_{t, \beta} + \beta + \mathcal{L}(y_{t+1:T}),
+\]</span></p>
+<p><span class="math display">\[
+\implies \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:T}) + \beta \geq \mathcal{Q}_{t, \beta} + \mathcal{L}(y_{t+1:T}) + \beta,
+\]</span></p>
+<p>by <a href="#eq-inequality" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> from above. Hence, it follows that <span class="math inline">\(\tau\)</span> cannot be a future minimizer of the sets</p>
+<p><span class="math display">\[
+R_t = \{\tau' \in 0, 1, \dots, T-1, \ \mathcal{Q}_{\tau', \beta} + \mathcal{L}(y_{\tau' + 1:T}) + \beta\},\ \forall \ T &gt; \tau
+\]</span></p>
+<p>and can be removed from the set of splits to check for each future step!</p>
+<hr>
+<p>Using the condition in <a href="#eq-PELT_condition" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>, the PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>. That is, by setting <span class="math inline">\(\kappa = 0\)</span>, if</p>
 <p><span class="math display">\[\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_{t, \beta} \]</span></p>
 <p>then we can safely prune the segment cost related to <span class="math inline">\(\tau\)</span>, as <span class="math inline">\(\tau\)</span> will never be the optimal changepoint location up to any time <span class="math inline">\(T &gt; t\)</span> in the future.</p>
 <p>When this condition will be met? Well, plugging the cost from the previous week into the right side:</p>
 <p><span class="math display">\[
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right],
 \]</span></p>
-<p>we see how the <span class="math inline">\(\beta\)</span> plays again a central role, as this is absent in the left side. The intuition, is that once the minimum is reached for a <span class="math inline">\(\tau\)</span> despite the penalty, e.g.&nbsp;we introduce a new candidate changepoint, we would then prune. This is why colloquially we say “PELT prunes at the changes”.<br>
+<p>we see how the <span class="math inline">\(\beta\)</span> plays again a central role, as this is absent in the left side. The intuition, is that once we introduce a new candidate changepoint, we would then prune. This is why colloquially we say “PELT prunes at the changes”.<br>
 And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a <span class="math inline">\(\mathcal{O}(n \log n)\)</span> computational complexity, without any drawbacks!</p>
 <p><img src="source_imgs/OPPELT.png" class="img-fluid"></p>
 <p>To reduce computational complexity, we can slightly modify the OP algorithm, to add the pruning condition above:</p>
@@ -419,7 +438,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 <br>
 <strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta)\}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint if <span class="math inline">\(-LR/2\)</span> is above penalty <span class="math inline">\(- \beta\)</span></div>
@@ -563,7 +582,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 </ol>
 <p><span id="eq-continuous-slope"><span class="math display">\[
     y_t = \tau_i \theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
-\tag{4.1}\]</span></span></p>
+\tag{4.3}\]</span></span></p>
 <p>where <span class="math inline">\(\theta_{\tau_i}\)</span> represents the value of the slope at changepoint <span class="math inline">\(\tau_i\)</span> and <span class="math inline">\(\phi_{\tau_{i+1}}\)</span> is the value at the next changepoint <span class="math inline">\(\tau_{i+1}\)</span>. Note, in this example, for simplicity, we assume the intercept is set equal to 0.</p>
 <p>This model is a variation from the one we had next week as it enforces continuity, e.g.&nbsp;the value at the end of one segment, needs to be the at the next:</p>
 <div class="cell">
@@ -577,7 +596,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 </div>
 <ol type="a">
 <li><p>Can you identify the elements where there is dependency across segments? Once you’ve done that, rewrite the model for one change by seting <span class="math inline">\(\tau_{i} = 0\)</span>. Would you be able to use PELT pruning with this one?</p></li>
-<li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2! What are the differences across the three models?</p></li>
+<li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2! What are the differences across the three models?</p></li>
 </ol>
 <!-- -->
 <ol start="3" type="1">

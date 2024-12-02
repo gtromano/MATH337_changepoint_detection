@@ -188,7 +188,7 @@ In OP, we can reduce the numbers of checks to be performed at each iteration, re
 
 $$
         \mathcal{L}(y_{l + 1:\tau}) + \mathcal{L}(y_{\tau + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
-$$
+$${#eq-inequality}
 
 It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant $\kappa$ exists.
 
@@ -196,9 +196,39 @@ Then, for any $\tau < t$, if
 
 $$
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-$$ holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.\
+$${#eq-PELT_condition}
 
-Using this condition, the PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, by setting $\kappa = 0$, if
+holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.\
+
+**Proof.**
+
+Assume that @eq-PELT_condition from above is true. Then, for $\tau < t < T$:
+
+$$
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K \geq \mathcal{Q}_{t, \beta} + \beta.
+$$
+
+Summing $\mathcal{L}(y_{t+1:T})$ on both sides:
+
+$$
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K + \mathcal{L}(y_{t+1:T}) \geq \mathcal{Q}_{t, \beta} + \beta + \mathcal{L}(y_{t+1:T}),
+$$
+
+$$
+\implies \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:T}) + \beta \geq \mathcal{Q}_{t, \beta} + \mathcal{L}(y_{t+1:T}) + \beta,
+$$
+
+by @eq-inequality from above. Hence, it follows that $\tau$ cannot be a future minimizer of the sets
+
+$$
+R_t = \{\tau' \in 0, 1, \dots, T-1, \ \mathcal{Q}_{\tau', \beta} + \mathcal{L}(y_{\tau' + 1:T}) + \beta\},\ \forall \ T > \tau
+$$
+
+and can be removed from the set of splits to check for each future step!
+
+------------------------------------------------------------------------
+
+Using the condition in @eq-PELT_condition, the PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, by setting $\kappa = 0$, if
 
 $$\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_{t, \beta} $$
 
@@ -210,7 +240,7 @@ $$
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right],
 $$
 
-we see how the $\beta$ plays again a central role, as this is absent in the left side. The intuition, is that once the minimum is reached for a $\tau$ despite the penalty, e.g. we introduce a new candidate changepoint, we would then prune. This is why colloquially we say "PELT prunes at the changes".\
+we see how the $\beta$ plays again a central role, as this is absent in the left side. The intuition, is that once we introduce a new candidate changepoint, we would then prune. This is why colloquially we say "PELT prunes at the changes".\
 And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
 
 ![](source_imgs/OPPELT.png)
@@ -281,7 +311,7 @@ Then, WBS will have just a couple of alterations to the original Binary Segmenta
 | 
 | **IF** $\mathcal{Q} < 0$
 |     $\hat{\tau} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]$
-|      $cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta) + \hat\tau \}$
+|      $cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta)\}$
 |      **RETURN** $cp$
 | 
 | **RETURN** $\{\}$ // No changepoint if $-LR/2$ is above penalty $- \beta$

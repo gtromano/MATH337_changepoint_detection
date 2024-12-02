@@ -192,19 +192,26 @@ $$
 
 It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant $\kappa$ exists.
 
-Then, for any $\tau < s$, if
+Then, for any $\tau < t$, if
 
 $$
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-$$ holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.
+$$ holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.\
 
 Using this condition, the PELT algorithm -- acronym for Pruned Exact Linear Time -- (@Killick) solves exactly the penalised minimization of @eq-optimal-partitioning with an expected computational cost that can be linear in $n$ -- while still retaining $\mathcal{O}(n^2)$ computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition @eq-optimal-partitioning. That is, by setting $\kappa = 0$, if
 
-$$\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_t $$
+$$\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_{t, \beta} $$
 
 then we can safely prune the segment cost related to $\tau$, as $\tau$ will never be the optimal changepoint location up to any time $T > t$ in the future.
 
-The intuition, is that we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
+When this condition will be met? Well, plugging the cost from the previous week into the right side:
+
+$$
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right],
+$$
+
+we see how the $\beta$ plays again a central role, as this is absent in the left side. The intuition, is that once the minimum is reached for a $\tau$ despite the penalty, e.g. we introduce a new candidate changepoint, we would then prune. This is why colloquially we say "PELT prunes at the changes".\
+And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a $\mathcal{O}(n \log n)$ computational complexity, without any drawbacks!
 
 ![](source_imgs/OPPELT.png)
 

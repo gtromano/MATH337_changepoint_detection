@@ -347,14 +347,20 @@ window.Quarto = {
         \mathcal{L}(y_{l + 1:\tau}) + \mathcal{L}(y_{\tau + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
 \]</span></p>
 <p>It is possible to <em>prune</em> without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant <span class="math inline">\(\kappa\)</span> exists.</p>
-<p>Then, for any <span class="math inline">\(\tau &lt; s\)</span>, if</p>
+<p>Then, for any <span class="math inline">\(\tau &lt; t\)</span>, if</p>
 <p><span class="math display">\[
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-\]</span> holds, then for any <span class="math inline">\(T &gt; t\)</span>, <span class="math inline">\(\tau\)</span> can never be the optimal change location prior to time <span class="math inline">\(T\)</span>.</p>
+\]</span> holds, then for any <span class="math inline">\(T &gt; t\)</span>, <span class="math inline">\(\tau\)</span> can never be the optimal change location prior to time <span class="math inline">\(T\)</span>.<br>
+</p>
 <p>Using this condition, the PELT algorithm – acronym for Pruned Exact Linear Time – (<span class="citation" data-cites="Killick">Killick, Fearnhead, and Eckley (<a href="references.html#ref-Killick" role="doc-biblioref">2012</a>)</span>) solves exactly the penalised minimization of <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a> with an expected computational cost that can be linear in <span class="math inline">\(n\)</span> – while still retaining <span class="math inline">\(\mathcal{O}(n^2)\)</span> computational complexity in the worst case. This is achieved by reducing the number of segment costs to evaluate at each iteration via an additional pruning step based on Condition <a href="3_multiple_changes.html#eq-optimal-partitioning" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>. That is, by setting <span class="math inline">\(\kappa = 0\)</span>, if</p>
-<p><span class="math display">\[\mathcal{Q}\tau + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_t \]</span></p>
+<p><span class="math display">\[\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \mathcal{Q}_{t, \beta} \]</span></p>
 <p>then we can safely prune the segment cost related to <span class="math inline">\(\tau\)</span>, as <span class="math inline">\(\tau\)</span> will never be the optimal changepoint location up to any time <span class="math inline">\(T &gt; t\)</span> in the future.</p>
-<p>The intuition, is that we would prune at every change detected. And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a <span class="math inline">\(\mathcal{O}(n \log n)\)</span> computational complexity, without any drawbacks!</p>
+<p>When this condition will be met? Well, plugging the cost from the previous week into the right side:</p>
+<p><span class="math display">\[
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) \geq \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right],
+\]</span></p>
+<p>we see how the <span class="math inline">\(\beta\)</span> plays again a central role, as this is absent in the left side. The intuition, is that once the minimum is reached for a <span class="math inline">\(\tau\)</span> despite the penalty, e.g.&nbsp;we introduce a new candidate changepoint, we would then prune. This is why colloquially we say “PELT prunes at the changes”.<br>
+And if the changes increase linearly with the length of the data, this means that our algorithm will achieve a <span class="math inline">\(\mathcal{O}(n \log n)\)</span> computational complexity, without any drawbacks!</p>
 <p><img src="source_imgs/OPPELT.png" class="img-fluid"></p>
 <p>To reduce computational complexity, we can slightly modify the OP algorithm, to add the pruning condition above:</p>
 <table class="table">

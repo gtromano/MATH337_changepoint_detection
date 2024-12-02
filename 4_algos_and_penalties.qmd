@@ -188,7 +188,7 @@ In OP, we can reduce the numbers of checks to be performed at each iteration, re
 
 $$
         \mathcal{L}(y_{l + 1:\tau}) + \mathcal{L}(y_{\tau + 1:u}) + \kappa \leq \mathcal{L}(y_{l + 1:u})
-$${#eq-inequality}
+$$ {#eq-inequality}
 
 It is possible to *prune* without resorting to an approximation. For many cost functions, such as the Gaussian cost, such constant $\kappa$ exists.
 
@@ -196,7 +196,7 @@ Then, for any $\tau < t$, if
 
 $$
 \mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \kappa \geq \mathcal{Q}_{t, \beta}
-$${#eq-PELT_condition}
+$$ {#eq-PELT_condition}
 
 holds, then for any $T > t$, $\tau$ can never be the optimal change location prior to time $T$.\
 
@@ -205,13 +205,13 @@ holds, then for any $T > t$, $\tau$ can never be the optimal change location pri
 Assume that @eq-PELT_condition from above is true. Then, for $\tau < t < T$:
 
 $$
-\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K \geq \mathcal{Q}_{t, \beta} + \beta.
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + \kappa \geq \mathcal{Q}_{t, \beta} + \beta.
 $$
 
 Summing $\mathcal{L}(y_{t+1:T})$ on both sides:
 
 $$
-\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + K + \mathcal{L}(y_{t+1:T}) \geq \mathcal{Q}_{t, \beta} + \beta + \mathcal{L}(y_{t+1:T}),
+\mathcal{Q}_{\tau, \beta} + \mathcal{L}(y_{\tau + 1:t}) + \beta + \kappa + \mathcal{L}(y_{t+1:T}) \geq \mathcal{Q}_{t, \beta} + \beta + \mathcal{L}(y_{t+1:T}),
 $$
 
 $$

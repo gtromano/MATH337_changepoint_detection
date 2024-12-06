@@ -584,7 +584,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
     y_t = \tau_i \theta_{\tau_i} + \theta_{\tau_{i+1}} (t - \tau_i) + \epsilon_t, \text{ for } t = \tau_i + 1, \dots, \tau_{i+1}, \epsilon_t \sim N(0, 1)
 \tag{4.3}\]</span></span></p>
 <p>where <span class="math inline">\(\theta_{\tau_i}\)</span> represents the value of the slope at changepoint <span class="math inline">\(\tau_i\)</span> and <span class="math inline">\(\phi_{\tau_{i+1}}\)</span> is the value at the next changepoint <span class="math inline">\(\tau_{i+1}\)</span>. Note, in this example, for simplicity, we assume the intercept is set equal to 0.</p>
-<p>This model is a variation from the one we had next week as it enforces continuity, e.g.&nbsp;the value at the end of one segment, needs to be the at the next:</p>
+<p>This model is a variation from the one we had last week as it enforces continuity, e.g.&nbsp;the value at the end of one segment, needs to be the at the next:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -595,8 +595,8 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 </div>
 </div>
 <ol type="a">
-<li><p>Can you identify the elements where there is dependency across segments? Once you’ve done that, rewrite the model for one change by seting <span class="math inline">\(\tau_{i} = 0\)</span>. Would you be able to use PELT pruning with this one?</p></li>
-<li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2! What are the differences across the three models?</p></li>
+<li><p>Can you identify the elements where there is dependency across segments? Once you’ve done that, rewrite the model for one change (model a). Then, still for one change, rewrite the model setting <span class="math inline">\(\tau_{i} = 0\)</span> (model b). Would you be able to use PELT pruning with this one?</p></li>
+<li><p>Write down the continuous model from equation <a href="#eq-continuous-slope" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, and the one from the previous point for a case where you have two segments, <span class="math inline">\(\theta_1, \theta_2\)</span>. Then have a look at the model from week 2 (model c). What are the differences across the three models?</p></li>
 </ol>
 <!-- -->
 <ol start="3" type="1">

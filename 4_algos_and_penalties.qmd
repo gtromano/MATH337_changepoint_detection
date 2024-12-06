@@ -460,7 +460,7 @@ $$ {#eq-continuous-slope}
 
 where $\theta_{\tau_i}$ represents the value of the slope at changepoint $\tau_i$ and $\phi_{\tau_{i+1}}$ is the value at the next changepoint $\tau_{i+1}$. Note, in this example, for simplicity, we assume the intercept is set equal to 0.
 
-This model is a variation from the one we had next week as it enforces continuity, e.g. the value at the end of one segment, needs to be the at the next:
+This model is a variation from the one we had last week as it enforces continuity, e.g. the value at the end of one segment, needs to be the at the next:
 
 ```{r echo=FALSE}
 set.seed(1)
@@ -489,9 +489,9 @@ ggplot(data_trend, aes(x = t, y = signal)) +
   theme_minimal()
 ```
 
-a.  Can you identify the elements where there is dependency across segments? Once you've done that, rewrite the model for one change by seting $\tau_{i} = 0$. Would you be able to use PELT pruning with this one?
+a.  Can you identify the elements where there is dependency across segments? Once you've done that, rewrite the model for one change (model a). Then, still for one change, rewrite the model setting $\tau_{i} = 0$ (model b). Would you be able to use PELT pruning with this one?
 
-b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2! What are the differences across the three models?
+b.  Write down the continuous model from equation @eq-continuous-slope, and the one from the previous point for a case where you have two segments, $\theta_1, \theta_2$. Then have a look at the model from week 2 (model c). What are the differences across the three models?
 
 <!-- -->
 

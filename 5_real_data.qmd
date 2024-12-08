@@ -9,13 +9,13 @@ In practice, working with real-world data presents various challenges that can c
 
 ## Assessing the model fit
 
-### Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics
+### Assessing Residuals from a Changepoint Model
 
-When dealing with real-world data and changepoint models, it's essential to evaluate how well the model fits the data. Apart from the techniques we saw last week, where we can use an elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals -- the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.
+When dealing with real-world data and changepoint, it's essential to evaluate how well the model fits the data. Apart from the elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals -- the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.
 
 This section introduces three key diagnostic tools for assessing the residuals from a changepoint model: the **histogram of residuals**, the **normal Q-Q plot**, and the **residuals vs. fitted values plot**. These tools help assess whether the assumptions of the model (such as normality and homoscedasticity) hold.
 
-As an example, we will run diagnostics on the following example:
+As an example, we will run diagnostics on the following sequence:
 
 ```{r echo=FALSE}
 #| fig-height: 3
@@ -75,8 +75,7 @@ hist(residuals(out), main = "Histogram of the residuals")
 
 -   **What to Watch for:**
     -   Skewness: If the histogram is not symmetric, it could indicate skewness in the residuals, suggesting that the model may not fully capture the data's structure.
-    -   Outliers: Large bars far from zero indicate extreme residuals, which could be outliers.
-    -   Heavy or light tails: If the histogram shows long tails, it may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors.
+    -   Heavy or light tails: Large bars far from zero indicate extreme residuals, which could be outliers. In case we see the histogram showing heavier tails, this may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors. But note that if we see lighter tails, this might also suggest that we are overfitting over those outlier points!
 
 #### 2. **Normal Q-Q Plot**
 
@@ -88,21 +87,18 @@ qqline(residuals(out), col = "red")
 ```
 
 -   **What to Watch for:**
-    -   **Deviations from the line:** Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values).
-    -   **Outliers:** Points far away from the line, especially at the ends, suggest outliers or non-normality in the tails.
-
-The Q-Q plot is a more precise method of checking normality than the histogram since it directly compares the residuals to a normal distribution's quantiles.
+    -   **Deviations from the line:** Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values). As above, both cases might suggest that we have outliers, as we might be in a scenario where we are overfitting our sequence.
 
 #### 3. **Residuals vs. Fitted Values Plot**
 
-Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values. This suggests the model has adequately captured the relationship between the variables.
+Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see some clusters, consisting of a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values and clusters.
 
 ```{r}
 plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
 ```
 
 -   **What to Watch for:**
-    -   To observe cluster of points in the data is normal, as the fitted values are the estimate of our signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting.
+    -   To observe cluster of points in the data is normal, as the fitted values are the estimate of our piecewise signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting. **Note that these will not show up in the two plots above!**
     -   Heteroscedasticity (Non-constant variance): If the residuals' spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!
 
 ### Example: violating heteroschedasticity:
@@ -167,7 +163,8 @@ plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
 
 ```
 
-We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which might be due to the presence of heteroscedasticity in the data. However, the residuals vs. fitted values plot provides the strongest evidence of overfitting due to heteroscedasticity, showing that the variance of the residuals is not constant and increases at the extremes.
+We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting. \
+The residuals vs. fitted values gives us the better figure and provides the strongest evidence of overfitting: we can see that we have many small clusters consisting of just few points... Those which have two points, are almost symmetrically distanced from the 0 line. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.
 
 ## Estimating Other Known Parameters
 

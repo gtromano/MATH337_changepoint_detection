@@ -246,7 +246,7 @@ window.Quarto = {
   <ul>
   <li><a href="#assessing-the-model-fit" id="toc-assessing-the-model-fit" class="nav-link active" data-scroll-target="#assessing-the-model-fit"><span class="header-section-number">5.1</span> Assessing the model fit</a>
   <ul class="collapse">
-  <li><a href="#assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" id="toc-assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" class="nav-link" data-scroll-target="#assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics</a></li>
+  <li><a href="#assessing-residuals-from-a-changepoint-model" id="toc-assessing-residuals-from-a-changepoint-model" class="nav-link" data-scroll-target="#assessing-residuals-from-a-changepoint-model"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model</a></li>
   <li><a href="#example-violating-heteroschedasticity" id="toc-example-violating-heteroschedasticity" class="nav-link" data-scroll-target="#example-violating-heteroschedasticity"><span class="header-section-number">5.1.2</span> Example: violating heteroschedasticity:</a></li>
   </ul></li>
   <li><a href="#estimating-other-known-parameters" id="toc-estimating-other-known-parameters" class="nav-link" data-scroll-target="#estimating-other-known-parameters"><span class="header-section-number">5.2</span> Estimating Other Known Parameters</a>
@@ -287,11 +287,11 @@ window.Quarto = {
 <p>In practice, working with real-world data presents various challenges that can complicate our analyses. Unlike idealised examples, real data often contain noise, outliers, and other irregularities that can impair the accuracy of the segmentations we aim to generate. The assumptions we make in our models may not hold up well, and this can lead to poor estimates of changepoints. To tackle these issues, it is important to either use robust methods, or consider carefully how we handle the estimation of key parameters within our changepoint detection models.</p>
 <section id="assessing-the-model-fit" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="assessing-the-model-fit"><span class="header-section-number">5.1</span> Assessing the model fit</h2>
-<section id="assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="assessing-residuals-from-a-changepoint-model-a-guide-for-undergraduate-mathematics"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model: A Guide for Undergraduate Mathematics</h3>
-<p>When dealing with real-world data and changepoint models, it’s essential to evaluate how well the model fits the data. Apart from the techniques we saw last week, where we can use an elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals – the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.</p>
+<section id="assessing-residuals-from-a-changepoint-model" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="assessing-residuals-from-a-changepoint-model"><span class="header-section-number">5.1.1</span> Assessing Residuals from a Changepoint Model</h3>
+<p>When dealing with real-world data and changepoint, it’s essential to evaluate how well the model fits the data. Apart from the elbow plot and visual inspection to assess a segmentation, this evaluation is often done by examining the residuals – the differences between the observed data points and the values predicted by the model. If the residuals exhibit certain patterns, it may indicate that the model is not capturing all the underlying structure of the data, or that assumptions about the error distribution are violated.</p>
 <p>This section introduces three key diagnostic tools for assessing the residuals from a changepoint model: the <strong>histogram of residuals</strong>, the <strong>normal Q-Q plot</strong>, and the <strong>residuals vs.&nbsp;fitted values plot</strong>. These tools help assess whether the assumptions of the model (such as normality and homoscedasticity) hold.</p>
-<p>As an example, we will run diagnostics on the following example:</p>
+<p>As an example, we will run diagnostics on the following sequence:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -328,8 +328,7 @@ window.Quarto = {
 <li><strong>What to Watch for:</strong>
 <ul>
 <li>Skewness: If the histogram is not symmetric, it could indicate skewness in the residuals, suggesting that the model may not fully capture the data’s structure.</li>
-<li>Outliers: Large bars far from zero indicate extreme residuals, which could be outliers.</li>
-<li>Heavy or light tails: If the histogram shows long tails, it may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors.</li>
+<li>Heavy or light tails: Large bars far from zero indicate extreme residuals, which could be outliers. In case we see the histogram showing heavier tails, this may suggest that the data contains more extreme values than expected under the assumption of normally distributed errors. But note that if we see lighter tails, this might also suggest that we are overfitting over those outlier points!</li>
 </ul></li>
 </ul>
 </section>
@@ -350,15 +349,13 @@ window.Quarto = {
 <ul>
 <li><strong>What to Watch for:</strong>
 <ul>
-<li><strong>Deviations from the line:</strong> Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values).</li>
-<li><strong>Outliers:</strong> Points far away from the line, especially at the ends, suggest outliers or non-normality in the tails.</li>
+<li><strong>Deviations from the line:</strong> Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values). As above, both cases might suggest that we have outliers, as we might be in a scenario where we are overfitting our sequence.</li>
 </ul></li>
 </ul>
-<p>The Q-Q plot is a more precise method of checking normality than the histogram since it directly compares the residuals to a normal distribution’s quantiles.</p>
 </section>
 <section id="residuals-vs.-fitted-values-plot" class="level4" data-number="5.1.1.3">
 <h4 data-number="5.1.1.3" class="anchored" data-anchor-id="residuals-vs.-fitted-values-plot"><span class="header-section-number">5.1.1.3</span> 3. <strong>Residuals vs.&nbsp;Fitted Values Plot</strong></h4>
-<p>Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values. This suggests the model has adequately captured the relationship between the variables.</p>
+<p>Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see some clusters, consisting of a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values and clusters.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(out), <span class="fu">residuals</span>(out), <span class="at">xlab =</span> <span class="st">"fitted"</span>, <span class="at">ylab=</span><span class="st">"residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -372,7 +369,7 @@ window.Quarto = {
 <ul>
 <li><strong>What to Watch for:</strong>
 <ul>
-<li>To observe cluster of points in the data is normal, as the fitted values are the estimate of our signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting.</li>
+<li>To observe cluster of points in the data is normal, as the fitted values are the estimate of our piecewise signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting. <strong>Note that these will not show up in the two plots above!</strong></li>
 <li>Heteroscedasticity (Non-constant variance): If the residuals’ spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!</li>
 </ul></li>
 </ul>
@@ -424,7 +421,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which might be due to the presence of heteroscedasticity in the data. However, the residuals vs.&nbsp;fitted values plot provides the strongest evidence of overfitting due to heteroscedasticity, showing that the variance of the residuals is not constant and increases at the extremes.</p>
+<p>We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting.<br>
+The residuals vs.&nbsp;fitted values gives us the better figure and provides the strongest evidence of overfitting: we can see that we have many small clusters consisting of just few points… Those which have two points, are almost symmetrically distanced from the 0 line. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.</p>
 </section>
 </section>
 <section id="estimating-other-known-parameters" class="level2" data-number="5.2">

@@ -163,7 +163,7 @@ plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
 
 ```
 
-We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting. \
+We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting.\
 The residuals vs. fitted values gives us the better figure and provides the strongest evidence of overfitting: we can see that we have many small clusters consisting of just few points... Those which have two points, are almost symmetrically distanced from the 0 line. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.
 
 ## Estimating Other Known Parameters

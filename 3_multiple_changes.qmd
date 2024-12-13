@@ -172,13 +172,13 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 $$ Taking the log and summing across all data points in the segment:
 
 $$
-\sum_{i = s + 1}^{t} -2 \log f(y_i | \theta) = -2 \left [ -\frac{t - s + 1}{2} \log(2\pi \sigma^2) -\frac{1}{2 \sigma^2} \sum_{i = s + 1}^{t} (y_t - \mu)^2 \right].
+\sum_{i = s + 1}^{t} -2 \log f(y_i | \theta) = -2 \left [ -\frac{t - s}{2} \log(2\pi \sigma^2) -\frac{1}{2 \sigma^2} \sum_{i = s + 1}^{t} (y_t - \mu)^2 \right].
 $$
 
 This is minimized for $\bar{y}_{s+1:t} = \frac{1}{t - s} \sum_{i = s + 1}^{t} y_t$. Therefore, plugging this into our equation @eq-segment_cost, the cost of a segment will be given by:
 
 $$
-\mathcal{L}(y_{s+1:t}) = (t - s + 1) \log(2\pi \sigma^2) + \frac{1}{\sigma^2} \sum_{i = s+1}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
+\mathcal{L}(y_{s+1:t}) = (t - s) \log(2\pi \sigma^2) + \frac{1}{\sigma^2} \sum_{i = s+1}^{t} \left ( y_i - \bar{y}_{s+1:t} \right)^2.
 $$
 
 Remember, we can get rid of all constants terms as those do not contribute to our optimization. Doing so, our cost will be simply: $$

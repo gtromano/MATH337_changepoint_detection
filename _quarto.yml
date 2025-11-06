@@ -4,7 +4,7 @@ project:
 book:
   title: "MATH337: Changepoint Detection"
   author: "Gaetano Romano"
-  date: "11/01/24"
+  date: "01/01/25"
   downloads: [pdf]
   chapters:
     - index.qmd

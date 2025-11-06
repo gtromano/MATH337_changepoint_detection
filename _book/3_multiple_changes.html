@@ -723,10 +723,8 @@ Attaching package: 'zoo'</code></pre>
 <ol type="1">
 <li><p>For the vector <span class="math inline">\(y_{1:4} = (0.5, -0.1, 12.1, 12.4)\)</span>, variance known <span class="math inline">\(\sigma^2 = 1\)</span>, and a penalty <span class="math inline">\(\beta = 5\)</span> we will calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps for the Gaussian change-in-mean case.</p>
 <ol type="a">
-<li>To speed up computations, pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:</li>
-</ol></li>
-</ol>
-<p><span class="math display">\[
+<li><p>To speed up computations, pre-compute all segment costs <span class="math inline">\(\mathcal{L}(y_{l:u})\)</span>. I have pre-computed some of these costs in the table below:<br>
+<span class="math display">\[
 \begin{array}{c|cccc}
 l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 \hline
@@ -735,13 +733,11 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 3 &amp;  &amp;  &amp; 0.00 &amp; \mathcal{L}(y_{3:4}) \\
 4 &amp;  &amp;  &amp;  &amp; 0.00 \\
 \end{array}
-\]</span></p>
-<pre><code> b. Using the costs from (a), obtain step-by-step the optimal cost $\mathcal{Q}_{t, \beta}$ of segmenting the data up to time $t$. Do not forget to compute the changepoints estimates at each iterations.
- 
- c. Using the costs from (a), obtain the Binary Segmentation recursive solution.
- </code></pre>
-<ol start="2" type="1">
-<li>Draw a linegraph of some piece-wise constant signal <span class="math inline">\(\mu\)</span> with more than one change-in-mean, where with a reasonable penalty/signal-to-noise ration Binary Segmentation would consistently miss the changes, but Optimal Partitioning wouldn’t.</li>
+\]</span></p></li>
+<li><p>Using the costs from (a), obtain step-by-step the optimal cost <span class="math inline">\(\mathcal{Q}_{t, \beta}\)</span> of segmenting the data up to time <span class="math inline">\(t\)</span>. Do not forget to compute the changepoints estimates at each iterations.</p></li>
+<li><p>Using the costs from (a), obtain the Binary Segmentation recursive solution.</p></li>
+</ol></li>
+<li><p>Draw a linegraph of some piece-wise constant signal <span class="math inline">\(\mu\)</span> with more than one change-in-mean, where (with a reasonable penalty/signal-to-noise ratio) Binary Segmentation would consistently reconstruct the wrong signal by under-fitting the changes, but Optimal Partitioning wouldn’t.</p></li>
 </ol>
 </section>
 <section id="lab-3" class="level3" data-number="3.4.2">
@@ -757,36 +753,36 @@ l \backslash u &amp; 1 &amp; 2 &amp; 3 &amp; 4 \\
 <li>A function <code>COST</code>. This function should take as input arguments <code>y, s, t</code>, and act as <span class="math inline">\(\mathcal{L}(y_{s:t})\)</span>. You fill find a skeleton below. Note: with adequate indexing, you can pass to COST just the data <code>y</code>!</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">### pre-compute all the costs here</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">### your initialization here</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="do">### your recursion here</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(changepoints)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>OP <span class="ot">&lt;-</span> <span class="cf">function</span> (y, penalty, COST) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">### pre-compute all the costs here</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="do">### your initialization here</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="do">### your recursion here</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(changepoints)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For this exercise, we are implementing the Gaussian change-in-mean case. Therefore, a skeleton for our cost function will be:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>costMean <span class="ot">=</span> <span class="cf">function</span>(y, s, t) {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code for computing the Gaussian change-in-mean cost here</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(your_cost)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>costMean <span class="ot">=</span> <span class="cf">function</span>(y, s, t) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># code for computing the Gaussian change-in-mean cost here</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(your_cost)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You should be then able to call your <code>OP</code> function as:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">OP</span>(y, <span class="dv">15</span>, costMean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">OP</span>(y, <span class="dv">15</span>, costMean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This should return 100, 200.</p>
 <pre><code>**Tips:**

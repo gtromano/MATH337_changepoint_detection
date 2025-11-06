@@ -627,26 +627,25 @@ Some of you might come up with two (very interesting) questions that hopefully w
 
 ### Workshop 3
 
-1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, variance known $\sigma^2 = 1$, and a penalty $\beta = 5$ we will calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps for the Gaussian change-in-mean case. 
+1.  For the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, variance known $\sigma^2 = 1$, and a penalty $\beta = 5$ we will calculate, pen on paper (and calculator), all the Optimal Partitioning and Binary Segmentation steps for the Gaussian change-in-mean case.
 
-     a. To speed up computations, pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:
+    a.  To speed up computations, pre-compute all segment costs $\mathcal{L}(y_{l:u})$. I have pre-computed some of these costs in the table below:\
+        $$
+        \begin{array}{c|cccc}
+        l \backslash u & 1 & 2 & 3 & 4 \\
+        \hline
+        1 & \mathcal{L}(y_{1:1}) & 0.18 & 94.59 & 145.43 \\
+        2 &  & 0.00 & \mathcal{L}(y_{2:3}) & 101.73 \\
+        3 &  &  & 0.00 & \mathcal{L}(y_{3:4}) \\
+        4 &  &  &  & 0.00 \\
+        \end{array}
+        $$
 
-$$
-\begin{array}{c|cccc}
-l \backslash u & 1 & 2 & 3 & 4 \\
-\hline
-1 & \mathcal{L}(y_{1:1}) & 0.18 & 94.59 & 145.43 \\
-2 &  & 0.00 & \mathcal{L}(y_{2:3}) & 101.73 \\
-3 &  &  & 0.00 & \mathcal{L}(y_{3:4}) \\
-4 &  &  &  & 0.00 \\
-\end{array}
-$$
+    b.  Using the costs from (a), obtain step-by-step the optimal cost $\mathcal{Q}_{t, \beta}$ of segmenting the data up to time $t$. Do not forget to compute the changepoints estimates at each iterations.
 
-     b. Using the costs from (a), obtain step-by-step the optimal cost $\mathcal{Q}_{t, \beta}$ of segmenting the data up to time $t$. Do not forget to compute the changepoints estimates at each iterations.
-     
-     c. Using the costs from (a), obtain the Binary Segmentation recursive solution.
-     
-2.  Draw a linegraph of some piece-wise constant signal $\mu$ with more than one change-in-mean, where with a reasonable penalty/signal-to-noise ration Binary Segmentation would consistently miss the changes, but Optimal Partitioning wouldn't.
+    c.  Using the costs from (a), obtain the Binary Segmentation recursive solution.
+
+2.  Draw a linegraph of some piece-wise constant signal $\mu$ with more than one change-in-mean, where (with a reasonable penalty/signal-to-noise ratio) Binary Segmentation would consistently reconstruct the wrong signal by under-fitting the changes, but Optimal Partitioning wouldn't.
 
 ### Lab 3
 

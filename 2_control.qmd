@@ -150,12 +150,11 @@ $$
 
 Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:
 
-```{=tex}
 \begin{align}
   LR_\tau = & -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\ 
   &+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
 \end{align}
-```
+
 This simplifies to:
 
 $$
@@ -214,7 +213,6 @@ $$
 
 Plugging in this into our LR:
 
-```{=tex}
 \begin{align}
 \sigma^2 LR_\tau &= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
 &=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
@@ -222,7 +220,7 @@ Plugging in this into our LR:
 &= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
 &= C_\tau^2.
 \end{align}
-```
+
 This gives us $LR_\tau = \frac{C_\tau^2}{\sigma^2}$.
 
 ## Towards More General Models
@@ -245,12 +243,11 @@ $$
 
 And taking the log, and simplifying over the constant gives us:
 
-```{=tex}
 \begin{align}
 LR_\tau &= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 & = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
 \end{align}
-```
+
 Now to solve the minimisation, we focus on the first term:
 
 $$
@@ -344,8 +341,7 @@ More formally, let our data be modeled as:
 
 $$
 y_t = f_t + \epsilon_t, \ \epsilon_t \sim N(0, 1) \quad t = 1, \dots, n.
-$$
-In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.
+$$ In this scenario, for simplicity, we assume a known constant variance, which without loss of generality, we take to be 1.
 
 Under the null hypothesis $H_0$, we assume that the signal is linear with a constant slope over the entire sequence, i.e.,
 
@@ -407,11 +403,12 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 ### Workshop 2
 
-1.  Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.
+1. Consider an independent Bernoulli time series, $y_t \sim \text{Bernoulli}(p)$, for $t = 1, \dots, n$, where $y_t \in {0, 1}$. In this question, you will compute the Likelihood Ratio (LR) test statistic for detecting a change in the success probability $p$ at some unknown point $\tau \in {1, \dots, n-1}$.
 
-    a.  Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative
+   a.  Write down the probability mass function (pmf) of the Bernoulli distribution under the null hypothesis (no change), and derive the corresponding Maximum Likelihood Estimator (MLE) for $p$. Then, extend this formulation to the alternative hypothesis, where the success probability changes at $\tau$.
 
-    b.  Compose the log-likelihood ratio, according to the equation @eq-lr-test introduced above.
+   b.  Using the MLEs from part (a), construct the log-likelihood ratio according to the general expression for the Likelihood Ratio test statistic, as defined in Equation @eq-lr-test.
+
 
 ### Lab 2
 

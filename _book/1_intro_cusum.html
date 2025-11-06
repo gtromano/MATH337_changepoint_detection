@@ -264,7 +264,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">1.4</span> Exercises</a>
   <ul class="collapse">
-  <li><a href="#code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." id="toc-code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." class="nav-link" data-scroll-target="#code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above."><span class="header-section-number">1.4.1</span> Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</a></li>
+  <li><a href="#workshop-1" id="toc-workshop-1" class="nav-link" data-scroll-target="#workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</a></li>
   <li><a href="#lab-1" id="toc-lab-1" class="nav-link" data-scroll-target="#lab-1"><span class="header-section-number">1.4.2</span> Lab 1</a></li>
   </ul></li>
   </ul>
@@ -639,21 +639,16 @@ C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \ti
 </section>
 <section id="exercises" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">1.4</span> Exercises</h2>
-<section id="code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above." class="level3" data-number="1.4.1">
-<h3 data-number="1.4.1" class="anchored" data-anchor-id="code-the-cusum-algorithm-for-a-unknown-change-location-based-on-the-pseudocode-above."><span class="header-section-number">1.4.1</span> Code the CUSUM algorithm for a unknown change location, based on the pseudocode above.</h3>
-<p>Workshop 1</p>
+<section id="workshop-1" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="workshop-1"><span class="header-section-number">1.4.1</span> Workshop 1</h3>
 <ol type="1">
-<li>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</li>
-</ol>
-<!-- -->
+<li><p>Determine if the following processes are stationary, piecewise stationary, or non-stationary:</p>
 <ol type="a">
 <li><p><span class="math inline">\(y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{t} \sim N(0, 1)\)</span>. This is a random walk model. Let’s start by computing the expected value and variance of <span class="math inline">\(y_t\)</span> across all <span class="math inline">\(t\)</span>. <strong>TIP:</strong> Start by expanding <span class="math inline">\(y_{t}\)</span> in terms of the noise components…</p></li>
 <li><p><span class="math inline">\(y_t = t \epsilon_t + 3 \mathbb{1}(t &gt; 50), \quad t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)\)</span></p></li>
 <li><p><span class="math inline">\(y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)\)</span></p></li>
-</ol>
-<!-- -->
-<ol start="2" type="1">
-<li><p>In this exercise we will show that: <span class="math display">\[ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \]</span> in case of no change, e.g.&nbsp;for <span class="math inline">\(\mu_1 = \mu_2 = \dots = \mu_n = \mu\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
+</ol></li>
+<li><p>For an i.i.d. Gaussian time series <span class="math inline">\(y = (y_1, ..., y_n)\)</span> with known variance <span class="math inline">\(\sigma^2\)</span>, and fixed and known change at <span class="math inline">\(\tau \in \{1, \dots, n-1\}\)</span>, with <span class="math inline">\(\, n \in \mathbb{N}, \,  n &gt; \tau\)</span>, show that: <span class="math display">\[ \frac{1}{\sigma}\sqrt{\frac{\tau(n-\tau)}{n}} ( \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}) \]</span> in case of no change, e.g.&nbsp;for <span class="math inline">\(\mu_1 = \mu_2 = \dots = \mu_n = \mu\)</span>, follows a standard normal distribution. <strong>Hint:</strong></p>
 <ol type="a">
 <li><p>Compute the expected value and variance of the difference <span class="math inline">\(\bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n}\)</span></p></li>
 <li><p>Conclude that if you standardise the sum, this follows a standard normal distribution.</p></li>

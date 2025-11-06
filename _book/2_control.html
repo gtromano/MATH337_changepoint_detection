@@ -366,10 +366,10 @@ y_{t} \sim N(\mu_t, \sigma^2), \quad t = 1, \dots, n
 f(y_t | \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_t - \mu)^2\}.
 \]</span></p>
 <p>Therefore, to obtain the likelihood ratio test statistic, we plug our Gaussian p.d.f. into the LR above, and take the logarithm:</p>
-<span class="math display">\[\begin{align}
+<p><span class="math display">\[\begin{align}
   LR_\tau = &amp; -2 \left[ \max_{\mu} \left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right) - \max_{\mu_1, \mu_2} \left(    -\frac{1}{2\sigma^2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right)  \right] + \\
   &amp;+ \tau \log(2\pi \sigma^2) + (n - \tau) \log(2\pi \sigma^2) - n \log(2\pi \sigma^2).
-\end{align}\]</span>
+\end{align}\]</span></p>
 <p>This simplifies to:</p>
 <p><span class="math display">\[
 = \frac{1}{\sigma^2} \left[ \min_{\mu} \sum_{i=1}^n (y_i - \mu_1)^2 - \min_{\mu_1, \mu_2} \left( \sum_{i=1}^\tau (y_i - \mu_1)^2 + \sum_{i=\tau+1}^n (y_i - \mu_2)^2 \right) \right].
@@ -408,13 +408,13 @@ LR_\tau = \frac{C_\tau^2}{\sigma^2}.
 \bar{y}_{1:n}^2 = \frac{1}{n^2}  \left[ \tau^2 \bar{y}_{1:\tau}^2 + 2 \tau (n - \tau) \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + (n - \tau)^2 \bar{y}_{\tau+1:n}^2 \right].
 \]</span></p>
 <p>Plugging in this into our LR:</p>
-<span class="math display">\[\begin{align}
+<p><span class="math display">\[\begin{align}
 \sigma^2 LR_\tau &amp;= - \frac{\tau^2}{n} \bar{y}_{1:\tau}^2 - \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n}  - \frac{(n - \tau)^2}{n} \bar{y}_{\tau+1:n}^2 - \tau \bar{y}_{1:\tau}^2 - (n - \tau) \bar{y}_{\tau+1:n}^2=\\
 &amp;=  \frac{\tau (n - \tau)}{n} \bar{y}_{1:\tau}^2 -  \frac{2 \tau (n - \tau)}{n} \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \frac{\tau (n - \tau)}{n}  \bar{y}_{\tau+1:n}^2 = \\  
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau}^2  - 2 \bar{y}_{1:\tau}\bar{y}_{\tau+1:n} + \bar{y}_{\tau+1:n}^2)=\\
 &amp;= \frac{\tau (n - \tau)}{n} (\bar{y}_{1:\tau} - \bar{y}_{\tau+1:n})^2=\\
 &amp;= C_\tau^2.
-\end{align}\]</span>
+\end{align}\]</span></p>
 <p>This gives us <span class="math inline">\(LR_\tau = \frac{C_\tau^2}{\sigma^2}\)</span>.</p>
 </section>
 </section>
@@ -432,10 +432,10 @@ f(y_t | \theta) = \frac{1}{\sqrt{2\pi \theta}} \exp\{-\frac{y_t^2}{2 \theta}\}.
 LR_\tau = - 2 \log \left\{ \frac{\max_{\theta} \prod_{t=1}^n \frac{1}{\sqrt{2\pi\theta }} \exp\{-\frac{y_t^2}{2 \theta}\}}{\max_{\theta_1, \theta_2} [(\prod_{t=1}^\tau \frac{1}{\sqrt{2\pi\theta_1}} \exp\{-\frac{y_t^2}{2 \theta_1}\})(\prod_{t=\tau+1}^n  \frac{1}{\sqrt{2\pi\theta_2}} \exp\{-\frac{y_t^2}{2 \theta_2}\}]} \right\}
 \]</span></p>
 <p>And taking the log, and simplifying over the constant gives us:</p>
-<span class="math display">\[\begin{align}
+<p><span class="math display">\[\begin{align}
 LR_\tau &amp;= -\max_\theta \sum_{t = 1}^n \left(- \log(\theta) - \frac{y^2}{\theta} \right) + \max_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left( - \log(\theta_1) - \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(  - \log(\theta_2) - \frac{y^2}{\theta_2} \right) \right] = \\
 &amp; = \min_\theta \sum_{t = 1}^n \left( \log(\theta) + \frac{y^2}{\theta} \right) - \min_{\theta_1, \theta_2}  \left[ \ \sum_{t = 1}^\tau \left(  \log(\theta_1) + \frac{y^2}{\theta_1} \right) + \sum_{t = \tau+1}^n \left(   \log(\theta_2) + \frac{y^2}{\theta_2} \right) \right]
-\end{align}\]</span>
+\end{align}\]</span></p>
 <p>Now to solve the minimisation, we focus on the first term:</p>
 <p><span class="math display">\[
 f(y_{1:n}, \theta) = \sum_{t = 1}^n \left(  \log(\theta) + \frac{y^2}{\theta} \right) = \left(  n \log(\theta) + \frac{\sum_{t = 1}^n y^2}{\theta} \right).
@@ -538,10 +538,10 @@ LR_\tau = \left( v_\tau^\top y_{1:n} \right)^2,
 <section id="workshop-2" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="workshop-2"><span class="header-section-number">2.4.1</span> Workshop 2</h3>
 <ol type="1">
-<li><p>Compute the LR ratio to detect a change in the success probability of a Bernoulli Random Variable.</p>
+<li><p>Consider an independent Bernoulli time series, <span class="math inline">\(y_t \sim \text{Bernoulli}(p)\)</span>, for <span class="math inline">\(t = 1, \dots, n\)</span>, where <span class="math inline">\(y_t \in {0, 1}\)</span>. In this question, you will compute the Likelihood Ratio (LR) test statistic for detecting a change in the success probability <span class="math inline">\(p\)</span> at some unknown point <span class="math inline">\(\tau \in {1, \dots, n-1}\)</span>.</p>
 <ol type="a">
-<li><p>Start by writing down the distribution of the model under the null, and find the MLE. Extend this to the alternative</p></li>
-<li><p>Compose the log-likelihood ratio, according to the equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.2</span></a> introduced above.</p></li>
+<li><p>Write down the probability mass function (pmf) of the Bernoulli distribution under the null hypothesis (no change), and derive the corresponding Maximum Likelihood Estimator (MLE) for <span class="math inline">\(p\)</span>. Then, extend this formulation to the alternative hypothesis, where the success probability changes at <span class="math inline">\(\tau\)</span>.</p></li>
+<li><p>Using the MLEs from part (a), construct the log-likelihood ratio according to the general expression for the Likelihood Ratio test statistic, as defined in Equation <a href="#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.2</span></a>.</p></li>
 </ol></li>
 </ol>
 </section>

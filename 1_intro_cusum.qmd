@@ -336,7 +336,7 @@ To address this problem, one of the most widely used methods is *the CUSUM (Cumu
 
 ### The CUSUM statistics
 
-The CUSUM statistic compares, for a fixed $\tau \in \{1, \dots, n-1\}$ , the empirical mean (average) of the data to the left (before $\tau$) with the empirical mean of the data to the right (after $\tau$):
+We compare, for a fixed $\tau \in \{1, \dots, n-1\}$ , the empirical mean (average) of the data to the left (before $\tau$) with the empirical mean of the data to the right (after $\tau$):
 
 $$
 C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|,
@@ -356,13 +356,13 @@ More formally, we declare a change at $\tau$ if:
 
 $$
 \frac{C_{\tau}^2 }{\sigma^2} > c,
-$$ where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing).
+$$ where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing). The $\frac{C_{\tau}^2 }{\sigma^2}$ is known as the CUSUM statistics for a fixed change at $\tau$.
 
 ### Searching for all $\tau$s
 
 In practice, however, we do not know the changepoint location in advance. Our goal is to detect whether a changepoint exists and, if so, estimate its location. To achieve this, we need to consider all possible changepoint locations and choose the one that maximizes our test statistic.
 
-The natural extension of the CUSUM to this situation is to use as a test statistic the maximum of $C_\tau$ as we vary $\tau$:
+The natural solution to this situation is to use as a test statistic the maximum of $C_\tau$ as we vary $\tau$:
 
 $$
 C^2_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2.

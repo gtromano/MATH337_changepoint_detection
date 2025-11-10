@@ -510,7 +510,7 @@ y_t = \mu_t + \epsilon_t, \quad t = 1, \dots, n,
 <p>To address this problem, one of the most widely used methods is <em>the CUSUM (Cumulative Sum) statistic</em>. The basic idea behind the CUSUM statistic is to systematically compare the mean of the data to the left and right of each possible changepoint <span class="math inline">\(\tau\)</span>. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.</p>
 <section id="the-cusum-statistics" class="level3" data-number="1.3.1">
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="the-cusum-statistics"><span class="header-section-number">1.3.1</span> The CUSUM statistics</h3>
-<p>The CUSUM statistic compares, for a fixed <span class="math inline">\(\tau \in \{1, \dots, n-1\}\)</span> , the empirical mean (average) of the data to the left (before <span class="math inline">\(\tau\)</span>) with the empirical mean of the data to the right (after <span class="math inline">\(\tau\)</span>):</p>
+<p>We compare, for a fixed <span class="math inline">\(\tau \in \{1, \dots, n-1\}\)</span> , the empirical mean (average) of the data to the left (before <span class="math inline">\(\tau\)</span>) with the empirical mean of the data to the right (after <span class="math inline">\(\tau\)</span>):</p>
 <p><span class="math display">\[
 C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\tau+1):n} \right|,
 \]</span></p>
@@ -523,12 +523,12 @@ C_{\tau} = \sqrt{\frac{\tau(n-\tau)}{n}} \left| \bar{y}_{1:\tau} - \bar{y}_{(\ta
 <p>More formally, we declare a change at <span class="math inline">\(\tau\)</span> if:</p>
 <p><span class="math display">\[
 \frac{C_{\tau}^2 }{\sigma^2} &gt; c,
-\]</span> where the <span class="math inline">\(c \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing).</p>
+\]</span> where the <span class="math inline">\(c \in \mathbb{R}^+\)</span> is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing). The <span class="math inline">\(\frac{C_{\tau}^2 }{\sigma^2}\)</span> is known as the CUSUM statistics for a fixed change at <span class="math inline">\(\tau\)</span>.</p>
 </section>
 <section id="searching-for-all-taus" class="level3" data-number="1.3.2">
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="searching-for-all-taus"><span class="header-section-number">1.3.2</span> Searching for all <span class="math inline">\(\tau\)</span>s</h3>
 <p>In practice, however, we do not know the changepoint location in advance. Our goal is to detect whether a changepoint exists and, if so, estimate its location. To achieve this, we need to consider all possible changepoint locations and choose the one that maximizes our test statistic.</p>
-<p>The natural extension of the CUSUM to this situation is to use as a test statistic the maximum of <span class="math inline">\(C_\tau\)</span> as we vary <span class="math inline">\(\tau\)</span>:</p>
+<p>The natural solution to this situation is to use as a test statistic the maximum of <span class="math inline">\(C_\tau\)</span> as we vary <span class="math inline">\(\tau\)</span>:</p>
 <p><span class="math display">\[
 C^2_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2.
 \]</span></p>

@@ -177,7 +177,7 @@ Changepoints can be found in a wide range of time series, not limited to physica
 
 In changepoint detection, there are two main approaches: **online** and **offline** analysis. In applications that require **online analysis**, the data is processed as it arrives, or in small batches. The primary goal of online changepoint detection is to identify changes as quickly as possible, making it crucial in contexts such as process control or intrusion detection, where immediate action is necessary.
 
-On the other hand, **offline analysis** processes all the data at once, typically after it has been fully collected. The aim here is to provide an accurate detection of changepoints, rather than a rapid one. This approach is common in fields like genome analysis or audiology, where the focus is on understanding the structure of the data post-collection.
+On the other hand, **offline analysis** processes all the data at once, typically after it has been fully collected. The aim here is to provide an accurate detection of changepoints, rather than a rapid one. This approach is common in fields like biology, medicine, genomics, physics, where the focus is on understanding the structure of the data post-collection, and the change locations are key objects of interest.
 
 To give few examples:
 

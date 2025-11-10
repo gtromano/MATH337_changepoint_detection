@@ -330,7 +330,7 @@ $$
 \mu_1 = \mu_2 = \dots = \mu_\tau \neq \mu_{\tau+1} = \dots = \mu_n \quad \text{(changepoint at } \tau\text{)}.
 $$
 
-**Note.** The point $\tau$ is our *changepoint*, e.g. the first point after which our mean changes, however there's a lot of inconsistencies on the literature: sometimes you will find that people refer to $\tau + 1$ as the changepoint, and $\tau$ as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).
+**Note.** The point $\tau$ is our *changepoint*, e.g. the last point after which our mean changes, however there's a lot of inconsistencies on the literature: sometimes you will find that people refer to $\tau + 1$ as the changepoint, and $\tau$ as the last pre-change point (as a matter of fact, please let me know if you spot this inconsistency anywhere in these notes!).
 
 To address this problem, one of the most widely used methods is *the CUSUM (Cumulative Sum) statistic*. The basic idea behind the CUSUM statistic is to systematically compare the mean of the data to the left and right of each possible changepoint $\tau$. By doing so, we can assess whether there is evidence of a significant change in the mean at a given point.
 

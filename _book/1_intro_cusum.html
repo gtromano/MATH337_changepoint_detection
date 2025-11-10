@@ -389,9 +389,9 @@ We can therefore say that the series is non-stationary in the mean.</p></li>
 <ul>
 <li><strong>Has a change occurred?</strong>: Identifying if there is a shift in the data.</li>
 <li><strong>If yes, where is the change?</strong>: Locating the precise point where the change happened.</li>
-<li><strong>What is the difference between the pre and post-change data?</strong> This may reveal the type of change, and it could indicate differences in parameter values before and after the change.</li>
+<li><strong>What is the difference between the pre and post-change data?</strong> This may reveal the type of change, and it helps to reconstruct the piece-wise constant signal.</li>
 <li><strong>How certain are we of the changepoint location?</strong>: Assessing the confidence in the detected changepoint.</li>
-<li><strong>How many changes have occurred?</strong>: Identifying multiple changepoints and analyzing each one for similar characteristics.</li>
+<li><strong>How many changes have occurred?</strong>: Identifying multiple changepoints, and as above, their locations, segment-wise parameters, etc</li>
 </ul>
 <p>Changepoints can be found in a wide range of time series, not limited to physical, biological, industrial, or financial processes, and which objectives to follow depends on the type of the analysis we are carrying.</p>
 <p>In changepoint detection, there are two main approaches: <strong>online</strong> and <strong>offline</strong> analysis. In applications that require <strong>online analysis</strong>, the data is processed as it arrives, or in small batches. The primary goal of online changepoint detection is to identify changes as quickly as possible, making it crucial in contexts such as process control or intrusion detection, where immediate action is necessary.</p>

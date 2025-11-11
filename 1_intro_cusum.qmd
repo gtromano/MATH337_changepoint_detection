@@ -355,8 +355,8 @@ This approach is intuitive because if the mean $\mu$ is the same across the enti
 More formally, we declare a change at $\tau$ if:
 
 $$
-\frac{C_{\tau}^2 }{\sigma^2} > c,
-$$ where the $c \in \mathbb{R}^+$ is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing). The $\frac{C_{\tau}^2 }{\sigma^2}$ is known as the CUSUM statistics for a fixed change at $\tau$.
+\frac{C_{\tau}^2 }{\sigma^2} > c_\tau,
+$$ where the $c_\tau \in \mathbb{R}^+$ is a suitable chosen threshold value (in fact it is often chosen as in hypothesis testing). The $\frac{C_{\tau}^2 }{\sigma^2}$ is known as the CUSUM statistics for a fixed change at $\tau$.
 
 ### Searching for all $\tau$s
 
@@ -368,7 +368,7 @@ $$
 C^2_{max} = \max_{\tau \in \{1,\ldots,n-1\}} C_\tau^2 / \sigma^2.
 $$
 
-And detect a changepoint if $C^2_{max} > c$ for some suitably chosen threshold $c$. The choice of $c$ will determine the significance level of the test (we'll discuss this in more detail later). Graphically, the test will look as follows:
+And detect a changepoint if $C^2_{max} > c$ for some suitably chosen threshold $c \in \mathbb{R}^+$. The choice of $c$ will determine the significance level of the test (we'll discuss this in more detail later). Graphically, the test will look as follows:
 
 ```{r echo = FALSE}
 set.seed(5)
@@ -406,7 +406,7 @@ This estimate represents the difference between the mean of the data after the e
 
 ### Example
 
-Let us compute the cusum for the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$.
+Let us compute the cusum for the vector $y_{1:4} = (0.5, -0.1, 12.1, 12.4)$, assuming known $\sigma^2 = 1$ variance.
 
 We know that $n = 4$ (the total number of observations), therefore possible changepoints are: $\tau = 1, 2, 3$.
 
@@ -440,7 +440,7 @@ $$
     C_3 = \sqrt{\frac{3(4-3)}{4}} \left| 4.16\overline{6} - 12.4 \right| = 0.866 \times 8.23\overline{3} = 7.13.
     $$
 
-Thus, the maximum of the CUSUM statistic occurs at $\tau = 2$, with $C_{max} = 12.05$. To detect a changepoint, we would compare $C_{max}$ to a threshold value $c$. If $C_{max} > c$, we conclude that there is a changepoint at $\hat{\tau} = 2$.
+Thus, the maximum of the CUSUM statistic occurs at $\tau = 2$, with $C_{max} = 12.05$. To detect a changepoint, we would compare $C_{max}$ to a threshold value $c$. If $C_{max}^2 = 145.20 \geq c$, we conclude that there is a changepoint at $\hat{\tau} = 2$.
 
 ### Algorithmic Formulation of the CUSUM Statistic {#sec-algorithmic-formulation-of-the-cusum-statistic}
 

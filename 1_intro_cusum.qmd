@@ -591,21 +591,18 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 
 3.  Recreate the "CUSUM Statistics over time" plot for the Simpsons data above.
 
-<!-- -->
+    a.  You'll be able to load the dataset via:
 
-a.  You'll be able to load the dataset via:
+    ```{r eval=FALSE}
+    library(tidyverse)
+    simpsons_episodes <- read_csv("https://www.lancaster.ac.uk/~romano/teaching/2425MATH337/datasets/simpsons_episodes.csv")
 
-```{r eval=FALSE}
-library(tidyverse)
-simpsons_episodes <- read_csv("https://www.lancaster.ac.uk/~romano/teaching/2425MATH337/datasets/simpsons_episodes.csv")
+    simpsons_ratings <- simpsons_episodes |> 
+      mutate(Episode = id + 1, Season = as.factor(season), Rating = tmdb_rating)
+    simpsons_ratings <- simpsons_ratings[-nrow(simpsons_ratings), ]
 
-simpsons_ratings <- simpsons_episodes |> 
-  mutate(Episode = id + 1, Season = as.factor(season), Rating = tmdb_rating)
-simpsons_ratings <- simpsons_ratings[-nrow(simpsons_ratings), ]
+    # run your CUSUM algorithm on the Rating variable!
+    ```
 
-# run your CUSUM algorithm on the Rating variable!
-```
-
-b.  To run it on the whole sequence, you'll have to set the threshold $c = \infty$.
-
-c.  Assume $\sigma^2 = 1$
+    b.  To run it on the whole sequence, you'll have to set the threshold $c = \infty$. Assume $\sigma^2 = 1$
+    c.  Can you make your implementation even faster than what described in the algorithm?

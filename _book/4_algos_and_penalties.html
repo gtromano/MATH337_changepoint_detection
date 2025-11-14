@@ -428,11 +428,11 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 <div class="line-block"><strong>INPUT:</strong> Subseries <span class="math inline">\(y_{s:t} = \{y_s, \dots, y_t\}\)</span> of length <span class="math inline">\(t - s + 1\)</span>, penalty <span class="math inline">\(\beta\)</span><br>
 <strong>OUTPUT:</strong> Set of detected changepoints <span class="math inline">\(cp\)</span><br>
 <br>
-<strong>IF</strong> <span class="math inline">\(t - s \leq 1\)</span><br>
+<strong>IF</strong> <span class="math inline">\(t - s &lt; 1\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(\{\}\)</span> // No changepoint in segments of length 1 or less<br>
 <br>
 <span class="math inline">\(\mathcal{M}_{s,e} =\)</span> Set of those indices m for which <span class="math inline">\([s_m, t_m] \in \mathcal{F}\)</span> is such that <span class="math inline">\([s_m, t_m] \subset [s, t]\)</span>.<br>
-<span class="math inline">\(\mathcal{M} \leftarrow \mathcal{M} \cup \{[1, n]\}\)</span><br>
+<span class="math inline">\(\mathcal{M} \leftarrow \mathcal{M} \cup \{[s, t]\}\)</span><br>
 <strong>COMPUTE</strong><br>
 <span class="math inline">\(\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]\)</span><br>
 <br>

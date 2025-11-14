@@ -301,11 +301,11 @@ Then, WBS will have just a couple of alterations to the original Binary Segmenta
 | **INPUT:** Subseries $y_{s:t} = \{y_s, \dots, y_t\}$ of length $t - s + 1$, penalty $\beta$
 | **OUTPUT:** Set of detected changepoints $cp$
 | 
-| **IF** $t - s \leq 1$
+| **IF** $t - s < 1$
 |     **RETURN** $\{\}$ // No changepoint in segments of length 1 or less
 | 
 | $\mathcal{M}_{s,e} =$ Set of those indices m for which $[s_m, t_m] \in \mathcal{F}$ is such that $[s_m, t_m] \subset [s, t]$.
-| $\mathcal{M} \leftarrow \mathcal{M} \cup \{[1, n]\}$
+| $\mathcal{M} \leftarrow \mathcal{M} \cup \{[s, t]\}$
 | **COMPUTE**
 | $\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]$
 | 

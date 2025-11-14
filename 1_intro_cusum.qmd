@@ -573,7 +573,7 @@ This results in episode `r simpsons_ratings[cusum_results$tau.hat, "title"]` bei
 
     a.  $y_t = y_{t - 1} + \epsilon_t, \quad \ t = 2, \dots, n, y_1 = 0, \epsilon_{t} \sim N(0, 1)$. This is a random walk model. Let's start by computing the expected value and variance of $y_t$ across all $t$. **TIP:** Start by expanding $y_{t}$ in terms of the noise components...
 
-    b.  $y_t = t \epsilon_t + 3 \mathbb{1}(t > 50), \quad t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)$
+    b.  $y_t = \epsilon_t + 3 \ \mathbb{1}(t > 50), \quad t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)$
 
     c.  $y_t = 0.05 \cdot t + \epsilon_t, \ t = 1, \dots, 100, \quad \epsilon_{t} \sim N(0, 1)$
 

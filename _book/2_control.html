@@ -337,7 +337,7 @@ u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{(2\pi)^{-1/2}} \right).
 <p>In practice, it’s often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:</p>
 <ol type="1">
 <li><p>Simulate many time series under the null hypothesis (no changepoint),</p></li>
-<li><p>Calculate the test statistic <span class="math inline">\(C_\tau^2/\sigma^2\)</span> for each one of the replicates.</p></li>
+<li><p>Calculate the test statistic <span class="math inline">\(\max_\tau \frac{C_{\tau}^2 }{\sigma^2}\)</span> for each one of the replicates.</p></li>
 <li><p>Set the threshold to be the <span class="math inline">\((1-\alpha)\)</span> percentile of the distribution of the test statistics from simulated data.</p></li>
 </ol>
 <p>This leads to have less conservative thresholds.</p>

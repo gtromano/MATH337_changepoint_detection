@@ -108,7 +108,7 @@ In practice, it's often simplest and most effective to use Monte Carlo methods t
 
 1.  Simulate many time series under the null hypothesis (no changepoint),
 
-2.  Calculate the test statistic $C_\tau^2/\sigma^2$ for each one of the replicates.
+2.  Calculate the test statistic $\max_\tau \frac{C_{\tau}^2 }{\sigma^2}$ for each one of the replicates.
 
 3.  Set the threshold to be the $(1-\alpha)$ percentile of the distribution of the test statistics from simulated data.
 
@@ -403,12 +403,11 @@ We can see that we now find a significant changepoint prior to episode `r simpso
 
 ### Workshop 2
 
-1. Consider an independent Bernoulli time series, $y_t \sim \text{Bernoulli}(p)$, for $t = 1, \dots, n$, where $y_t \in {0, 1}$. In this question, you will compute the Likelihood Ratio (LR) test statistic for detecting a change in the success probability $p$ at some unknown point $\tau \in {1, \dots, n-1}$.
+1.  Consider an independent Bernoulli time series, $y_t \sim \text{Bernoulli}(p)$, for $t = 1, \dots, n$, where $y_t \in {0, 1}$. In this question, you will compute the Likelihood Ratio (LR) test statistic for detecting a change in the success probability $p$ at some unknown point $\tau \in {1, \dots, n-1}$.
 
-   a.  Write down the probability mass function (pmf) of the Bernoulli distribution under the null hypothesis (no change), and derive the corresponding Maximum Likelihood Estimator (MLE) for $p$. Then, extend this formulation to the alternative hypothesis, where the success probability changes at $\tau$.
+    a.  Write down the probability mass function (pmf) of the Bernoulli distribution under the null hypothesis (no change), and derive the corresponding Maximum Likelihood Estimator (MLE) for $p$. Then, extend this formulation to the alternative hypothesis, where the success probability changes at $\tau$.
 
-   b.  Using the MLEs from part (a), construct the log-likelihood ratio according to the general expression for the Likelihood Ratio test statistic, as defined in Equation @eq-lr-test.
-
+    b.  Using the MLEs from part (a), construct the log-likelihood ratio according to the general expression for the Likelihood Ratio test statistic, as defined in Equation @eq-lr-test.
 
 ### Lab 2
 

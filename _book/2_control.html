@@ -336,11 +336,11 @@ u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{(2\pi)^{-1/2}} \right).
 <p>This asymptotic result suggests that the threshold <span class="math inline">\(c_\alpha\)</span> for <span class="math inline">\(C_\tau^2/\sigma^2\)</span> should increase with <span class="math inline">\(n\)</span> at a rate of approximately <span class="math inline">\(2 \log \log n\)</span>. Given that this is a fairly slow rate of convergence, this suggests that the threshold suggested by this asymptotic distribution can be conservative in practice, potentially leading to detect less changepoints than what actually exist.</p>
 <p>In practice, it’s often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:</p>
 <ol type="1">
-<li><p>Simulate many time series under the null hypothesis (no changepoint),</p></li>
+<li><p>Simulate many (say <span class="math inline">\(M\)</span>) time series under the null hypothesis (no changepoint),</p></li>
 <li><p>Calculate the test statistic <span class="math inline">\(\max_\tau \frac{C_{\tau}^2 }{\sigma^2}\)</span> for each one of the replicates.</p></li>
 <li><p>Set the threshold to be the <span class="math inline">\((1-\alpha)\)</span> percentile of the distribution of the test statistics from simulated data.</p></li>
 </ol>
-<p>This leads to have less conservative thresholds.</p>
+<p>This leads to have less conservative thresholds. However, one clear drawback, this approach is computationally intensive (especially for large <span class="math inline">\(n\)</span> and large <span class="math inline">\(M\)</span>).</p>
 <p><strong>Theoretical vs Empirical Thresholds</strong> The figure below shows, for various levels of <span class="math inline">\(\alpha = 0.01, 0.05, 0.1\)</span>, thresholds <span class="math inline">\(c_\alpha\)</span> computed from the theoretical distribution of <a href="#eq-cusum_control" class="quarto-xref">Equation&nbsp;<span>2.1</span></a> against the Monte Carlo thresholds obtained from empirical simulations under the null.</p>
 <p><img src="source_imgs/empirical_thres_comparison.png" class="img-fluid"></p>
 <p>We will see how to compute in practice the theoretical and empirical thresholds in the Lab!</p>

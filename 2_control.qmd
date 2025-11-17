@@ -106,13 +106,13 @@ This asymptotic result suggests that the threshold $c_\alpha$ for $C_\tau^2/\sig
 
 In practice, it's often simplest and most effective to use Monte Carlo methods to approximate the null distribution of the test statistic. This can be done via the following process:
 
-1.  Simulate many time series under the null hypothesis (no changepoint),
+1.  Simulate many (say $M$) time series under the null hypothesis (no changepoint),
 
 2.  Calculate the test statistic $\max_\tau \frac{C_{\tau}^2 }{\sigma^2}$ for each one of the replicates.
 
 3.  Set the threshold to be the $(1-\alpha)$ percentile of the distribution of the test statistics from simulated data.
 
-This leads to have less conservative thresholds.
+This leads to have less conservative thresholds. However, one clear drawback, this approach is computationally intensive (especially for large $n$ and large $M$).
 
 **Theoretical vs Empirical Thresholds** The figure below shows, for various levels of $\alpha = 0.01, 0.05, 0.1$, thresholds $c_\alpha$ computed from the theoretical distribution of @eq-cusum_control against the Monte Carlo thresholds obtained from empirical simulations under the null.
 

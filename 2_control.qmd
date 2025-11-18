@@ -190,7 +190,7 @@ $$
 As $\sum_{t=1}^{n} y_t = n \bar{y}_{1:n}$, we notice that we can simplify the last two terms. We are left with:
 
 $$
-\sum_{t=1}^{n} (y_t - \bar{y}_{1:n})^2 = \sum_{t=1}^{n} y_t^2 - n \bar{y}_{1:\tau}^2.
+\sum_{t=1}^{n} (y_t - \bar{y}_{1:n})^2 = \sum_{t=1}^{n} y_t^2 - n \bar{y}_{1:n}^2.
 $$
 
 We proceed similarly for the other two terms:

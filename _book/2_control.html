@@ -321,12 +321,12 @@ window.Quarto = {
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="sec-cusum-control"><span class="header-section-number">2.1.1</span> Controlling the max of our cusums</h3>
 <p>Fortunately, for controlling our CUSUM test, we can use the fact that <span class="math inline">\((C_1, ..., C_{n-1})/ \sigma\)</span> are the absolute values of a Gaussian process with mean 0 and known covariance, and there are well known statistical results that can help us in our problem. <span class="citation" data-cites="yao1986asymptotic">Yao and Davis (<a href="references.html#ref-yao1986asymptotic" role="doc-biblioref">1986</a>)</span>, in fact, show that the maximum of a set of Gaussian random variables is known to converge to a Gumbel distribution, described by the following equation:</p>
 <p><span id="eq-cusum_control"><span class="math display">\[
-\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-(2\pi)^{-1/2}\exp(-u_\alpha)\},
+\lim_{n→\infty} \text{Pr}\{a_n^{-1}(\max_\tau C_\tau/\sigma - b_n) ≤ u_\alpha\} = \exp\{-2(\pi)^{-1/2}\exp(-u_\alpha)\},
 \tag{2.1}\]</span></span></p>
 <p>where <span class="math inline">\(a_n = (2 \log \log n)^{-1/2}\)</span> and <span class="math inline">\(b_n = a_n^{-1} + 0.5a_n \log \log \log n\)</span> are a scaling and a centering constant.</p>
 <p>The right side of this equation is the CDF of a Gumbell distribution. As we learned from likelihood inference, to find the threshold <span class="math inline">\(c_{\alpha}\)</span> for a given false probability rate, we first set the right-hand side equal to <span class="math inline">\(1 - \alpha\)</span>, and solve for <span class="math inline">\(u_\alpha\)</span>. This gives:</p>
 <p><span class="math display">\[
-u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{(2\pi)^{-1/2}} \right).
+u_\alpha = -\log\left( -\frac{\log(1-\alpha)}{2(\pi)^{-1/2}} \right).
 \]</span></p>
 <p>Then, we can find the critical value by looking into the left side of the equation:</p>
 <p><span class="math display">\[

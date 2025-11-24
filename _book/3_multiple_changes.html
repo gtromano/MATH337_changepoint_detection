@@ -392,6 +392,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 \mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n}) = \frac{1}{\sigma^2} \left[\sum_{i=1}^{\tau} (y_i - \bar{y}_{1:\tau})^2 + \sum_{i=\tau+1}^{n} (y_i - \bar{y}_{(\tau+1):n})^2 \right]
 \]</span></p>
 <p>Which is essentially minus the LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations <span class="math inline">\(\tau\)</span> is equivalent to maximizing the CUSUM statistic.</p>
+<p><img src="source_imgs/always_cusum.jpeg" class="img-fluid"></p>
 </section>
 </section>
 <section id="the-best-segmentation" class="level3" data-number="3.1.4">

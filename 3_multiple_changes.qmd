@@ -201,6 +201,8 @@ $$
 
 Which is essentially minus the LR test as we saw last week, without the null component. Specifically, for one change, minimizing the segmentation cost over all possible changepoints locations $\tau$ is equivalent to maximizing the CUSUM statistic.
 
+![](source_imgs/always_cusum.jpeg)
+
 ### The "best" segmentation
 
 We now have a way of evaluating how "good" a segmentation is, so it's only natural to ask the question: what would be the best one?

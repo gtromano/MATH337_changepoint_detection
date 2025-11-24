@@ -397,9 +397,9 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 <section id="the-best-segmentation" class="level3" data-number="3.1.4">
 <h3 data-number="3.1.4" class="anchored" data-anchor-id="the-best-segmentation"><span class="header-section-number">3.1.4</span> The “best” segmentation</h3>
 <p>We now have a way of evaluating how “good” a segmentation is, so it’s only natural to ask the question: what would be the best one?</p>
-<p>Well, one way would be to, say, finding the the best set of <span class="math inline">\(\tau = \tau_0, \dots, \tau_{K+1}\)</span> changepoints that minimise the cost:</p>
+<p>Well, one way would be to, say, finding the the best set of <span class="math inline">\(\tau = \{ \tau_0, \dots, \tau_{K+1} \}\)</span> changepoints that minimise the cost:</p>
 <p><span class="math display">\[
-\min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
+\min_{\substack{K \in \{0, \ \ldots, \ n - 1\}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
 \]</span></p>
 <p>Which one would this be? Say that for instance we range the <span class="math inline">\(K = 1, \dots, n\)</span>, and at each step we find the best possible segmentation. Graphically, we would be observing the following:</p>
 <div class="cell">

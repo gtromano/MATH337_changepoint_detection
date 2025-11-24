@@ -353,11 +353,12 @@ window.Quarto = {
 </ul></li>
 </ul>
 </section>
-<section id="residuals-vs.-fitted-values-plot" class="level4" data-number="5.1.1.3">
-<h4 data-number="5.1.1.3" class="anchored" data-anchor-id="residuals-vs.-fitted-values-plot"><span class="header-section-number">5.1.1.3</span> 3. <strong>Residuals vs.&nbsp;Fitted Values Plot</strong></h4>
-<p>Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see some clusters, consisting of a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values and clusters.</p>
+<section id="residuals-over-time-plot" class="level4" data-number="5.1.1.3">
+<h4 data-number="5.1.1.3" class="anchored" data-anchor-id="residuals-over-time-plot"><span class="header-section-number">5.1.1.3</span> 3. <strong>Residuals over Time Plot</strong></h4>
+<p>Finally, this plot shows the residuals on the y-axis against time, with the additional change locations. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. In the change-in-mean case, we would like to see a random scatter of points around zero over time (as we subtracted the mean from each segment!), with no discernible pattern, and roughly equal spread across all segments (suggesting homoschedasticity).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(out), <span class="fu">residuals</span>(out), <span class="at">xlab =</span> <span class="st">"fitted"</span>, <span class="at">ylab=</span><span class="st">"residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">residuals</span>(out), <span class="at">xlab =</span> <span class="st">"t"</span>, <span class="at">ylab=</span><span class="st">"residuals"</span>,  <span class="at">main =</span> <span class="st">"Residuals over time"</span>, <span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="fu">cpts</span>(out), <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"red"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -369,8 +370,8 @@ window.Quarto = {
 <ul>
 <li><strong>What to Watch for:</strong>
 <ul>
-<li>To observe cluster of points in the data is normal, as the fitted values are the estimate of our piecewise signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting. <strong>Note that these will not show up in the two plots above!</strong></li>
-<li>Heteroscedasticity (Non-constant variance): If the residuals’ spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!</li>
+<li>We need to look out for extreme values, as well as a sequence of points centered around 0! These could be segments which only have one or few observations in it, which could be a sign of overfitting. <strong>Note that these will not show up in the two plots above!</strong></li>
+<li>Heteroscedasticity (Non-constant variance): If the residuals’ spread increases or decreases across segment, it may indicate heteroscedasticity, which violates one of the key assumptions of the change-in-mean model (constant variance of residuals). If you observe heteroschedasticity only in one of the segments, it might mean that we are underestimating the number of the changes!</li>
 </ul></li>
 </ul>
 </section>
@@ -422,7 +423,7 @@ window.Quarto = {
 </div>
 </div>
 <p>We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting.<br>
-The residuals vs.&nbsp;fitted values gives us the better figure and provides the strongest evidence of overfitting: we can see that we have many small clusters consisting of just few points… Those which have two points, are almost symmetrically distanced from the 0 line. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.</p>
+The residuals over time gives us a better figure and provides the strongest evidence of overfitting: we can see that we have a lot of “extreme” residuals followed by a streak of 0s… The extreme ones come from segments over large variance, the 0-centered ones, come from single point segments. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.</p>
 </section>
 </section>
 <section id="estimating-other-known-parameters" class="level2" data-number="5.2">

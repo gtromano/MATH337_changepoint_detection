@@ -205,10 +205,10 @@ Which is essentially minus the LR test as we saw last week, without the null com
 
 We now have a way of evaluating how "good" a segmentation is, so it's only natural to ask the question: what would be the best one?
 
-Well, one way would be to, say, finding the the best set of $\tau = \tau_0, \dots, \tau_{K+1}$ changepoints that minimise the cost:
+Well, one way would be to, say, finding the the best set of $\tau = \{ \tau_0, \dots, \tau_{K+1} \}$ changepoints that minimise the cost:
 
 $$
-\min_{\substack{K \in \mathbb{N}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
+\min_{\substack{K \in \{0, \ \ldots, \ n - 1\}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
 $$
 
 Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:

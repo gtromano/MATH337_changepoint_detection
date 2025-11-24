@@ -89,17 +89,18 @@ qqline(residuals(out), col = "red")
 -   **What to Watch for:**
     -   **Deviations from the line:** Systematic deviations suggest non-normality. For instance, if points deviate upwards or downwards at the tails of the plot, it might indicate heavy tails (more extreme values than a normal distribution would predict) or light tails (fewer extreme values). As above, both cases might suggest that we have outliers, as we might be in a scenario where we are overfitting our sequence.
 
-#### 3. **Residuals vs. Fitted Values Plot**
+#### 3. **Residuals over Time Plot**
 
-Finally, this plot shows the residuals on the y-axis against the fitted values from the model on the x-axis. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. We would like to see some clusters, consisting of a random scatter of points around zero, with no discernible pattern, and roughly equal spread across all fitted values and clusters.
+Finally, this plot shows the residuals on the y-axis against time, with the additional change locations. It is particularly useful for checking if there are patterns in the residuals that suggest issues with the model fit. In the change-in-mean case, we would like to see a random scatter of points around zero over time (as we subtracted the mean from each segment!), with no discernible pattern, and roughly equal spread across all segments (suggesting homoschedasticity).
 
 ```{r}
-plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
+plot(residuals(out), xlab = "t", ylab="residuals",  main = "Residuals over time", pch=16)
+abline(v=cpts(out), col = adjustcolor("red", alpha = 0.3))
 ```
 
 -   **What to Watch for:**
-    -   To observe cluster of points in the data is normal, as the fitted values are the estimate of our piecewise signal. Maybe counter-intuitively, we need to look out for single observations alone! These could be segments which only have one or few observations in it, which could be a sign of overfitting. **Note that these will not show up in the two plots above!**
-    -   Heteroscedasticity (Non-constant variance): If the residuals' spread increases or decreases as the fitted values increase, it may indicate heteroscedasticity, which violates one of the key assumptions of many models (constant variance of residuals). If you observe heteroschedasticity only in one of the clusters, it might mean that we are underestimating the number of the changes!
+    -   We need to look out for extreme values, as well as a sequence of points centered around 0! These could be segments which only have one or few observations in it, which could be a sign of overfitting. **Note that these will not show up in the two plots above!**
+    -   Heteroscedasticity (Non-constant variance): If the residuals' spread increases or decreases across segment, it may indicate heteroscedasticity, which violates one of the key assumptions of the change-in-mean model (constant variance of residuals). If you observe heteroschedasticity only in one of the segments, it might mean that we are underestimating the number of the changes!
 
 ### Example: violating heteroschedasticity:
 
@@ -156,15 +157,15 @@ p
 With the diagnostics:
 
 ```{r echo=FALSE}
-hist(residuals(out), main = "Histogram of the residuals")
+hist(residuals(out), main = "Histogram of the residuals", breaks = 30)
 qqnorm(residuals(out), main = "Normal Q-Q Plot of the Residuals")
 qqline(residuals(out), col = "red")
-plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
-
+plot(residuals(out), xlab = "t", ylab="residuals",  main = "Residuals over time", pch=16)
+abline(v=cpts(out), col = adjustcolor("red", alpha = 0.3))
 ```
 
 We can clearly see from the vertical lines that we have an oversegmentation in the third segment. The histogram and Q-Q plot both show some signs of deviations from a strict normal distribution, especially in the tails, which are lighter. This means that there might be some evidence of overfitting.\
-The residuals vs. fitted values gives us the better figure and provides the strongest evidence of overfitting: we can see that we have many small clusters consisting of just few points... Those which have two points, are almost symmetrically distanced from the 0 line. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.
+The residuals over time gives us a better figure and provides the strongest evidence of overfitting: we can see that we have a lot of "extreme" residuals followed by a streak of 0s... The extreme ones come from segments over large variance, the 0-centered ones, come from single point segments. This is a clear sign of heteroschedasticity, where we overfitted across the sequence with larger variance.
 
 ## Estimating Other Known Parameters
 

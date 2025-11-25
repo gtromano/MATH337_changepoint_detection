@@ -402,7 +402,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 <p><span class="math display">\[
 \min_{\substack{K \in \{0, \ \ldots, \ n - 1\}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
 \]</span></p>
-<p>Which one would this be? Say that for instance we range the <span class="math inline">\(K = 1, \dots, n\)</span>, and at each step we find the best possible segmentation. Graphically, we would be observing the following:</p>
+<p>Which one would this be? Say that for instance we range the <span class="math inline">\(K = 1, \dots, n-1\)</span>, and at each step we find the best possible segmentation. Graphically, we would be observing the following:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -479,7 +479,7 @@ f(y_i, \theta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\{-\frac{1}{2 \sigma^2} (y_i
 </ol>
 <p>where the segment cost <span class="math inline">\(\mathcal{L}(\cdot)\)</span>, is as in <a href="#eq-segment_cost" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>.</p>
 <ol start="2" type="1">
-<li><p>If the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> is true for at least one <span class="math inline">\(\tau \in 1, \dots, n\)</span>, then the <span class="math inline">\(\tau\)</span> that minimizes <span class="math inline">\(\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})\)</span> is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.</p></li>
+<li><p>If the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> is true for at least one <span class="math inline">\(\tau \in 1, \dots, n-1\)</span>, then the <span class="math inline">\(\tau\)</span> that minimizes <span class="math inline">\(\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})\)</span> is picked as a first changepoint and the test is then performed on the two newly generated splits. Otherwise, return no changes in the current split. This step is repeated until no changes are present on all resulting sub-splits.</p></li>
 <li><p>If there are no more resulting valid splits, then the procedure ends.</p></li>
 </ol>
 <p>Some of you might have noted how the condition in <a href="#eq-bin_seg_condition" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> is closely related to the LR test in <a href="2_control.html#eq-lr-test" class="quarto-xref">Equation&nbsp;<span>2.2</span></a>. In fact, rearranging equation above, gives us:</p>
@@ -652,12 +652,13 @@ Q_{n, \beta} = \min_{K \in \mathbb{N}} \left[ \min_{\substack{\\ \tau_1, \dots, 
 <strong>OUTPUT:</strong> Optimal changepoint vector <span class="math inline">\(cp_n\)</span><br>
 <br>
 Initialize <span class="math inline">\(\mathcal{Q}_0 \leftarrow -\beta\)</span><br>
-Initialize <span class="math inline">\(cp_0 \leftarrow \{\}\)</span> // a set of vectors ordered by time<br>
+Initialize <span class="math inline">\(cp_0 \leftarrow []\)</span> // an (empty) vector of change locations.<br>
+// Similarly we will store multiple vectors, ordered by time (e.g.&nbsp;<span class="math inline">\(cp_1, cp_2, \ldots, cp_n\)</span>)<br>
 <br>
 <strong>FOR</strong> <span class="math inline">\(t = 1, \dots, n\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\mathcal{Q}_t \leftarrow \min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat\tau \leftarrow \text{arg}\min_{0 \leq \tau &lt; t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)\)</span> // Append the changepoint to the list at the last optimal point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)\)</span> // Append the changepoint to the vector at the last optimal point<br>
 <br>
 <strong>RETURN</strong> <span class="math inline">\(cp_n\)</span></div>
 <hr>

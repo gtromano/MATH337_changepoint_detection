@@ -213,7 +213,7 @@ $$
 \min_{\substack{K \in \{0, \ \ldots, \ n - 1\}\\ \tau_1, \dots, \tau_K}} \sum_{k = 0}^K \mathcal{L}(y_{\tau_k+1:\tau_{k+1}}).
 $$
 
-Which one would this be? Say that for instance we range the $K = 1, \dots, n$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
+Which one would this be? Say that for instance we range the $K = 1, \dots, n-1$, and at each step we find the best possible segmentation. Graphically, we would be observing the following:
 
 ```{r echo=FALSE, warning=FALSE}
 #| fig-height: 2
@@ -279,7 +279,7 @@ Binary Segmentation (BS) is a procedure from @scott1974cluster and @sen1975tests
 
 where the segment cost $\mathcal{L}(\cdot)$, is as in @eq-segment_cost.
 
-2.  If the condition in @eq-bin_seg_condition is true for at least one $\tau \in 1, \dots, n$, then the $\tau$ that minimizes $\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})$ is picked as a first changepoint and the test is then performed on the two newly generated splits. This step is repeated until no further changepoints are detected on all resulting segments.
+2.  If the condition in @eq-bin_seg_condition is true for at least one $\tau \in 1, \dots, n-1$, then the $\tau$ that minimizes $\mathcal{L}(y_{1:\tau}) + \mathcal{L}(y_{\tau+1:n})$ is picked as a first changepoint and the test is then performed on the two newly generated splits. Otherwise, return no changes in the current split. This step is repeated until no changes are present on all resulting sub-splits.
 
 3.  If there are no more resulting valid splits, then the procedure ends.
 
@@ -538,12 +538,13 @@ A formal description of the algorithm can be found below:
 | **OUTPUT:** Optimal changepoint vector $cp_n$
 | 
 | Initialize $\mathcal{Q}_0 \leftarrow -\beta$
-| Initialize $cp_0 \leftarrow \{\}$ // a set of vectors ordered by time
+| Initialize $cp_0 \leftarrow []$ // an (empty) vector of change locations. 
+| // Similarly we will store multiple vectors, ordered by time (e.g. $cp_1, cp_2, \ldots, cp_n$)
 | 
 | **FOR** $t = 1, \dots, n$
 |      $\mathcal{Q}_t \leftarrow \min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
 |      $\hat\tau \leftarrow \text{arg}\min_{0 \leq \tau < t} \left[ \mathcal{Q}_{\tau} + \mathcal{L}(y_{\tau + 1:t}) + \beta \right]$
-|      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the list at the last optimal point
+|      $cp_t \leftarrow (cp_{\hat\tau}, \hat\tau)$ // Append the changepoint to the vector at the last optimal point
 | 
 | **RETURN** $cp_n$
 

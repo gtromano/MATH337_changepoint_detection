@@ -538,7 +538,7 @@ A formal description of the algorithm can be found below:
 | **OUTPUT:** Optimal changepoint vector $cp_n$
 | 
 | Initialize $\mathcal{Q}_0 \leftarrow -\beta$
-| Initialize $cp_0 \leftarrow []$ // an (empty) vector of change locations. 
+| Initialize $cp_0 \leftarrow []$ // an (empty) vector of change locations.
 | // Similarly we will store multiple vectors, ordered by time (e.g. $cp_1, cp_2, \ldots, cp_n$)
 | 
 | **FOR** $t = 1, \dots, n$

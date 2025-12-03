@@ -409,7 +409,7 @@ Initialise <span class="math inline">\(R_1 = (0)\)</span> // a vector of candida
 <p>However, PELT still has some disadvantages:</p>
 <ul>
 <li><p>PELT pruning works only over some cost functions, those for which the condition above is true. For example, in a special case of change-in-slope, as we will see in the workshop, we have that the cost from the next change depends on the location of the previous one, making it impossible for PELT to prune without loosing optimality.</p></li>
-<li><p>We mentioned above how PELT over iterations at which a change is detected. For signals where changes are not frequent, PELT does not benefits from. A more sophisticated approach is that of <strong>FPOP</strong>, that prunes at every iteration. FPOP employs a different type of pruning, called functional pruning, that at every iteration only check costs that are likely associated to a change. However, despite the pruning is stronger FPOP works only over few selected models.</p></li>
+<li><p>We mentioned above how PELT prunes over iterations at which a change is detected. For signals where changes are not frequent, PELT does not benefits from pruning, and in datasets where no change are present, PELT shows still <span class="math inline">\(\mathcal{O}(n^2)\)</span> complexity. A more sophisticated approach is that of <strong>FPOP</strong>, that prunes at every iteration. FPOP employs a different type of pruning, called functional pruning, that at every iteration only check costs that are likely associated to a change. However, despite the pruning is stronger FPOP works only over few selected models.</p></li>
 </ul>
 </section>
 <section id="wbs-improving-on-binary-segmentation" class="level3" data-number="4.2.2">
@@ -434,10 +434,10 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 <span class="math inline">\(\mathcal{M}_{s,e} =\)</span> Set of those indices m for which <span class="math inline">\([s_m, t_m] \in \mathcal{F}\)</span> is such that <span class="math inline">\([s_m, t_m] \subset [s, t]\)</span>.<br>
 <span class="math inline">\(\mathcal{M} \leftarrow \mathcal{M} \cup \{[s, t]\}\)</span><br>
 <strong>COMPUTE</strong><br>
-<span class="math inline">\(\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) + \beta \right]\)</span><br>
+<span class="math inline">\(\mathcal{Q} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\min} \left[ \mathcal{L}(y_{s_m:\tau}) + \mathcal{L}(y_{(\tau+1):t_m}) - \mathcal{L}(y_{s_m:t_m}) + \beta \right]\)</span><br>
 <br>
 <strong>IF</strong> <span class="math inline">\(\mathcal{Q} &lt; 0\)</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\text{arg}\min} \left[ \mathcal{L}(y_{s:\tau}) + \mathcal{L}(y_{\tau+1:t}) - \mathcal{L}(y_{s:t}) \right]\)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(\hat{\tau} \leftarrow \underset{\substack{[s_m, t_m] \in \mathcal{M}\\ \tau \in \{s_m, \dots, t_m\}}}{\text{arg}\min} \left[ \mathcal{L}(y_{s_m:\tau}) + \mathcal{L}(y_{(\tau+1):t_m}) - \mathcal{L}(y_{s_m:t_m}) \right]\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="math inline">\(cp \leftarrow \{ \hat{\tau}, \text{WBS}(y_{s:\hat{\tau}}, \beta), \text{WBS}(y_{\hat{\tau}+1:t}, \beta)\}\)</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>RETURN</strong> <span class="math inline">\(cp\)</span><br>
 <br>
@@ -554,7 +554,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 </div>
 </div>
 </div>
-<p>We can see that the elbow is at 4 changepoints, therefore this could suggest that a segmentation with 4 changes might be the best!</p>
+<p>We can see that the elbow is at 3 changepoints, therefore this could suggest that a segmentation with 3 changes might be the best!</p>
 <p>This gives us:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cpts</span>(out, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -570,6 +570,7 @@ s_m \sim \text{U}(1, n), \ t_m \sim \text{U}(s_m+1, n)
 </div>
 </div>
 </div>
+<p>However, some might rightfully argue as well that the elbow could for 1 change… Which gives us the same segmentation of the MBIC above.</p>
 </section>
 </section>
 <section id="exercises" class="level2" data-number="4.4">

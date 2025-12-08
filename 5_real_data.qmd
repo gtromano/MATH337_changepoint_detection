@@ -384,6 +384,8 @@ library(changepoint)
 data <- cbind(y, 1, 1:length(y))
 out <- cpt.reg(data, method="PELT")
 
+plot(out, ylab="y", xlab="t", pch=16)
+abline(v = cpts(out), col = "red")
 
 hist(residuals(out), main = "Histogram of the residuals")
 
@@ -392,5 +394,6 @@ qqnorm(residuals(out), main = "Normal Q-Q Plot of the Residuals")
 qqline(residuals(out), col = "red")  # Adds a reference line
 
 
-plot(fitted(out), residuals(out), xlab = "fitted", ylab="residuals")
+plot(residuals(out), xlab = "t", ylab="residuals",  main = "Residuals over time", pch=16)
+abline(v=cpts(out), col = adjustcolor("red", alpha = 0.3))
 ```
